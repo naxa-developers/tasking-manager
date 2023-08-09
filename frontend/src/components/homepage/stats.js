@@ -4,7 +4,7 @@ import axios from 'axios';
 import shortNumber from 'short-number';
 
 import messages from './messages';
-import { HOMEPAGE_STATS_API_URL } from '../../config';
+import { OHSOME_STATS_BASE_URL } from '../../config';
 import { fetchLocalJSONAPIWithAbort } from '../../network/genericJSONRequest';
 
 export const StatsNumber = (props) => {
@@ -41,7 +41,7 @@ export const StatsSection = () => {
     const abortController = new AbortController();
     // Using axios over the useFetch hook for external API endpoint
     const fetchOsmStats = () =>
-      axios.get(HOMEPAGE_STATS_API_URL, {
+      axios.get(`${OHSOME_STATS_BASE_URL}/stats/hotosm-project-%2A?ohsomeFormat=false`, {
         signal: abortController.signal,
       });
 
@@ -50,7 +50,7 @@ export const StatsSection = () => {
 
     Promise.all([fetchOsmStats(), fetchSystemStats()])
       .then(([osmStats, tmStats]) => {
-        const { edits, building_count_add: buildings, road_km_add: roads } = osmStats.data;
+        const { edits, buildings, roads } = osmStats.data;
         setOsmStats({
           edits,
           buildings,

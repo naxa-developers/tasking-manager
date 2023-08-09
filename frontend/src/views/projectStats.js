@@ -13,6 +13,7 @@ import { TimeStats } from '../components/projectStats/timeStats';
 import { CompletionStats } from '../components/projectStats/completion';
 import { EditsStats } from '../components/projectStats/edits';
 import { retrieveDefaultChangesetComment } from '../utils/defaultChangesetComment';
+import { OHSOME_STATS_BASE_URL } from '../config';
 
 const ContributorsStats = React.lazy(() => import('../components/projectStats/contributorsStats'));
 const TasksByStatus = React.lazy(() => import('../components/projectStats/taskStatus'));
@@ -40,10 +41,7 @@ export function ProjectStats() {
       // To fix: set this URL with an ENV VAR later
       if (defaultComment.length) {
         fetchExternalJSONAPI(
-          `https://osm-stats-production-api.azurewebsites.net/stats/${defaultComment[0].replace(
-            '#',
-            '',
-          )}`,
+          `${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}?ohsomeFormat=false`,
         )
           .then((res) => setEdits(res))
           .catch((e) => console.log(e));
