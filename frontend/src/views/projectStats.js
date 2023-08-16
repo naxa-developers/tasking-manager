@@ -43,7 +43,7 @@ export function ProjectStats() {
         fetchExternalJSONAPI(
           `${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}?ohsomeFormat=false`,
         )
-          .then((res) => setEdits(res))
+          .then((res) => setEdits(res.result))
           .catch((e) => console.log(e));
       }
     }
@@ -71,7 +71,7 @@ export function ProjectStats() {
               showLoadingAnimation={true}
               rows={5}
               delay={500}
-              ready={edits && edits.hashtag}
+              ready={edits.hasOwnProperty('buildings')}
             >
               <EditsStats data={edits} />
             </ReactPlaceholder>

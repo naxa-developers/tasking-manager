@@ -50,7 +50,7 @@ export const StatsSection = () => {
 
     Promise.all([fetchOsmStats(), fetchSystemStats()])
       .then(([osmStats, tmStats]) => {
-        const { edits, buildings, roads } = osmStats.data;
+        const { edits, buildings, roads } = osmStats.data.result;
         setOsmStats({
           edits,
           buildings,
