@@ -41,7 +41,7 @@ export const StatsSection = () => {
     const abortController = new AbortController();
     // Using axios over the useFetch hook for external API endpoint
     const fetchOsmStats = () =>
-      axios.get(`${OHSOME_STATS_BASE_URL}/stats/hotosm-project-%2A?ohsomeFormat=false`, {
+      axios.get(`${OHSOME_STATS_BASE_URL}/stats/hotosm-project-%2A`, {
         signal: abortController.signal,
       });
 

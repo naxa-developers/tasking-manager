@@ -41,7 +41,7 @@ export function ProjectStats() {
       // To fix: set this URL with an ENV VAR later
       if (defaultComment.length) {
         fetchExternalJSONAPI(
-          `${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}?ohsomeFormat=false`,
+          `${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}`,
         )
           .then((res) => setEdits(res.result))
           .catch((e) => console.log(e));
