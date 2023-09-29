@@ -14,6 +14,14 @@ import { CompletionStats } from '../components/projectStats/completion';
 import { EditsStats } from '../components/projectStats/edits';
 import { retrieveDefaultChangesetComment } from '../utils/defaultChangesetComment';
 import { OHSOME_STATS_BASE_URL } from '../config';
+// import {
+//   useProjectContributionsQuery,
+//   useProjectSummaryQuery,
+//   useProjectTimelineQuery,
+//   useTasksQuery,
+// } from '../api/projects';
+// import { useOsmHashtagStatsQuery } from '../api/stats';
+// import { Alert } from '../components/alert';
 
 const ContributorsStats = React.lazy(() => import('../components/projectStats/contributorsStats'));
 const TasksByStatus = React.lazy(() => import('../components/projectStats/taskStatus'));
@@ -25,6 +33,7 @@ export function ProjectStats() {
   const [error, loading, project] = useFetch(`projects/${id}/queries/summary/`, id);
   // eslint-disable-next-line
   const [errorTasks, loadingTasks, tasks] = useFetch(`projects/${id}/tasks/`, id);
+  // const { data: tasks, status: tasksStatus } = useTasksQuery(id);
   const tasksByStatus = useTasksByStatus(tasks);
   const [contributorsError, contributorsLoading, contributors] = useFetch(
     `projects/${id}/contributions/`,
@@ -34,15 +43,17 @@ export function ProjectStats() {
     `projects/${id}/contributions/queries/day/`,
     id,
   );
+  // const { data: contributions, status: contributionsStatus } = useProjectContributionsQuery(id);
+  // const { data: timelineData, status: timelineDataStatus } = useProjectTimelineQuery(id);
+  // const defaultComment = project && retrieveDefaultChangesetComment(project.changesetComment, id);
   const [edits, setEdits] = useState({});
+
   useEffect(() => {
     if (project && project.changesetComment !== undefined) {
       let defaultComment = retrieveDefaultChangesetComment(project.changesetComment, id);
       // To fix: set this URL with an ENV VAR later
       if (defaultComment.length) {
-        fetchExternalJSONAPI(
-          `${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}`,
-        )
+        fetchExternalJSONAPI(`${OHSOME_STATS_BASE_URL}/stats/${defaultComment[0].replace('#', '')}`)
           .then((res) => setEdits(res.result))
           .catch((e) => console.log(e));
       }

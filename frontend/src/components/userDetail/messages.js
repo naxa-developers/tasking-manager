@@ -125,4 +125,8 @@ export default defineMessages({
     id: 'users.detail.teams',
     defaultMessage: 'Teams',
   },
+  userOrganisationsError: {
+    id: 'users.header.organisations.error',
+    defaultMessage: "Couldn't load organisations at this time",
+  },
 });

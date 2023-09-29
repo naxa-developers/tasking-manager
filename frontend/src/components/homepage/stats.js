@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
 import shortNumber from 'short-number';
 
 import messages from './messages';
 import { OHSOME_STATS_BASE_URL } from '../../config';
 import { fetchLocalJSONAPIWithAbort } from '../../network/genericJSONRequest';
+// import { useOsmStatsQuery, useSystemStatisticsQuery } from '../../api/stats';
 
 export const StatsNumber = (props) => {
   const value = shortNumber(props.value);
