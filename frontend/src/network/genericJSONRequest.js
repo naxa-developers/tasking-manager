@@ -6,10 +6,10 @@ export function fetchExternalJSONAPI(url, isSetToken = false): Promise<*> {
     'Content-Type': 'application/json',
   };
 
-  // Passing token only for ohsomeNow stats
-  if (isSetToken) {
-    headers['Authorization'] = `Basic ${OHSOME_STATS_TOKEN}`;
-  }
+  // // Passing token only for ohsomeNow stats
+  // if (isSetToken) {
+  //   headers['Authorization'] = `Basic ${OHSOME_STATS_TOKEN}`;
+  // }
 
   return fetch(url, {
     method: 'GET',
