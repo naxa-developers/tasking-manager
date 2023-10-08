@@ -1,5 +1,5 @@
 # Tasking Manager
-<h1><a href="task_file.docx"></a></h1>
+# task_file.docx
 [![hotosm](https://dl.circleci.com/status-badge/img/gh/hotosm/tasking-manager/tree/develop.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/hotosm/tasking-manager/tree/develop)
 [![TM Backend on Quay](https://quay.io/repository/hotosm/tasking-manager/status "Tasking Manager Backend Build")](https://quay.io/repository/hotosm/tasking-manager)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=hotosm_tasking-manager&metric=alert_status)](https://sonarcloud.io/dashboard?id=hotosm_tasking-manager)
