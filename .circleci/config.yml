@@ -254,7 +254,7 @@ jobs:
     working_directory: /home/circleci/tasking-manager
     resource_class: large
     docker:
-      - image: cimg/base
+      - image: cimg/base:2023.09
     steps:
       - checkout
       - add_ssh_keys:
