@@ -261,13 +261,13 @@ jobs:
           fingerprints:
             - "af:00:1e:ac:45:bc:d6:79:98:eb:46:df:cb:a5:cb:7f"
       - setup_remote_docker:
-          version: 20.10.14
+          version: 24.0.6
       - run:
           name: Deploy to develop
           command: |
-            export DOCKER_HOST=ssh://ubuntu@ec2-43-204-84-238.ap-south-1.compute.amazonaws.com
             docker ps
-
+          environment:
+            DOCKER_HOST: ssh://ubuntu@ec2-43-204-84-238.ap-south-1.compute.amazonaws.com
 workflows:
   version: 2
 
