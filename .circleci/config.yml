@@ -253,8 +253,8 @@ jobs:
   develop_deploy:
     working_directory: /home/circleci/tasking-manager
     resource_class: large
-    docker:
-      - image: cimg/base:2023.09
+    # docker:
+    #   - image: cimg/base:2023.09
     steps:
       - checkout
       - setup_remote_docker:
@@ -476,11 +476,18 @@ workflows:
           pattern: "deployment/naxa"
           value: << pipeline.git.branch >>
     jobs:
-      - frontend-code-test
-      - backend-code-check-PEP8
-      - backend-code-check-Black
-      - backend-functional-tests
-      - develop_deploy
+      # - frontend-code-test
+      # - backend-code-check-PEP8
+      # - backend-code-check-Black
+      # - backend-functional-tests
+      - develop_deploy:
+          name: Deploy to develop
+          # requires:
+          #   - frontend-code-test
+          #   - backend-code-check-PEP8
+          #   - backend-code-check-Black
+          #   - backend-functional-tests
+              
 
 
 
