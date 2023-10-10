@@ -263,11 +263,16 @@ jobs:
           fingerprints:
             - "af:00:1e:ac:45:bc:d6:79:98:eb:46:df:cb:a5:cb:7f"
       - run:
+          name: Add to Known Hosts
+          command: |
+            ssh-keyscan -H ec2-43-204-84-238.ap-south-1.compute.amazonaws.com >> ~/.ssh/known_hosts
+      - run:
           name: Deploy to develop
           command: |
             docker ps
           environment:
             DOCKER_HOST: ssh://ubuntu@ec2-43-204-84-238.ap-south-1.compute.amazonaws.com
+            
 workflows:
   version: 2
 
@@ -471,10 +476,10 @@ workflows:
           pattern: "deployment/naxa"
           value: << pipeline.git.branch >>
     jobs:
-      # - frontend-code-test
-      # - backend-code-check-PEP8
-      # - backend-code-check-Black
-      # - backend-functional-tests
+      - frontend-code-test
+      - backend-code-check-PEP8
+      - backend-code-check-Black
+      - backend-functional-tests
       - develop_deploy
 
 
