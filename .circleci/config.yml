@@ -255,10 +255,6 @@ jobs:
     resource_class: large
     docker:
       - image: cimg/base
-    parameters:
-      detail:
-        description: "development server avaliable on https://tm.naxa.com.np/"
-        type: string
     steps:
       - checkout
       - add_ssh_keys:
