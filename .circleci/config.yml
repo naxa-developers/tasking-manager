@@ -253,8 +253,8 @@ jobs:
   develop_deploy:
     working_directory: /home/circleci/tasking-manager
     resource_class: large
-    # docker:
-    #   - image: cimg/base:2023.09
+    docker:
+      - image: cimg/base:2023.09
     steps:
       - checkout
       - setup_remote_docker:
