@@ -318,9 +318,12 @@ jobs:
                  echo 'export TF_ENV="prod"' >> "$BASH_ENV"
                 ;;
             esac
+            echo "curcle env and tf-env"
+            echo $CIRCLE_BRANCH $TF_ENV
+
       - run:
           name: Run Terraform Apply
-          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
+          command: echo "TF_ENV:" $TF_ENV cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
 
 workflows:
   version: 2
