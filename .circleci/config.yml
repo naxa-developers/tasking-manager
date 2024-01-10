@@ -271,6 +271,7 @@ jobs:
       - image: hashicorp/terraform:1.6.6
     steps:
       - checkout
+      - aws-cli/setup
       - run:
           name: Setup terragrunt
           command: |
@@ -278,6 +279,11 @@ jobs:
             chmod +x terragrunt
             mv terragrunt /usr/local/bin/terragrunt
             terragrunt -v
+      - run:
+          name: Terraform plan
+          command: |
+          cd scripts/aws/lambda/TM-Extractor/dev/tm-extractor/
+          terragrunt plan
           
 
 workflows:
