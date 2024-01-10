@@ -275,25 +275,21 @@ jobs:
             mv terragrunt /usr/local/bin/terragrunt
             terragrunt -v
       - run:
-          name: CD according to branch name
+          name: Run Terraform Plan
           command: |
             case $CIRCLE_BRANCH in
             staging)
-                 echo 'export TF_ENV="stag"' >> "$BASH_ENV"
+                 export TF_ENV="stag"
                 ;;
             infra-lambda-tm-exporter)
-                 echo 'export TF_ENV="dev"' >> "$BASH_ENV"
+                 export TF_ENV="dev"
                 ;;
             deployment/hot-tasking-manager)
-                 echo 'export TF_ENV="prod"' >> "$BASH_ENV"
+                 export TF_ENV="prod"
                 ;;
             esac
-            echo "curcle env and tf-env"
-            echo $CIRCLE_BRANCH $TF_ENV
-      - run:
-          name: Terraform plan
-          command: echo "TF_ENV:" $TF_ENV && cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
-
+            cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
+            
   tf-apply-tm-extractor:
     docker:
       - image: hashicorp/terraform:1.5.5
@@ -307,25 +303,20 @@ jobs:
             mv terragrunt /usr/local/bin/terragrunt
             terragrunt -v
       - run:
-          name: CD according to branch name
+          name: Run Terraform Apply
           command: |
             case $CIRCLE_BRANCH in
             staging)
-                 echo 'export TF_ENV="stag"' >> "$BASH_ENV"
+                 export TF_ENV="stag"
                 ;;
             infra-lambda-tm-exporter)
-                 echo 'export TF_ENV="dev"' >> "$BASH_ENV"
+                 export TF_ENV="dev"
                 ;;
             deployment/hot-tasking-manager)
-                 echo 'export TF_ENV="prod"' >> "$BASH_ENV"
+                 export TF_ENV="prod"
                 ;;
             esac
-            echo "curcle env and tf-env"
-            echo $CIRCLE_BRANCH $TF_ENV
-
-      - run:
-          name: Run Terraform Apply
-          command: echo "TF_ENV:" $TF_ENV cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
+            cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
 
 workflows:
   version: 2
