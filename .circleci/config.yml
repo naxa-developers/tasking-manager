@@ -289,7 +289,7 @@ jobs:
                 ;;
             esac
             cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
-            
+
   tf-apply-tm-extractor:
     docker:
       - image: hashicorp/terraform:1.5.5
@@ -524,7 +524,10 @@ workflows:
           - equal: [ deployment/hot-tasking-manager, << pipeline.git.branch >> ]
     jobs:
       - tf-plan-tm-extractor
-      - tf-apply-tm-extractor:
-          type: approval
+      - hold-tf-apply-tm-extractor:
           requires:
             - tf-plan-tm-extractor
+      - tf-apply-tm-extractor:
+          requires:
+            - tf-plan-tm-extractor
+            - hold-tf-apply-tm-extractor
