@@ -271,7 +271,6 @@ jobs:
       - image: hashicorp/terraform:1.6.6
     steps:
       - checkout
-      - aws-cli/setup
       - run:
           name: Setup terragrunt
           command: |
