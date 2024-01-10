@@ -288,9 +288,10 @@ jobs:
                 export TF_ENV=prod
                 ;;
             esac
+            pwd
       - run:
           name: Terraform plan
-          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
+          command: pwd && cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
 
   tf-apply-tm-extractor:
     docker:
