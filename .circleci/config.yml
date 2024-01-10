@@ -4,7 +4,7 @@ orbs:
   aws-cli: circleci/aws-cli@4.1.1
   aws-ecs: circleci/aws-ecs@4.0.0
   opsgenie: opsgenie/opsgenie@1.0.8
-  terragrunt: dialogue/terragrunt@3.14.0
+  terraform: circleci/terraform@3.1
 
 
 jobs:
@@ -262,17 +262,6 @@ jobs:
             export DISTRIBUTION_ID=`aws cloudformation list-exports --output=text --query "Exports[?Name=='tasking-manager-<< parameters.stack_name >>-cloudfront-id-${AWS_REGION}'].Value"`
             aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
 
-  run-tf-infra-job:
-    docker: 
-      - image: cimg/python:3.10.7-node
-    steps:
-      - terragrunt/install-terragrunt:
-          version: 0.54.9
-      - run:
-          name: echo
-          command: |
-            echo "Run tf config"
-
 workflows:
   version: 2
 
@@ -475,4 +464,11 @@ workflows:
       and:
         - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
     jobs:
-      - run-tf-infra-job
+      - terraform/fmt:
+          checkout: true
+          context: terraform
+      - terraform/validate:
+          checkout: true
+          context: terraform
+          requires:
+            - terraform/fmt
