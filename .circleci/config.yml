@@ -262,11 +262,11 @@ jobs:
             export DISTRIBUTION_ID=`aws cloudformation list-exports --output=text --query "Exports[?Name=='tasking-manager-<< parameters.stack_name >>-cloudfront-id-${AWS_REGION}'].Value"`
             aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
   tf-lambda-tm-extractor:
-  build:
-    filters:
-      branches:
-        only:
-          - infra-lambda-tm-exporter
+  # build:
+  #   filters:
+  #     branches:
+  #       only:
+  #         - infra-lambda-tm-exporter
     docker:
       - image: hashicorp/terraform:1.6.6
     steps:
@@ -482,11 +482,4 @@ workflows:
       and:
         - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
     jobs:
-      - terraform/fmt:
-          checkout: true
-          context: terraform
-      - terraform/validate:
-          checkout: true
-          context: terraform
-          requires:
-            - terraform/fmt
+      - tf-lambda-tm-extractor
