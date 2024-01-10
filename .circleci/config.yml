@@ -4,6 +4,7 @@ orbs:
   aws-cli: circleci/aws-cli@4.1.1
   aws-ecs: circleci/aws-ecs@4.0.0
   opsgenie: opsgenie/opsgenie@1.0.8
+  terragrunt: dialogue/terragrunt@3.14.0
 
 
 jobs:
@@ -265,6 +266,9 @@ jobs:
     docker: 
       - image: cimg/python:3.10.7-node
     steps:
+      - terragrunt/install-terragrunt:
+          version: v0.54.9
+      - terragrunt/validate
       - run:
           name: echo
           command: |
