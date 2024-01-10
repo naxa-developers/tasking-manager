@@ -525,6 +525,7 @@ workflows:
     jobs:
       - tf-plan-tm-extractor
       - hold-tf-apply-tm-extractor:
+          type: approval
           requires:
             - tf-plan-tm-extractor
       - tf-apply-tm-extractor:
