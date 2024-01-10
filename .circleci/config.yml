@@ -530,5 +530,4 @@ workflows:
             - tf-plan-tm-extractor
       - tf-apply-tm-extractor:
           requires:
-            - tf-plan-tm-extractor
             - hold-tf-apply-tm-extractor
