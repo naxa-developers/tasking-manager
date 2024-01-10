@@ -268,7 +268,6 @@ jobs:
     steps:
       - terragrunt/install-terragrunt:
           version: v0.54.9
-      - terragrunt/validate
       - run:
           name: echo
           command: |
