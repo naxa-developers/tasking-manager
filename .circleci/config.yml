@@ -267,7 +267,7 @@ jobs:
       - image: cimg/python:3.10.7-node
     steps:
       - terragrunt/install-terragrunt:
-          version: v0.54.9
+          version: 0.54.9
       - run:
           name: echo
           command: |
