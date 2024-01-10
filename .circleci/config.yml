@@ -318,9 +318,10 @@ jobs:
                 export TF_ENV=prod
                 ;;
             esac
+            pwd
       - run:
           name: Run Terraform Apply
-          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
+          command: pwd && cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
 
 workflows:
   version: 2
