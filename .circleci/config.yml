@@ -308,7 +308,7 @@ jobs:
       - run:
           name: CD according to branch name
           command: |
-            case << pipeline.git.branch >> in
+            case $CIRCLE_BRANCH in
             staging)
                 export TF_ENV=stag
                 ;;
@@ -319,10 +319,9 @@ jobs:
                 export TF_ENV=prod
                 ;;
             esac
-            echo "ENV_NAME=$ENV_NAME" >> $GITHUB_OUTPUT
       - run:
           name: Run Terraform Apply
-          command: terragrunt apply --auto-approve
+          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
 
 workflows:
   version: 2
