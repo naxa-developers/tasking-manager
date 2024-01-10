@@ -481,8 +481,12 @@ workflows:
       - backend-functional-tests
 
   tf-tm-extractor:
-    # when:
-    #   and:
-    #     - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
+    when:
+      and:
+        - or:
+          - equal: [ staging, << pipeline.git.branch >> ]
+          - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
+          - equal: [ deployment/hot-tasking-manager, << pipeline.git.branch >> ]
+
     jobs:
       - tf-lambda-tm-extractor
