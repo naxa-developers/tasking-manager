@@ -270,7 +270,7 @@ jobs:
     docker:
       - image: hashicorp/terraform:1.6.6
     steps:
-      - checkout:
+      - checkout
       - run:
           name: Setup terragrunt
           command: |
@@ -478,8 +478,8 @@ workflows:
       - backend-functional-tests
 
   tf-tm-extractor:
-    when:
-      and:
-        - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
+    # when:
+    #   and:
+    #     - equal: [ infra-lambda-tm-exporter, << pipeline.git.branch >> ]
     jobs:
       - tf-lambda-tm-extractor
