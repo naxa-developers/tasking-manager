@@ -277,7 +277,7 @@ jobs:
       - run:
           name: CD according to branch name
           command: |
-            case << pipeline.git.branch >> in
+            case $CIRCLE_BRANCH in
             staging)
                 export TF_ENV=stag
                 ;;
