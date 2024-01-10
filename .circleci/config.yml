@@ -281,9 +281,7 @@ jobs:
             terragrunt -v
       - run:
           name: Terraform plan
-          command: |
-          cd scripts/aws/lambda/TM-Extractor/dev/tm-extractor/
-          terragrunt plan
+          command: cd scripts/aws/lambda/TM-Extractor/dev/tm-extractor/ && terragrunt plan
           
 
 workflows:
