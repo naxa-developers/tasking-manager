@@ -288,7 +288,6 @@ jobs:
                 export TF_ENV=prod
                 ;;
             esac
-            echo "ENV_NAME=$ENV_NAME" >> $GITHUB_OUTPUT
       - run:
           name: Terraform plan
           command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
