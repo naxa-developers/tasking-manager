@@ -279,19 +279,18 @@ jobs:
           command: |
             case $CIRCLE_BRANCH in
             staging)
-                export TF_ENV=stag
+                 echo 'export TF_ENV="stag"' >> "$BASH_ENV"
                 ;;
             infra-lambda-tm-exporter)
-                export TF_ENV=dev
+                 echo 'export TF_ENV="dev"' >> "$BASH_ENV"
                 ;;
             deployment/hot-tasking-manager)
-                export TF_ENV=prod
+                 echo 'export TF_ENV="prod"' >> "$BASH_ENV"
                 ;;
             esac
-            pwd
       - run:
           name: Terraform plan
-          command: pwd && cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
+          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt plan
 
   tf-apply-tm-extractor:
     docker:
@@ -310,19 +309,18 @@ jobs:
           command: |
             case $CIRCLE_BRANCH in
             staging)
-                export TF_ENV=stag
+                 echo 'export TF_ENV="stag"' >> "$BASH_ENV"
                 ;;
             infra-lambda-tm-exporter)
-                export TF_ENV=dev
+                 echo 'export TF_ENV="dev"' >> "$BASH_ENV"
                 ;;
             deployment/hot-tasking-manager)
-                export TF_ENV=prod
+                 echo 'export TF_ENV="prod"' >> "$BASH_ENV"
                 ;;
             esac
-            pwd
       - run:
           name: Run Terraform Apply
-          command: pwd && cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
+          command: cd scripts/aws/lambda/TM-Extractor/$TF_ENV/tm-extractor/ && terragrunt apply --auto-approve
 
 workflows:
   version: 2
