@@ -104,6 +104,7 @@ export const DownloadOsmData = ({ projectMappingTypes, project }) => {
       projectMappingTypes?.includes(icon.value),
     );
     setDownloadDataList(filteredMappingTypes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectMappingTypes]);
 
   useEffect(() => {
@@ -184,6 +185,7 @@ export const DownloadOsmData = ({ projectMappingTypes, project }) => {
         });
     };
     multipleHeadCallForFormat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategoryFormat]);
 
   return (
