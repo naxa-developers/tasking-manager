@@ -1,0 +1,34 @@
+name: TM NAXA Custom Branch CICD 
+
+on:
+    push:
+        tags:
+            - force-deploy*
+    workflow_dispatch:
+
+jobs:
+  build-static-for-branch:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Clone repository
+          uses: actions/checkout@v2
+
+        - name: Use Node.js 16
+          uses: actions/setup-node@v1
+          with:
+                node-version: 16.x
+
+        - name: Install dependencies
+          run: cd frontend && yarn install --network-concurrency 1
+
+        - name: Generate build
+          run: cd frontend && GENERATE_SOURCEMAP=false && yarn build
+            
+        - name: copy file via ssh password
+          uses: appleboy/scp-action@v0.1.7
+          with:
+            host: ${{ vars.SERVER_IP }}
+            username: ${{ vars.SERVER_USERNAME }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            source: "./frontend/build/"
+            target: /home/ubuntu/Projects/tasking-manager/frontend/build/
