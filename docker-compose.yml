@@ -15,40 +15,42 @@ services:
   # Main application
   backend:
     <<: *backend
-    container_name: backend
+    container_name: tm-backend
     restart: always
     labels:
-      - traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/api/`)
+      - traefik.http.routers.backend.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && PathPrefix(`/api/`)
       - traefik.http.services.backend.loadbalancer.server.port=5000
 
   migration:
     <<: *backend
-    container_name: migration
+    container_name: tm-migration
     restart: on-failure
     command: flask db upgrade
 
   frontend:
     image: hotosm-tasking-manager:frontend
+    container_name: tm-frontend
     restart: always
     networks:
       - tm-web
     labels:
-      - traefik.http.routers.frontend.rule=Host(`localhost`)
-      - traefik.http.services.frontend.loadbalancer.server.port=80
+      - traefik.http.routers.frontend.rule=Host(`127.0.0.1`) || Host(`localhost`)
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
 
   postgresql:
-    image: mdillon/postgis:11
-    container_name: postgresql
+    image: postgis/postgis:14-3.3
+    container_name: tm-postgresql
     restart: always
     env_file: ${ENV_FILE:-tasking-manager.env}
     networks:
       - tm-web
 
   traefik:
-    image: traefik:v2.3
+    image: traefik:v2.10
+    container_name: tm-traefik
     restart: always
     ports:
-      - "80:80"
+      - "${TM_DEV_PORT:-80}:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     command:
@@ -59,4 +61,4 @@ services:
 
 networks:
   tm-web:
-    external: true
+    external: false

@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 import {
   createComponentWithMemoryRouter,
+  QueryClientProviders,
   ReduxIntlProviders,
   renderWithRouter,
 } from '../../utils/testWithIntl';
@@ -29,11 +30,13 @@ Object.defineProperty(config, 'OSM_TEAMS_CLIENT_ID', {
 describe('List Teams', () => {
   it('should show loading placeholder when teams are being fetched', async () => {
     const { container } = renderWithRouter(
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <ReduxIntlProviders>
-          <ManageTeams />
-        </ReduxIntlProviders>
-      </QueryParamProvider>,
+      <QueryClientProviders>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <ReduxIntlProviders>
+            <ManageTeams />
+          </ReduxIntlProviders>
+        </QueryParamProvider>
+      </QueryClientProviders>,
     );
     act(() => {
       store.dispatch({
@@ -47,11 +50,13 @@ describe('List Teams', () => {
 
   it('should fetch and list teams', async () => {
     const { container } = renderWithRouter(
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <ReduxIntlProviders>
-          <ManageTeams />
-        </ReduxIntlProviders>
-      </QueryParamProvider>,
+      <QueryClientProviders>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <ReduxIntlProviders>
+            <ManageTeams />
+          </ReduxIntlProviders>
+        </QueryParamProvider>
+      </QueryClientProviders>,
     );
     await waitFor(() =>
       expect(container.getElementsByClassName('show-loading-animation').length).toBe(0),
@@ -63,11 +68,13 @@ describe('List Teams', () => {
 
   it('should navigate to team detail page on team article click', async () => {
     const { user, router, container } = createComponentWithMemoryRouter(
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <ReduxIntlProviders>
-          <ManageTeams />
-        </ReduxIntlProviders>
-      </QueryParamProvider>,
+      <QueryClientProviders>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <ReduxIntlProviders>
+            <ManageTeams />
+          </ReduxIntlProviders>
+        </QueryParamProvider>
+      </QueryClientProviders>,
     );
     await waitFor(() =>
       expect(container.getElementsByClassName('show-loading-animation').length).toBe(0),
@@ -413,11 +420,13 @@ describe('Delete Team', () => {
 
 test('MyTeams Component renders its child component', () => {
   renderWithRouter(
-    <QueryParamProvider adapter={ReactRouter6Adapter}>
-      <ReduxIntlProviders>
-        <MyTeams />
-      </ReduxIntlProviders>
-    </QueryParamProvider>,
+    <QueryClientProviders>
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <ReduxIntlProviders>
+          <MyTeams />
+        </ReduxIntlProviders>
+      </QueryParamProvider>
+    </QueryClientProviders>,
   );
   expect(
     screen.getByRole('heading', {

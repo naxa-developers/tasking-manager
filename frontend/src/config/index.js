@@ -3,12 +3,9 @@ export const API_VERSION = process.env.REACT_APP_API_VERSION || 'v2';
 export const API_URL = process.env.REACT_APP_API_URL
   ? new URL('/api/' + API_VERSION + '/', process.env.REACT_APP_API_URL)
   : 'http://127.0.0.1:5000/api/' + API_VERSION + '/';
-export const HOMEPAGE_STATS_API_URL =
-  process.env.REACT_APP_HOMEPAGE_STATS_API_URL ||
-  'https://osmstats-api.hotosm.org/wildcard/?key=hotosm-project-*';
-export const USER_STATS_API_URL =
-  process.env.REACT_APP_USER_STATS_API_URL ||
-  'https://osm-stats-production-api.azurewebsites.net/users/';
+export const OHSOME_STATS_BASE_URL =
+  process.env.REACT_APP_OHSOME_STATS_BASE_URL || 'https://stats.now.ohsome.org/api';
+export const OHSOME_STATS_TOKEN = process.env.REACT_APP_OHSOME_STATS_TOKEN || '';
 
 // APPLICATION SETTINGS
 export const DEFAULT_LOCALE = process.env.REACT_APP_DEFAULT_LOCALE || 'en';
@@ -62,6 +59,8 @@ export const POTLATCH2_EDITOR_URL =
   'https://www.openstreetmap.org/edit?editor=potlatch2';
 export const RAPID_EDITOR_URL =
   process.env.REACT_APP_RAPID_EDITOR_URL || 'https://mapwith.ai/rapid';
+export const EXPORT_TOOL_S3_URL = process.env.REACT_APP_EXPORT_TOOL_S3_URL || '';
+export const ENABLE_EXPORT_TOOL = process.env.REACT_APP_ENABLE_EXPORT_TOOL || '';
 
 // OSM Teams integration
 export const OSM_TEAMS_API_URL = process.env.REACT_APP_OSM_TEAMS_API_URL || 'https://mapping.team';

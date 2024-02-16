@@ -11,6 +11,8 @@ frontend/package-lock.json
 frontend/.env
 frontend/.eslintcache
 frontend/coverage/
+# Sentry Auth Token
+frontend/.sentryclirc
 
 # Ignore dist folder as this contains the minimized build for deploy
 backend/web/static/dist
@@ -53,3 +55,12 @@ venv_aws/
 # Backend coverage generated files
 htmlcov/
 .coverage
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Terragrunt
+.terragrunt-cache

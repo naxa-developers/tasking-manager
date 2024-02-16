@@ -21,3 +21,14 @@
 .menu-items-container::-webkit-scrollbar {
   display: none;
 }
+
+/* Hide the scrollbar in Firefox */
+.menu-items-container {
+  scrollbar-width: none;
+}
+
+.file-list-separator {
+  height: 27px;
+  position: relative;
+  border: 1px solid #d73f3f;
+}

@@ -1,7 +1,10 @@
 import threading
 from cachetools import TTLCache, cached
 from flask import current_app
+import geojson
+from datetime import datetime, timedelta, timezone
 
+from backend.exceptions import NotFound
 from backend.models.dtos.mapping_dto import TaskDTOs
 from backend.models.dtos.project_dto import (
     ProjectDTO,
@@ -25,7 +28,6 @@ from backend.models.postgis.statuses import (
     MappingLevel,
 )
 from backend.models.postgis.task import Task, TaskHistory
-from backend.models.postgis.utils import NotFound
 from backend.services.messaging.smtp_service import SMTPService
 from backend.services.users.user_service import UserService
 from backend.services.project_search_service import ProjectSearchService
@@ -50,7 +52,7 @@ class ProjectService:
     def get_project_by_id(project_id: int) -> Project:
         project = Project.get(project_id)
         if project is None:
-            raise NotFound()
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
 
         return project
 
@@ -58,14 +60,14 @@ class ProjectService:
     def exists(project_id: int) -> bool:
         project = Project.exists(project_id)
         if project is None:
-            raise NotFound()
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
         return True
 
     @staticmethod
     def get_project_by_name(project_id: int) -> Project:
         project = Project.get(project_id)
         if project is None:
-            raise NotFound()
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
 
         return project
 
@@ -78,14 +80,14 @@ class ProjectService:
         # Validate project exists.
         project = Project.get(project_id)
         if project is None:
-            raise NotFound({"project": project_id})
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
 
         tasks = [{"id": i, "obj": Task.get(i, project_id)} for i in tasks_ids]
 
         # In case a task is not found.
         not_found = [t["id"] for t in tasks if t["obj"] is None]
         if len(not_found) > 0:
-            raise NotFound({"tasks": not_found})
+            raise NotFound(sub_code="TASK_NOT_FOUND", tasks=not_found)
 
         # Delete task one by one.
         [t["obj"].delete() for t in tasks]
@@ -292,7 +294,7 @@ class ProjectService:
         tasks = Task.get_locked_tasks_details_for_user(user_id)
 
         if len(tasks) == 0:
-            raise NotFound()
+            raise NotFound(sub_code="TASK_NOT_FOUND")
 
         # TODO put the task details in to a DTO
         dtos = []
@@ -572,7 +574,7 @@ class ProjectService:
         project = ProjectService.get_project_by_id(project_id)
 
         if project is None:
-            raise NotFound()
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
 
         return project.teams
 
@@ -581,7 +583,7 @@ class ProjectService:
         project = ProjectService.get_project_by_id(project_id)
 
         if project is None:
-            raise NotFound()
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
 
         return project.organisation
 
@@ -615,3 +617,37 @@ class ProjectService:
                     project_completion,
                 ),
             ).start()
+
+    @staticmethod
+    def get_active_projects(interval):
+        action_date = datetime.now(timezone.utc) - timedelta(hours=interval)
+        result = (
+            TaskHistory.query.with_entities(TaskHistory.project_id)
+            .distinct()
+            .filter(TaskHistory.action_date >= action_date)
+            .all()
+        )
+        project_ids = [row.project_id for row in result]
+        projects = (
+            Project.query.with_entities(
+                Project.id,
+                Project.mapping_types,
+                Project.geometry.ST_AsGeoJSON().label("geometry"),
+            )
+            .filter(
+                Project.status == ProjectStatus.PUBLISHED.value,
+                Project.id.in_(project_ids),
+            )
+            .all()
+        )
+        features = []
+        for project in projects:
+            properties = {
+                "project_id": project.id,
+                "mapping_types": project.mapping_types,
+            }
+            feature = geojson.Feature(
+                geometry=geojson.loads(project.geometry), properties=properties
+            )
+            features.append(feature)
+        return geojson.FeatureCollection(features)

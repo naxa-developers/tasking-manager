@@ -12,7 +12,7 @@ import { CountriesMapped } from '../components/userDetail/countriesMapped';
 import { TopProjects } from '../components/userDetail/topProjects';
 import { ContributionTimeline } from '../components/userDetail/contributionTimeline';
 import { NotFound } from './notFound';
-import { USER_STATS_API_URL } from '../config';
+import { OHSOME_STATS_BASE_URL, OSM_SERVER_URL } from '../config';
 import { fetchExternalJSONAPI } from '../network/genericJSONRequest';
 import { useFetch } from '../hooks/UseFetch';
 import { useSetTitleTag } from '../hooks/UseMetaTags';
@@ -33,6 +33,7 @@ export const UserDetail = ({ withHeader = true }) => {
   const token = useSelector((state) => state.auth.token);
   const currentUser = useSelector((state) => state.auth.userDetails);
   const [osmStats, setOsmStats] = useState({});
+  const [userOsmDetails, setUserOsmDetails] = useState({});
   const [errorDetails, loadingDetails, userDetails] = useFetch(
     `users/queries/${username}/`,
     username !== undefined,
@@ -53,12 +54,15 @@ export const UserDetail = ({ withHeader = true }) => {
   }, [navigate, token]);
 
   useEffect(() => {
-    if (token && username) {
-      fetchExternalJSONAPI(`${USER_STATS_API_URL}${username}`)
-        .then((res) => setOsmStats(res))
+    if (userDetails.id) {
+      fetchExternalJSONAPI(`${OSM_SERVER_URL}/api/0.6/user/${userDetails.id}.json`, false)
+        .then((res) => setUserOsmDetails(res?.user))
+        .catch((e) => console.log(e));
+      fetchExternalJSONAPI(`${OHSOME_STATS_BASE_URL}/hot-tm-user?userId=${userDetails.id}`, true)
+        .then((res) => setOsmStats(res.result))
         .catch((e) => console.log(e));
     }
-  }, [token, username]);
+  }, [userDetails.id]);
 
   const titleClass = 'contributions-titles fw5 ttu barlow-condensed blue-dark mt0';
 
@@ -74,7 +78,7 @@ export const UserDetail = ({ withHeader = true }) => {
             rows={5}
             ready={!errorDetails && !loadingDetails}
           >
-            <HeaderProfile userDetails={userDetails} changesets={osmStats.changeset_count} />
+            <HeaderProfile userDetails={userDetails} changesets={userOsmDetails?.changesets?.count} />
           </ReactPlaceholder>
         </div>
       )}
