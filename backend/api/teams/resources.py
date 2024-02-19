@@ -45,6 +45,8 @@ class TeamsRestAPI(Resource):
                     name:
                         type: string
                         default: HOT - Mappers
+                    osm_teams_id:
+                        type: integer
                     logo:
                         type: string
                         default: https://tasks.hotosm.org/assets/img/hot-tm-logo.svg
@@ -318,6 +320,8 @@ class TeamsAllAPI(Resource):
                     organisation_id:
                         type: integer
                         default: 1
+                    osm_teams_id:
+                        type: integer
                     description:
                         type: string
                     visibility:
@@ -331,6 +335,7 @@ class TeamsAllAPI(Resource):
                         - "ANY"
                         - "BY_REQUEST"
                         - "BY_INVITE"
+                        - "OSM_TEAMS"
         responses:
             201:
                 description: Team created successfully

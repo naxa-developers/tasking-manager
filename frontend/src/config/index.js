@@ -63,6 +63,10 @@ export const RAPID_EDITOR_URL =
 export const EXPORT_TOOL_S3_URL = process.env.REACT_APP_EXPORT_TOOL_S3_URL || '';
 export const ENABLE_EXPORT_TOOL = process.env.REACT_APP_ENABLE_EXPORT_TOOL || '';
 
+// OSM Teams integration
+export const OSM_TEAMS_API_URL = process.env.REACT_APP_OSM_TEAMS_API_URL || 'https://mapping.team';
+export const OSM_TEAMS_CLIENT_ID = process.env.REACT_APP_OSM_TEAMS_CLIENT_ID || '';
+
 export const TASK_COLOURS = {
   READY: '#fff',
   LOCKED_FOR_MAPPING: '#fff',

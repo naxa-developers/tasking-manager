@@ -82,4 +82,5 @@ export { CutIcon } from './cut';
 export { FileImportIcon } from './fileImport';
 export { CalendarIcon } from './calendar';
 export { CommentIcon } from './comment';
+export { UserGroupIcon } from './user-group';
 export { DownloadIcon } from './download';
