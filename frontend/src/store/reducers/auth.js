@@ -3,7 +3,6 @@ import { types } from '../actions/auth';
 const initialState = {
   userDetails: {},
   token: '',
-  osmteams_token: '',
   session: {},
   osm: {},
   organisations: [],
@@ -26,9 +25,6 @@ export function authorizationReducer(state = initialState, action) {
     }
     case types.SET_TOKEN: {
       return { ...state, token: action.token };
-    }
-    case types.SET_OSM_TEAMS_TOKEN: {
-      return { ...state, osmteams_token: action.osmteams_token };
     }
     case types.SET_SESSION: {
       return { ...state, session: action.session };

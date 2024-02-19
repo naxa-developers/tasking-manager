@@ -1,7 +1,7 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 
 import { Root } from './views/root';
-import { Authorized, OSMTeamsAuthorized } from './views/authorized';
+import { Authorized } from './views/authorized';
 import { NotFound } from './views/notFound';
 import { FallbackComponent } from './views/fallback';
 import { Redirect } from './components/redirect';
@@ -45,7 +45,7 @@ export const router = createBrowserRouter(
         path="projects/:id"
         lazy={async () => {
           const { ProjectDetailPage } = await import(
-            './views/project' /* webpackChunkName: "projectDetail" */
+            './views/project' /* webpackChunkName: "project" */
           );
           return { Component: ProjectDetailPage };
         }}
@@ -54,7 +54,7 @@ export const router = createBrowserRouter(
         path="projects/:id/tasks"
         lazy={async () => {
           const { SelectTask } = await import(
-            './views/taskSelection' /* webpackChunkName: "projectDetail" */
+            './views/taskSelection' /* webpackChunkName: "taskSelection" */
           );
           return { Component: SelectTask };
         }}
@@ -212,7 +212,6 @@ export const router = createBrowserRouter(
         }}
       />
       <Route path="authorized" element={<Authorized />} />
-      <Route path="osmteams-authorized" element={<OSMTeamsAuthorized />} />
       <Route
         path="login"
         lazy={async () => {
@@ -363,7 +362,7 @@ export const router = createBrowserRouter(
           path="projects/:id"
           lazy={async () => {
             const { ProjectEdit } = await import(
-              './views/projectEdit' /* webpackChunkName: "project" */
+              './views/projectEdit' /* webpackChunkName: "projectEdit" */
             );
             return { Component: ProjectEdit };
           }}
