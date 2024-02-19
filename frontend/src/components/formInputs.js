@@ -9,13 +9,7 @@ import { formatCountryList } from '../utils/countries';
 import { fetchLocalJSONAPI } from '../network/genericJSONRequest';
 import { CheckIcon, SearchIcon, CloseIcon } from './svgIcons';
 
-export const RadioField = ({
-  name,
-  value,
-  className,
-  required = false,
-  disabled = false,
-}: Object) => (
+export const RadioField = ({ name, value, className, required = false }: Object) => (
   <Field
     name={name}
     component="input"
@@ -25,7 +19,6 @@ export const RadioField = ({
       className || ''
     }`}
     required={required}
-    disabled={disabled}
   />
 );
 

@@ -11,9 +11,9 @@ import {
   withDefault,
 } from 'use-query-params';
 import toast from 'react-hot-toast';
+import Popup from 'reactjs-popup';
 
 import messages from './messages';
-import { OSM_TEAMS_CLIENT_ID } from '../config';
 import { useFetch } from '../hooks/UseFetch';
 import { useEditTeamAllowed } from '../hooks/UsePermissions';
 import { useSetTitleTag } from '../hooks/UseMetaTags';
@@ -33,20 +33,17 @@ import {
   TeamForm,
   TeamsManagement,
   TeamSideBar,
-  TeamDetailPageFooter,
 } from '../components/teamsAndOrgs/teams';
 import { MessageMembers } from '../components/teamsAndOrgs/messageMembers';
 import { Projects } from '../components/teamsAndOrgs/projects';
+import { LeaveTeamConfirmationAlert } from '../components/teamsAndOrgs/leaveTeamConfirmationAlert';
 import { FormSubmitButton, CustomButton } from '../components/button';
 import { DeleteModal } from '../components/deleteModal';
 import { NotFound } from './notFound';
 import { PaginatorLine } from '../components/paginator';
 import { updateEntity } from '../utils/management';
 import { EntityError } from '../components/alert';
-import { TeamSync } from '../components/teamsAndOrgs/teamSync';
 import { useTeamsQuery } from '../api/teams';
-
-const ENABLE_OSM_TEAMS_INTEGRATION = Boolean(OSM_TEAMS_CLIENT_ID);
 
 export function ManageTeams() {
   useSetTitleTag('Manage teams');
@@ -112,7 +109,7 @@ export function ListTeams({ managementView = false }: Object) {
   );
 }
 
-export const joinTeamRequest = (team_id, username, role, token) => {
+const joinTeamRequest = (team_id, username, role, token) => {
   return pushToLocalJSONAPI(
     `teams/${team_id}/actions/add/`,
     JSON.stringify({ username: username, role: role }),
@@ -121,7 +118,7 @@ export const joinTeamRequest = (team_id, username, role, token) => {
   );
 };
 
-export const leaveTeamRequest = (team_id, username, role, token) => {
+const leaveTeamRequest = (team_id, username, role, token) => {
   return pushToLocalJSONAPI(
     `teams/${team_id}/actions/leave/`,
     JSON.stringify({ username: username, role: role }),
@@ -143,46 +140,25 @@ export function CreateTeam() {
   } = useModifyMembers([{ username: userDetails.username, pictureUrl: userDetails.pictureUrl }]);
   const { members, setMembers, addMember, removeMember } = useModifyMembers([]);
   const [isError, setIsError] = useState(false);
-  const [osmTeamsId, setOsmTeamsId] = useState();
-
-  useEffect(() => {
-    if (userDetails && userDetails.username && managers.length === 0) {
-      setManagers([{ username: userDetails.username, pictureUrl: userDetails.pictureUrl }]);
-    }
-  }, [userDetails, managers, setManagers]);
 
   const createTeam = (payload) => {
     delete payload['organisation'];
     setIsError(false);
-    payload.osm_teams_id = osmTeamsId;
     pushToLocalJSONAPI('teams/', JSON.stringify(payload), token, 'POST')
       .then((result) => {
-        const errors = [];
-        Promise.all([
-          ...managers
-            .filter((user) => user.username !== userDetails.username)
-            .map((user) =>
-              joinTeamRequest(result.teamId, user.username, 'MANAGER', token).catch((e) =>
-                errors.push({ username: user.username, function: 'MANAGER' }),
-              ),
-            ),
-          ...members.map((user) =>
-            joinTeamRequest(result.teamId, user.username, 'MEMBER', token).catch((e) =>
-              errors.push({ username: user.username, function: 'MEMBER' }),
-            ),
-          ),
-        ]).then(() => {
-          const additionalSearchParam = errors.length ? `?syncUsersErrors=${errors.length}` : '';
-          toast.success(
-            <FormattedMessage
-              {...messages.entityCreationSuccess}
-              values={{
-                entity: 'team',
-              }}
-            />,
-          );
-          navigate(`/manage/teams/${result.teamId}${additionalSearchParam}`);
-        });
+        managers
+          .filter((user) => user.username !== userDetails.username)
+          .map((user) => joinTeamRequest(result.teamId, user.username, 'MANAGER', token));
+        members.map((user) => joinTeamRequest(result.teamId, user.username, 'MEMBER', token));
+        toast.success(
+          <FormattedMessage
+            {...messages.entityCreationSuccess}
+            values={{
+              entity: 'team',
+            }}
+          />,
+        );
+        navigate(`/manage/teams/${result.teamId}`);
       })
       .catch(() => setIsError(true));
   };
@@ -192,7 +168,6 @@ export function CreateTeam() {
       onSubmit={(values) => createTeam(values)}
       initialValues={{ visibility: 'PUBLIC' }}
       render={({ handleSubmit, pristine, submitting, values }) => {
-        if (osmTeamsId) values.joinMethod = 'OSM_TEAMS';
         return (
           <form onSubmit={handleSubmit} className="blue-grey">
             <div className="cf pb5">
@@ -204,7 +179,7 @@ export function CreateTeam() {
                   <h3 className="f3 blue-dark mv0 fw6">
                     <FormattedMessage {...messages.teamInfo} />
                   </h3>
-                  <TeamInformation disableJoinMethodField={Boolean(osmTeamsId)} />
+                  <TeamInformation />
                 </div>
                 {isError && <EntityError entity="team" />}
               </div>
@@ -215,7 +190,7 @@ export function CreateTeam() {
                     removeMembers={removeManager}
                     members={managers}
                     resetMembersFn={setManagers}
-                    disableEdit={osmTeamsId}
+                    creationMode={true}
                   />
                 </div>
                 <div className="mb3">
@@ -224,20 +199,10 @@ export function CreateTeam() {
                     removeMembers={removeMember}
                     members={members}
                     resetMembersFn={setMembers}
-                    disableEdit={osmTeamsId}
+                    creationMode={true}
                     type={'members'}
                   />
                 </div>
-                {ENABLE_OSM_TEAMS_INTEGRATION && (
-                  <div className="mb3">
-                    <TeamSync
-                      osmTeamsId={osmTeamsId}
-                      setOsmTeamsId={setOsmTeamsId}
-                      setManagers={setManagers}
-                      setMembers={setMembers}
-                    />
-                  </div>
-                )}
               </div>
             </div>
             <div className="fixed left-0 right-0 bottom-0 cf bg-white h3">
@@ -265,7 +230,7 @@ export function CreateTeam() {
   );
 }
 
-export function EditTeam() {
+export function EditTeam(props) {
   const { id } = useParams();
   const userDetails = useSelector((state) => state.auth.userDetails);
   const token = useSelector((state) => state.auth.token);
@@ -279,15 +244,12 @@ export function EditTeam() {
   const [memberJoinTeamError, setMemberJoinTeamError] = useState(null);
   const [managerJoinTeamError, setManagerJoinTeamError] = useState(null);
   const [isError, setIsError] = useState(false);
-  const [osmTeamsId, setOsmTeamsId] = useState();
-  useSetTitleTag(`Edit ${team.name}`);
 
   useEffect(() => {
     if (!initManagers && team && team.members) {
       setManagers(filterActiveManagers(team.members));
       setMembers(filterActiveMembers(team.members));
       setRequests(filterInactiveMembersAndManagers(team.members));
-      setOsmTeamsId(team.osm_teams_id);
       setInitManagers(true);
     }
   }, [team, managers, initManagers]);
@@ -298,6 +260,8 @@ export function EditTeam() {
       setMembers(filterActiveMembers(team.members));
     }
   }, [team]);
+
+  useSetTitleTag(`Edit ${team.name}`);
 
   const addManagers = (values) => {
     const newValues = values
@@ -374,13 +338,9 @@ export function EditTeam() {
   const onUpdateTeamFailure = () => setIsError(true);
 
   const updateTeam = (payload) => {
-    if (['ANY', 'BY_REQUEST'].includes(payload.joinMethod)) {
+    if (payload.joinMethod !== 'BY_INVITE') {
       payload.visibility = 'PUBLIC';
     }
-    payload.osm_teams_id = osmTeamsId;
-    // force teams synced with OSM Teams to have OSM_TEAMS join method
-    if (osmTeamsId) payload.joinMethod = 'OSM_TEAMS';
-
     updateEntity(`teams/${id}/`, 'team', payload, token, forceUpdate, onUpdateTeamFailure);
   };
 
@@ -413,7 +373,6 @@ export function EditTeam() {
             joinMethod: team.joinMethod,
             visibility: team.visibility,
             organisation_id: team.organisation_id,
-            osm_teams_id: team.osm_teams_id,
           }}
           updateTeam={updateTeam}
           disabledForm={error || loading}
@@ -429,7 +388,6 @@ export function EditTeam() {
           members={managers}
           managerJoinTeamError={managerJoinTeamError}
           setManagerJoinTeamError={setManagerJoinTeamError}
-          disableEdit={osmTeamsId}
         />
         <div className="h1"></div>
         <Members
@@ -441,34 +399,7 @@ export function EditTeam() {
           type="members"
           memberJoinTeamError={memberJoinTeamError}
           setMemberJoinTeamError={setMemberJoinTeamError}
-          enableTeamsIntegration={ENABLE_OSM_TEAMS_INTEGRATION}
-          disableEdit={osmTeamsId}
         />
-        <div className="h1"></div>
-        {ENABLE_OSM_TEAMS_INTEGRATION &&
-          (osmTeamsId || (members.length < 1 && managers.length < 2)) && (
-            <div className="mb3">
-              <TeamSync
-                osmTeamsId={osmTeamsId}
-                setOsmTeamsId={setOsmTeamsId}
-                setManagers={setManagers}
-                setMembers={setMembers}
-                managers={managers}
-                members={members}
-                tmTeamId={id}
-                updateMode={true}
-                forceUpdate={forceUpdate}
-                updateTeam={(selectedTeamId) =>
-                  pushToLocalJSONAPI(
-                    `teams/${id}/`,
-                    JSON.stringify({ osm_teams_id: selectedTeamId, joinMethod: 'OSM_TEAMS' }),
-                    token,
-                    'PATCH',
-                  )
-                }
-              />
-            </div>
-          )}
         <div className="h1"></div>
         <JoinRequests
           requests={requests}
@@ -562,12 +493,55 @@ export function TeamDetail() {
             />
           </div>
         </div>
-        <TeamDetailPageFooter
-          team={team}
-          isMember={isMember}
-          joinTeamFn={joinTeam}
-          leaveTeamFn={leaveTeam}
-        />
+        <div className="fixed bottom-0 cf bg-white h3 w-100">
+          <div
+            className={`${
+              team.joinMethod === 'BY_INVITE' && !isMember ? 'w-100-ns' : 'w-80-ns'
+            } w-60-m w-50 h-100 fl tr`}
+          >
+            <Link to={'/contributions/teams'}>
+              <CustomButton className="bg-white mr5 pr2 h-100 bn bg-white blue-dark">
+                <FormattedMessage {...messages.myTeams} />
+              </CustomButton>
+            </Link>
+          </div>
+          <div className="w-20-l w-40-m w-50 h-100 fr">
+            {isMember ? (
+              <Popup
+                trigger={
+                  <CustomButton
+                    className="w-100 h-100 bg-red white"
+                    disabledClassName="bg-red o-50 white w-100 h-100"
+                  >
+                    <FormattedMessage
+                      {...messages[isMember === 'requested' ? 'cancelRequest' : 'leaveTeam']}
+                    />
+                  </CustomButton>
+                }
+                modal
+                closeOnEscape
+              >
+                {(close) => (
+                  <LeaveTeamConfirmationAlert
+                    teamName={team.name}
+                    close={close}
+                    leaveTeam={leaveTeam}
+                  />
+                )}
+              </Popup>
+            ) : (
+              team.joinMethod !== 'BY_INVITE' && (
+                <CustomButton
+                  className="w-100 h-100 bg-red white"
+                  disabledClassName="bg-red o-50 white w-100 h-100"
+                  onClick={() => joinTeam()}
+                >
+                  <FormattedMessage {...messages.joinTeam} />
+                </CustomButton>
+              )
+            )}
+          </div>
+        </div>
       </>
     );
   }

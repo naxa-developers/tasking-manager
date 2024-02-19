@@ -7,17 +7,14 @@ import { Form, Field, useFormState } from 'react-final-form';
 import ReactTooltip from 'react-tooltip';
 
 import messages from './messages';
-import { ExternalLinkIcon, InfoIcon } from '../svgIcons';
+import { InfoIcon } from '../svgIcons';
 import { useEditTeamAllowed } from '../../hooks/UsePermissions';
 import { UserAvatar, UserAvatarList } from '../user/avatar';
 import { AddButton, ViewAllLink, Management, VisibilityBox, JoinMethodBox } from './management';
 import { RadioField, OrganisationSelectInput, TextField } from '../formInputs';
-import { Button, CustomButton, EditButton } from '../button';
+import { Button, EditButton } from '../button';
 import { nCardPlaceholders } from './teamsPlaceholder';
-import { OSM_TEAMS_API_URL } from '../../config';
 import { Alert } from '../alert';
-import Popup from 'reactjs-popup';
-import { LeaveTeamConfirmationAlert } from './leaveTeamConfirmationAlert';
 
 export function TeamsManagement({
   teams,
@@ -172,7 +169,7 @@ export function TeamCard({ team }: Object) {
   );
 }
 
-export function TeamInformation({ disableJoinMethodField }) {
+export function TeamInformation(props) {
   const intl = useIntl();
   const labelClasses = 'db pt3 pb2';
   const fieldClasses = 'blue-grey w-100 pv3 ph2 input-reset ba b--grey-light bg-transparent';
@@ -181,7 +178,6 @@ export function TeamInformation({ disableJoinMethodField }) {
     ANY: 'anyoneCanJoin',
     BY_REQUEST: 'byRequest',
     BY_INVITE: 'byInvite',
-    OSM_TEAMS: 'OSMTeams',
   };
 
   return (
@@ -210,12 +206,7 @@ export function TeamInformation({ disableJoinMethodField }) {
         </label>
         {Object.keys(joinMethods).map((method) => (
           <div className="pv2" key={method}>
-            <RadioField
-              name="joinMethod"
-              value={method}
-              required
-              disabled={disableJoinMethodField || method === 'OSM_TEAMS'}
-            />
+            <RadioField name="joinMethod" value={method} required />
             <span className="f5">
               <FormattedMessage {...messages[joinMethods[method]]} />
             </span>
@@ -229,7 +220,7 @@ export function TeamInformation({ disableJoinMethodField }) {
           </div>
         ))}
       </div>
-      {['BY_INVITE', 'OSM_TEAMS'].includes(formState.values.joinMethod) && (
+      {formState.values.joinMethod === 'BY_INVITE' && (
         <div className="cf pt1">
           <label className={labelClasses}>
             <FormattedMessage {...messages.visibility} />
@@ -291,7 +282,7 @@ export function TeamForm(props) {
               </h3>
               <form id="team-form" onSubmit={handleSubmit}>
                 <fieldset className="bn pa0" disabled={submitting}>
-                  <TeamInformation disableJoinMethodField={Boolean(props.team.osm_teams_id)} />
+                  <TeamInformation joinMethod={props.team.joinMethod} />
                 </fieldset>
               </form>
             </div>
@@ -430,23 +421,6 @@ export function TeamSideBar({ team, members, managers, requestedToJoin }: Object
               </span>
             )}
           </div>
-          {team.osm_teams_id && (
-            <Alert type="info">
-              <FormattedMessage
-                {...messages.osmTeamsReSyncHelp}
-                values={{ osmTeams: 'OSM Teams' }}
-              />{' '}
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`${OSM_TEAMS_API_URL}/teams/${team.osm_teams_id}`}
-                className="blue-grey link o-75 bn f5"
-              >
-                <FormattedMessage {...messages.openOnOsmTeams} />
-                <ExternalLinkIcon className={'pl1'} />
-              </a>
-            </Alert>
-          )}
         </div>
       </div>
     </ReactPlaceholder>
@@ -494,59 +468,3 @@ export const TeamBox = ({ team, className }: Object) => (
     </div>
   </Link>
 );
-
-export const TeamDetailPageFooter = ({ team, isMember, joinTeamFn, leaveTeamFn }) => {
-  return (
-    <div className="fixed bottom-0 cf bg-white h3 w-100">
-      <div
-        className={`${
-          team.joinMethod === 'BY_INVITE' && !isMember ? 'w-100-ns' : 'w-80-ns'
-        } w-60-m w-50 h-100 fl tr`}
-      >
-        <Link to={'/contributions/teams'}>
-          <CustomButton className="bg-white mr5 pr2 h-100 bn bg-white blue-dark">
-            <FormattedMessage {...messages.myTeams} />
-          </CustomButton>
-        </Link>
-      </div>
-      <div className="w-20-l w-40-m w-50 h-100 fr">
-        {isMember ? (
-          <Popup
-            trigger={
-              <CustomButton
-                className="w-100 h-100 bg-red b--red white"
-                disabledClassName="bg-red b--red o-50 white w-100 h-100"
-                disabled={team.joinMethod === 'OSM_TEAMS'}
-              >
-                <FormattedMessage
-                  {...messages[isMember === 'requested' ? 'cancelRequest' : 'leaveTeam']}
-                />
-              </CustomButton>
-            }
-            modal
-            closeOnEscape
-          >
-            {(close) => (
-              <LeaveTeamConfirmationAlert
-                teamName={team.name}
-                close={close}
-                leaveTeam={leaveTeamFn}
-              />
-            )}
-          </Popup>
-        ) : (
-          team.joinMethod !== 'BY_INVITE' && (
-            <CustomButton
-              className="w-100 h-100 bg-red b--red white"
-              disabledClassName="bg-red b--red o-50 white w-100 h-100"
-              onClick={() => joinTeamFn()}
-              disabled={team.joinMethod === 'OSM_TEAMS'}
-            >
-              <FormattedMessage {...messages.joinTeam} />
-            </CustomButton>
-          )
-        )}
-      </div>
-    </div>
-  );
-};
