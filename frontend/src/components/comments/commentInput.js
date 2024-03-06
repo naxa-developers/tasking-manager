@@ -53,8 +53,8 @@ export const CommentInputField = ({
         const isValueFromSuggestion = /^\[.*?\]\s$/.test(query);
         if (isValueFromSuggestion) return;
 
-        const res = await fetchLocalJSONAPI(`users/queries/filter/${query}/`, token);
-        cb(res.usernames.map((username) => ({ username })));
+        // const res = await fetchLocalJSONAPI(`users/queries/filter/${query}/`, token);
+        // cb(res.usernames.map((username) => ({ username })));
       } catch (e) {
         return [];
       }
