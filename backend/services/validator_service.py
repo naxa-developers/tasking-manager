@@ -1,6 +1,9 @@
 from flask import current_app
 from sqlalchemy import text
+from multiprocessing.dummy import Pool as ThreadPool
+import os
 
+from backend import db
 from backend.exceptions import NotFound
 from backend.models.dtos.mapping_dto import TaskDTOs
 from backend.models.dtos.stats_dto import Pagination
@@ -135,24 +138,16 @@ class ValidatorService:
             return False
 
     @staticmethod
-    def unlock_tasks_after_validation(
-        validated_dto: UnlockAfterValidationDTO,
-    ) -> TaskDTOs:
-        """
-        Unlocks supplied tasks after validation
-        :raises ValidatorServiceError
-        """
-        validated_tasks = validated_dto.validated_tasks
-        project_id = validated_dto.project_id
-        user_id = validated_dto.user_id
-        tasks_to_unlock = ValidatorService.get_tasks_locked_by_user(
-            project_id, validated_tasks, user_id
-        )
-
-        # Unlock all tasks
-        dtos = []
-        message_sent_to = []
-        for task_to_unlock in tasks_to_unlock:
+    def _process_tasks(args):
+        (
+            app_context,
+            task_to_unlock,
+            project_id,
+            validated_dto,
+            message_sent_to,
+            dtos,
+        ) = args
+        with app_context:
             task = task_to_unlock["task"]
 
             if task_to_unlock["comment"]:
@@ -202,6 +197,47 @@ class ValidatorService:
                 issues=task_mapping_issues,
             )
             dtos.append(task.as_dto_with_instructions(validated_dto.preferred_locale))
+
+    @staticmethod
+    def unlock_tasks_after_validation(
+        validated_dto: UnlockAfterValidationDTO,
+    ) -> TaskDTOs:
+        """
+        Unlocks supplied tasks after validation
+        :raises ValidatorServiceError
+        """
+        validated_tasks = validated_dto.validated_tasks
+        project_id = validated_dto.project_id
+        user_id = validated_dto.user_id
+        tasks_to_unlock = ValidatorService.get_tasks_locked_by_user(
+            project_id, validated_tasks, user_id
+        )
+
+        # Unlock all tasks
+        dtos = []
+        message_sent_to = []
+        args_list = []
+        for task_to_unlock in tasks_to_unlock:
+            args = (
+                current_app.app_context(),
+                task_to_unlock,
+                project_id,
+                validated_dto,
+                message_sent_to,
+                dtos,
+            )
+            args_list.append(args)
+
+        # Create a pool and Process the tasks in parallel
+        pool = ThreadPool(os.cpu_count())
+        pool.map(ValidatorService._process_tasks, args_list)
+
+        # Close the pool and wait for the threads to finish
+        pool.close()
+        pool.join()
+        db.session.commit()
+
+        # Send email on project progress
         ProjectService.send_email_on_project_progress(validated_dto.project_id)
         task_dtos = TaskDTOs()
         task_dtos.tasks = dtos
