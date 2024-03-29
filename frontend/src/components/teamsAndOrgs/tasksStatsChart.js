@@ -41,15 +41,11 @@ const TasksStatsChart = ({ stats }) => {
     },
     scales: {
       y: {
-        stacked: true,
         ticks: {
           beginAtZero: true,
         },
       },
-      x: {
-        stacked: true,
-        ...xAxisTimeSeries(unit),
-      },
+      x: { ...xAxisTimeSeries(unit) },
     },
   };
   return (
