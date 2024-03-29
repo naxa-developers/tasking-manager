@@ -19,6 +19,8 @@ import { formatChartData, formatTooltip } from '../../utils/formatChartJSData';
 import { useContributorStats } from '../../hooks/UseContributorStats';
 import { StatsCardContent } from '../statsCard';
 
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale);
+
 export default function ContributorsStats({ contributors }) {
   ChartJS.register(BarElement, CategoryScale, Legend, LinearScale, Title, Tooltip, ArcElement);
   const intl = useIntl();
