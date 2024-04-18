@@ -184,3 +184,5 @@ export const DROPZONE_SETTINGS = {
   // At time of writing, this workaround is only needed on Chromium based browsers.
   noClick: true,
 };
+
+export const defaultChangesetComment = TM_DEFAULT_CHANGESET_COMMENT.replace('#', '');
