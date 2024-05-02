@@ -1,15 +1,15 @@
 {
-  "short_name": "Tasking Manager",
-  "name": "Tasking Manager",
+  "background_color": "#ffffff",
+  "display": "standalone",
   "icons": [
     {
-      "src": "static/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
+      "src": "static/favicon.ico",
       "type": "image/x-icon"
     }
   ],
+  "name": "Tasking Manager",
+  "short_name": "Tasking Manager",
   "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#000000"
 }

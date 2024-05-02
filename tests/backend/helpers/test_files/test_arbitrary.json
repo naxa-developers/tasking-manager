@@ -1,11 +1,8 @@
 {
   "areaOfInterest": {
-    "type": "FeatureCollection",
     "features": [
       {
-        "type": "Feature",
         "geometry": {
-          "type": "Polygon",
           "coordinates": [
             [
               [
@@ -25,12 +22,15 @@
                 2828783.0982895694
               ]
             ]
-          ]
+          ],
+          "type": "Polygon"
         },
         "properties": {
           "foo": "bar"
-        }
+        },
+        "type": "Feature"
       }
-    ]
+    ],
+    "type": "FeatureCollection"
   }
 }

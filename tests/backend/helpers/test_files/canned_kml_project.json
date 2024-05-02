@@ -1,11 +1,9 @@
 {
+  "arbitraryTasks": true,
   "areaOfInterest": {
-    "type": "FeatureCollection",
     "features": [
       {
-        "type": "Feature",
         "geometry": {
-          "type": "Polygon",
           "coordinates": [
             [
               [
@@ -44,13 +42,15 @@
                 0
               ]
             ]
-          ]
+          ],
+          "type": "Polygon"
         },
-        "properties": null
+        "properties": null,
+        "type": "Feature"
       }
-    ]
+    ],
+    "type": "FeatureCollection"
   },
   "projectName": "kml",
-  "tasks": null,
-  "arbitraryTasks": true
+  "tasks": null
 }

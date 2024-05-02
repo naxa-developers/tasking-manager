@@ -1,42 +1,46 @@
 {
+  "builders": [
+    {
+      "access_key": "{{user `aws_access_key`}}",
+      "ami_name": "{{user `name`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "region": "{{user `instance_region`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "source_ami_filter": {
+        "filters": {
+          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "root-device-type": "ebs",
+          "virtualization-type": "hvm"
+        },
+        "most_recent": true,
+        "owners": [
+          "099720109477"
+        ]
+      },
+      "ssh_username": "{{user `ssh_username`}}",
+      "tags": {
+        "Name": "{{user `name`}}",
+        "built_by": "packer",
+        "component": "tasking_manager",
+        "created_by": "{{user `created_by`}}"
+      },
+      "type": "amazon-ebs"
+    }
+  ],
   "description": "Packer template for tasking-manager host instance.",
+  "provisioners": [
+    {
+      "script": "infra/bootstrap.sh",
+      "type": "shell"
+    }
+  ],
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "instance_type": "t2.micro",
-    "instance_region": "us-east-1",
-    "ssh_username": "ubuntu",
     "created_by": "{{env `PACKER_RUN_OWNER`}}",
-    "name": "tasking-manager-{{timestamp}}"
-  },
-  "builders": [{
-    "access_key": "{{user `aws_access_key`}}",
-    "secret_key": "{{user `aws_secret_key`}}",
-    "type": "amazon-ebs",
-    "region": "{{user `instance_region`}}",
-    "instance_type": "{{user `instance_type`}}",
-    "ssh_username": "{{user `ssh_username`}}",
-    "ami_name": "{{user `name`}}",
-    "source_ami_filter": {
-      "filters": {
-        "virtualization-type": "hvm",
-        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
-        "root-device-type": "ebs"
-      },
-      "owners": ["099720109477"],
-      "most_recent": true
-    },
-    "tags": {
-      "component": "tasking_manager",
-      "built_by": "packer",
-      "created_by": "{{user `created_by`}}",
-      "Name": "{{user `name`}}"
-    }
-  }],
-  "provisioners": [
-    {
-    "type": "shell",
-    "script": "infra/bootstrap.sh"
-    }
-  ]
+    "instance_region": "us-east-1",
+    "instance_type": "t2.micro",
+    "name": "tasking-manager-{{timestamp}}",
+    "ssh_username": "ubuntu"
+  }
 }

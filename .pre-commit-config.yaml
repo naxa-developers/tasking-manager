@@ -34,23 +34,15 @@ repos:
       language: python
       types: [text]
 
-    # - id: check-json
-    #   name: check json
-    #   description: checks json files for parseable syntax.
-    #   entry: check-json
-    #   language: python
-    #   files: \.(json)$
-    #   types: [json]
-
-    # - id: pretty-format-json
-    #   name: pretty format json
-    #   description: sets a standard for formatting json files.
-    #   entry: pretty-format-json
-    #   language: python
-    #   types: [text]
-    #   files: \.(json)$
-    #   args:
-    #     - "--autofix"
+    - id: pretty-format-json
+      name: pretty format json
+      description: sets a standard for formatting json files.
+      entry: pretty-format-json
+      language: python
+      types: [text]
+      files: \.(json)$
+      args:
+        - "--autofix"
 
     - id: check-merge-conflict
       name: check for merge conflicts
