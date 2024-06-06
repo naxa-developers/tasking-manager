@@ -5,12 +5,19 @@ orbs:
   aws-ecs: circleci/aws-ecs@4.0.0
   opsgenie: opsgenie/opsgenie@1.0.8
 
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:<<parameters.node-version>>
 
 jobs:
   frontend-code-test:
     resource_class: large
+    parameters:
+      node-version:
+        type: string
     docker:
-      - image: cimg/node:18.19.1
+      - image: cimg/node:<<parameters.node-version>>
     working_directory: /home/circleci/tasking-manager
     steps:
       - checkout
@@ -34,7 +41,6 @@ jobs:
             cd ${CIRCLE_WORKING_DIRECTORY}/frontend/
             CI=true yarn test -w 1
             CI=true GENERATE_SOURCEMAP=false yarn build
-
   backend-code-check-PEP8:
     docker:
       - image: cimg/python:3.10
@@ -510,4 +516,14 @@ workflows:
       - backend-code-check-Black
       - backend-functional-tests
 
-
+  frontend-matrix-tests:
+    jobs:
+      - frontend-code-test:
+          matrix:
+            parameters:
+              node-version: ["19.9.0", "18.19.1"]
+          ignore:
+            - frontend-code-test:
+                matrix:
+                  node-version: ["19.9.0", "18.19.1"]
+          when: always
