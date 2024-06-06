@@ -517,7 +517,7 @@ workflows:
       - frontend-code-test:
           matrix:
             parameters:
-              node-version: ["19.9.0", "18.19.1"]
+              node-version: ["19.9.0", "18.19.1", "20.14.0", "21.7.3"]
           # ignore:
           #   - frontend-code-test:
           #       matrix:
