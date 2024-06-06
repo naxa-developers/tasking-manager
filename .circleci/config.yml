@@ -5,11 +5,6 @@ orbs:
   aws-ecs: circleci/aws-ecs@4.0.0
   opsgenie: opsgenie/opsgenie@1.0.8
 
-executors:
-  node-executor:
-    docker:
-      - image: cimg/node:<<parameters.node-version>>
-
 jobs:
   frontend-code-test:
     resource_class: large
@@ -24,7 +19,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - yarn-deps-{{ checksum "frontend/yarn.lock" }}
+            - yarn-deps-{{ <<parameters.node-version>> }}-{{ checksum "frontend/yarn.lock" }}
       - run:
           name: Install node dependencies
           command: |
@@ -32,7 +27,7 @@ jobs:
             cd ${CIRCLE_WORKING_DIRECTORY}/frontend
             yarn install
       - save_cache:
-          key: yarn-deps-{{ checksum "frontend/yarn.lock" }}
+          key: yarn-deps-{{ <<parameters.node-version>> }}-{{ checksum "frontend/yarn.lock" }}
           paths:
             - frontend/node_modules
             - env
