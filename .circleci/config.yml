@@ -523,8 +523,8 @@ workflows:
           matrix:
             parameters:
               node-version: ["19.9.0", "18.19.1"]
-          ignore:
-            - frontend-code-test:
-                matrix:
-                  node-version: ["19.9.0", "18.19.1"]
-          when: always
+          # ignore:
+          #   - frontend-code-test:
+          #       matrix:
+          #         node-version: ["19.9.0", "18.19.1"]
+          # when: always
