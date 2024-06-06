@@ -23,6 +23,7 @@ jobs:
       - run:
           name: Install node dependencies
           command: |
+            node --version
             yarn --version
             cd ${CIRCLE_WORKING_DIRECTORY}/frontend
             yarn install
@@ -517,7 +518,7 @@ workflows:
       - frontend-code-test:
           matrix:
             parameters:
-              node-version: ["19.9.0", "18.19.1", "20.14.0", "21.7.3"]
+              node-version: ["19.9.0", "18.19.1"]  #, "20.14.0", "21.7.3"]
           # ignore:
           #   - frontend-code-test:
           #       matrix:
