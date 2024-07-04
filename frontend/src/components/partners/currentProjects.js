@@ -65,10 +65,14 @@ export function CurrentProjects({ currentProjects }) {
   };
 
   useEffect(() => {
+    if (!currentProjects) return;
     fetchData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProjects]);
+
+  if (!currentProjects)
+    return <h3 className="f3 barlow-condensed blue-dark fw6">There are no current projects.</h3>;
 
   return (
     <ReactPlaceholder

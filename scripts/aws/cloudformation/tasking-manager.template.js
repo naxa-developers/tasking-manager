@@ -369,7 +369,7 @@ const Resources = {
       LaunchTemplateData: {
         IamInstanceProfile: {
           Name: cf.ref('TaskingManagerEC2InstanceProfile'),
-        }, 
+        },
         ImageId: cf.ref('TaskingManagerBackendAMI'),
         InstanceType: cf.ref('TaskingManagerBackendInstanceType'),
         KeyName: 'mbtiles',
@@ -386,10 +386,10 @@ const Resources = {
         // }],
         PrivateDnsNameOptions: {
           EnableResourceNameDnsAAAARecord: true,
-          EnableResourceNameDnsARecord: true, 
+          EnableResourceNameDnsARecord: true,
           HostnameType: 'resource-name'
         },
-        SecurityGroupIds: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))], 
+        SecurityGroupIds: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))],
         TagSpecifications: [
           {
             ResourceType: 'instance',
@@ -654,10 +654,10 @@ const Resources = {
       SecurityGroups: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'elbs-security-group', cf.region]))],
       Subnets: cf.ref('ELBSubnets'),
       Type: 'application',
-      Tags: [  { 
-          "Key": "stack_name", 
-          "Value": cf.stackName 
-        },  
+      Tags: [  {
+          "Key": "stack_name",
+          "Value": cf.stackName
+        },
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -726,11 +726,11 @@ const Resources = {
       Port: 8000,
       Protocol: 'HTTP',
       VpcId: cf.importValue(cf.join('-', ['hotosm-network-production', 'default-vpc', cf.region])),
-      Tags: [ 
-        { 
-          "Key": "stack_name", 
-          "Value": cf.stackName 
-        },  
+      Tags: [
+        {
+          "Key": "stack_name",
+          "Value": cf.stackName
+        },
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -809,7 +809,7 @@ const Resources = {
         DBSnapshotIdentifier: cf.if('UseASnapshot', cf.ref('DBSnapshot'), cf.noValue),
         VPCSecurityGroups: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))],
 	      PubliclyAccessible: false,
-        Tags: [   
+        Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -838,7 +838,7 @@ const Resources = {
         IndexDocument: 'index.html'
       },
       AccessControl: "Private",
-      Tags: [ 
+      Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -985,7 +985,7 @@ const Resources = {
           SslSupportMethod: 'sni-only'
         }
       },
-      Tags: [ 
+      Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'
