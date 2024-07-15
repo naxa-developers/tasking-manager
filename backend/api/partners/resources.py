@@ -180,6 +180,10 @@ class PartnerRestAPI(Resource):
             updated_partner = PartnerService.update_partner(partner_id, data)
             updated_partner_dict = updated_partner.as_dto().to_primitive()
             return updated_partner_dict, 200
+
+        except ValueError as e:
+            return {"Error": str(e).split("-")[1], "SubCode": str(e).split("-")[0]}, 409
+
         except PartnerServiceError as e:
             return {"message": str(e)}, 404
 
@@ -288,8 +292,12 @@ class PartnersAllRestAPI(Resource):
                 return partner_dict, 201
             else:
                 return {"message": "Data not provided"}, 400
+
+        except ValueError as e:
+            return {"Error": str(e).split("-")[1], "SubCode": str(e).split("-")[0]}, 409
+
         except PartnerServiceError as e:
-            return {"message": str(e)}, 500
+            return {"message": str(e)}, 400
 
 
 class PartnerPermalinkRestAPI(Resource):
