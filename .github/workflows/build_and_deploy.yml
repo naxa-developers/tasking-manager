@@ -1,0 +1,46 @@
+name: Build and Deploy
+
+on:
+  # Push includes PR merge
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+      - ci/gh-workflows
+    paths:
+      # Workflow is triggered only if src changes
+      - backend/**
+      - frontend/**
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  backend-build:
+    uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
+    with:
+      context: .
+      build_target: prod
+      image_name: ghcr.io/${{ github.repository }}/backend
+      dockerfile: Dockerfile
+    secrets: inherit
+
+  frontend-build:
+    uses: naxa-developers/tasking-manager/.github/workflows/frontend-build@ci/gh-workflows
+    secrets: inherit
+    with:
+      node-version: 16.x
+      context: ./frontend
+      cache-key-file: ./frontend/yarn.lock
+      package-manager: yarn
+
+  # deploy_to_vm:
+  #   name: Deploy to VM
+  #   needs:
+  #     - frontend-build
+  #     - backend-build
+  #   uses: hotosm/gh-workflows/.github/workflows/remote_deploy_compose.yml@2.0.5
+  #   with:
+  #     docker_compose_file: docker-compose.vm.yml
+  #     environment: ${{ github.ref_name }}
+  #   secrets: inherit

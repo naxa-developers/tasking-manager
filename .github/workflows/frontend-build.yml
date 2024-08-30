@@ -1,0 +1,146 @@
+name: Node build
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node version to use."
+        required: false
+        type: string
+        default: "18.x"
+      node-version-file:
+        description: "Node version file to use. node-version overrides this parameter."
+        required: false
+        type: string
+        default: ""
+      context:
+        description: "Root directory to start the build from."
+        required: false
+        type: string
+        default: "."
+      cache:
+        description: "Use node modules installation caching. Default true."
+        required: false
+        type: boolean
+        default: true
+      cache-key-file:
+        description: "Key file for cache."
+        required: false
+        type: string
+        default: "${{ inputs.context }}/package.json"
+      package-manager:
+        description: "Package manager to use. Supports [npm, yarn]"
+        required: false
+        type: string
+        default: "npm"
+      build-script-name:
+        description: "Build script name in package.json"
+        required: false
+        type: string
+        default: "build"
+      upload-artifacts:
+        description: "Upload artifacts to Github"
+        required: false
+        type: boolean
+        default: true
+
+    outputs:
+      artifact_name:
+        description: "Node built artifact"
+        value: ${{ jobs.node-build.outputs.artifact_name }}
+
+jobs:
+  node-build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name }}
+
+    outputs:
+      artifact_name: ${{ steps.get_artifact_name.outputs.artifact_name }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - id: node_setup
+        name: Install node 
+        uses: actions/setup-node@v4
+        #reference: https://github.com/actions/setup-node
+        with:
+          node-version: ${{ inputs.node-version }}
+          node-version-file: ${{ inputs.node-version-file && inputs.node-version-file || '' }}
+
+      - name: Cache Node packages
+        uses: actions/cache@v3
+        env:
+          cache_name: node-${{ inputs.node-version || hashFiles(inputs.node-version-file)  }}-${{ inputs.package-manager }}-${{ hashFiles(inputs.cache-key-file) }}
+        with:
+          key: ${{ runner.os }}-build-${{ env.cache_name }}
+          path: |
+            ~/.npm
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache_name }}
+
+      - id: node_packages_install
+        name: Install node pacakges
+        run: |
+          case "${{ inputs.package-manager }}" in
+          yarn)
+            yarn
+            ;;
+          npm)
+            npm i
+            ;;
+          esac
+
+      - id: vars_and_secrets
+        name: Vars and Secrets to Env file
+        env:
+          VARS_CONTEXT: ${{ toJson(vars) }}
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: |
+          # Parse JSON with multiline strings
+          to_envs() { jq -r "to_entries[] | \"\(.key)=\(.value)\""; }
+
+          # Create .env file from VARS_CONTEXT
+          if [ "${VARS_CONTEXT}" != "null" ]; then
+          echo "${VARS_CONTEXT}" | to_envs > ${{ inputs.context }}/.env
+          fi
+
+          # Append Secrets to .env file from SECRETS_CONTEXT
+          if [ "${SECRETS_CONTEXT}" != "null" ]; then
+          echo "\n${SECRETS_CONTEXT}" | to_envs >> ${{ inputs.context }}/.env
+          fi
+          
+      - id: build_frontend
+        name: Build Frontend
+        run: |
+          case "${{ inputs.package-manager }}" in
+          yarn)
+            yarn ${{ inputs.build-script-name }}
+            ;;
+          npm)
+            npm run ${{ inputs.build-script-name }}
+            ;;
+          esac
+
+      - id: upload_build_artifacts
+        name: Upload dist folder as build artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.upload-artifacts }}
+        with:
+          name: ${{ github.repository_id }}-${{ github.sha }}-frontend-dist
+          path: ./dist/*
+          retention-days: 1
+
+      - id: get_artifact_name
+        name: Get First Image Name
+        run: |
+          echo "artifact_name=${{ github.repository_id }}-${{ github.sha }}-frontend-dist" >> $GITHUB_OUTPUT
+          echo "Frontend Artifact Name: $artifact_name"
+  
