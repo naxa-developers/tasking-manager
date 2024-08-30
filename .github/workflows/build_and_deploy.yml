@@ -7,7 +7,7 @@ on:
       - main
       - staging
       - develop
-      - ci/gh-workflows
+      - ci-gh-workflows
     paths:
       # Workflow is triggered only if src changes
       - backend/**
