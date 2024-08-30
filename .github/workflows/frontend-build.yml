@@ -45,9 +45,9 @@ on:
         default: true
 
     outputs:
-      artifact_name:
+      artifact-name:
         description: "Node built artifact"
-        value: ${{ jobs.node-build.outputs.artifact_name }}
+        value: ${{ jobs.node-build.outputs.artifact-name }}
 
 jobs:
   node-build:
@@ -57,7 +57,7 @@ jobs:
       name: ${{ github.ref_name }}
 
     outputs:
-      artifact_name: ${{ steps.get_artifact_name.outputs.artifact_name }}
+      artifact-name: ${{ steps.get_artifact_name.outputs.artifact_name }}
 
     permissions:
       contents: read
