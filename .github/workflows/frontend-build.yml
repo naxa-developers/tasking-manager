@@ -88,6 +88,7 @@ jobs:
 
       - id: node_packages_install
         name: Install node pacakges
+        working-directory: ${{ inputs.context }}
         run: |
           case "${{ inputs.package-manager }}" in
           yarn)
@@ -119,6 +120,7 @@ jobs:
           
       - id: build_frontend
         name: Build Frontend
+        working-directory: ${{ inputs.context }}
         run: |
           case "${{ inputs.package-manager }}" in
           yarn)
@@ -135,7 +137,7 @@ jobs:
         if: ${{ inputs.upload-artifacts }}
         with:
           name: ${{ github.repository_id }}-${{ github.sha }}-frontend-dist
-          path: ./dist/*
+          path: ${{ inputs.context }}/dist/*
           retention-days: 1
 
       - id: get_artifact_name
