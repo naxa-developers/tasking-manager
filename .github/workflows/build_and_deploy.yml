@@ -16,14 +16,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend-build:
-    uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
-    with:
-      context: .
-      build_target: prod
-      image_name: ghcr.io/${{ github.repository }}/backend
-      dockerfile: Dockerfile
-    secrets: inherit
+  # backend-build:
+  #   uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
+  #   with:
+  #     context: .
+  #     build_target: prod
+  #     image_name: ghcr.io/${{ github.repository }}/backend
+  #     dockerfile: Dockerfile
+  #   secrets: inherit
 
   frontend-build:
     uses: naxa-developers/tasking-manager/.github/workflows/frontend-build.yml@ci-gh-workflows
