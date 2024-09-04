@@ -106,15 +106,9 @@ jobs:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
         shell: bash
         run: |
-          to_envs() { jq -r "to_entries[] | \"\(.key)=\(.value)\""; }
-
-          if [ "${VARS_CONTEXT}" != "null" ]; then
-            echo "${VARS_CONTEXT}" | to_envs > ${{ inputs.context }}/.env
-          fi
-
-          if [ "${SECRETS_CONTEXT}" != "null" ]; then
-            echo "\n${SECRETS_CONTEXT}" | to_envs >> ${{ inputs.context }}/.env
-          fi
+          parsed_vars=$(jq -n --argjson VARS_CONTEXT "$VARS_CONTEXT" --argjson SECRETS_CONTEXT "$SECRETS_CONTEXT" "$VARS_CONTEXT+$SECRETS_CONTEXT")
+          to_envs() { jq -r "to_entries[] | \"\(.key)=\\\"\(.value)\\\"\n\""; }
+          echo "$parsed_vars" | to_envs > ${{ inputs.context }}/.env
           
       - id: build_frontend
         name: Build Frontend
