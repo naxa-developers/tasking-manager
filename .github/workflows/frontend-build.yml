@@ -104,18 +104,16 @@ jobs:
         env:
           VARS_CONTEXT: ${{ toJson(vars) }}
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        shell: bash
         run: |
-          # Parse JSON with multiline strings
           to_envs() { jq -r "to_entries[] | \"\(.key)=\(.value)\""; }
 
-          # Create .env file from VARS_CONTEXT
           if [ "${VARS_CONTEXT}" != "null" ]; then
-          echo "${VARS_CONTEXT}" | to_envs > ${{ inputs.context }}/.env
+            echo "${VARS_CONTEXT}" | to_envs > ${{ inputs.context }}/.env
           fi
 
-          # Append Secrets to .env file from SECRETS_CONTEXT
           if [ "${SECRETS_CONTEXT}" != "null" ]; then
-          echo "\n${SECRETS_CONTEXT}" | to_envs >> ${{ inputs.context }}/.env
+            echo "\n${SECRETS_CONTEXT}" | to_envs >> ${{ inputs.context }}/.env
           fi
           
       - id: build_frontend
