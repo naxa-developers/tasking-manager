@@ -23,12 +23,7 @@ jobs:
       pre_command: docker compose --file docker-compose.yml up -d
       compose_service: tm-backend
       build_target: prod
-      compose_command: |
-        # pip install flake8
-        # flake8 manage.py backend migrations
-        # pip install 'black==23.12.1'
-        # black --check manage.py backend migrations
-        curl -i http://localhost:5000/api/v2/
+      compose_command: curl -i http://localhost:5000/api/v2/
       tag_override: ci-${{ github.ref_name }}
       # coverage: true
       example_env_file_path: example.env
