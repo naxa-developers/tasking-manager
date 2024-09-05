@@ -54,10 +54,11 @@ jobs:
       context: ./frontend
       cache-key-file: ./frontend/yarn.lock
       package-manager: yarn
-      test_frontend_build: false
       test_frontend_command: |
         CI=true yarn test -w 1
-        CI=true GENERATE_SOURCEMAP=false yarn build
+      # test_frontend_build: false
+      # build_test_frontend_command: |
+      #   CI=true GENERATE_SOURCEMAP=false yarn build
 
   frontend-build:
     uses: naxa-developers/tasking-manager/.github/workflows/frontend-build.yml@ci-gh-workflows
