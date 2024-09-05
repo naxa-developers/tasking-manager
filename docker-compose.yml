@@ -63,7 +63,7 @@ services:
     image: ghcr.io/hotosm/tasking-manager/backend:${GIT_BRANCH:-main}
     build:
       context: .
-    entrypoint: ["alembic", "-c", "migrations/alembic.ini", "upgrade", "head"]
+    command: ["alembic", "-c", "migrations/alembic.ini", "upgrade", "head"]
     depends_on:
       tm-db:
         condition: service_healthy
