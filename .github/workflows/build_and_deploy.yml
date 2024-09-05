@@ -17,7 +17,7 @@ on:
 
 jobs:
   backend-test:
-    uses: hotosm/gh-workflows/.github/workflows/test_compose.yml@2.0.5
+    uses: naxa-developers/tasking-manager/.github/workflows/test_compose.yml@ci-gh-workflows
     with:
       image_name: ghcr.io/${{ github.repository }}/backend
       pre_command: docker compose up -d traefik
@@ -30,6 +30,8 @@ jobs:
         black --check manage.py backend tests migrations
       tag_override: ci-${{ github.ref_name }}
       coverage: true
+      example_env_file_path: example.env
+      env_file_path: tasking-manager.env
     secrets: inherit
 
   backend-build:
