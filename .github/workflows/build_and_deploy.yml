@@ -88,10 +88,9 @@ jobs:
           ls -alh
           ls -alh build
 
-  deploy_to_vm:
-    name: Deploy to VM
+  backend_deploy_to_vm:
+    name: Deploy Backend to VM
     needs:
-      - frontend-build
       - backend-build
     uses: naxa-developers/tasking-manager/.github/workflows/remote_deploy_compose.yml@ci-gh-workflows
     with:
