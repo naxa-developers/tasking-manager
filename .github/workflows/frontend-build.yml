@@ -43,7 +43,12 @@ on:
         required: false
         type: boolean
         default: true
-
+      build-dist-folder-path:
+        description: "Path to folder that stores build files"
+        required: false
+        type: string
+        default: "${{ inputs.context }}/dist"
+          
     outputs:
       artifact-name:
         description: "Node built artifact"
@@ -124,12 +129,12 @@ jobs:
           esac
 
       - id: upload_build_artifacts
-        name: Upload dist folder as build artifacts
+        name: Upload build files as build artifacts
         uses: actions/upload-artifact@v4
         if: ${{ inputs.upload-artifacts }}
         with:
-          name: ${{ github.repository_id }}-${{ github.sha }}-frontend-dist
-          path: ${{ inputs.context }}/dist/*
+          name: ${{ github.repository_id }}-${{ github.sha }}-frontend-build-dist
+          path: ${{ inputs.build-dist-folder-path }}
           retention-days: 1
 
       - id: get_artifact_name
