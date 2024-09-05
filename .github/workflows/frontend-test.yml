@@ -38,11 +38,6 @@ on:
         required: false
         type: string
         default: "npm"
-      build-script-name:
-        description: "Build script name in package.json"
-        required: false
-        type: string
-        default: "build"
       test_frontend_command:
         description: "Testing command to run"
         required: true
@@ -52,6 +47,11 @@ on:
         required: false
         type: boolean
         default: true
+      build_test_frontend_command:
+        description: "Command to do build test on frontend"
+        required: false
+        type: string
+      
 
 jobs:
   node-build:
@@ -120,17 +120,10 @@ jobs:
         run: |
           ${{ inputs.test_frontend_command }}
           
-      - id: build_frontend
+      - id: test_frontend_build
         name: Build Frontend
-        if: ${{ inputs.test_frontend_build }}
+        if: ${{ inputs.test_frontend_build && inputs.build_test_frontend_command }}
         working-directory: ${{ inputs.context }}
         run: |
-          case "${{ inputs.package-manager }}" in
-          yarn)
-            yarn ${{ inputs.build-script-name }}
-            ;;
-          npm)
-            npm run ${{ inputs.build-script-name }}
-            ;;
-          esac
+          ${{ inputs.build_test_frontend_command }}
   
