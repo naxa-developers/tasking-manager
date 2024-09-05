@@ -276,10 +276,9 @@ jobs:
         if: ${{ ! inputs.coverage && ! inputs.playwright }}
         run: |
           ${{ inputs.pre_command }}
-
+          
           docker compose --file ${{ inputs.compose_file }} \
-            run --no-TTY \
-            ${{ inputs.compose_service }} ${{ inputs.compose_command }}
+            exec -i ${{ inputs.compose_service }} ${{ inputs.compose_command }}
 
       # Specific for generating coverage
       - name: Run Tests With Coverage
