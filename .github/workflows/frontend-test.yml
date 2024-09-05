@@ -1,4 +1,4 @@
-name: Node Frontend build
+name: Frontend Test
 
 on:
   workflow_call:
@@ -43,21 +43,15 @@ on:
         required: false
         type: string
         default: "build"
-      upload-artifacts:
-        description: "Upload artifacts to Github"
+      test_frontend_command:
+        description: "Testing command to run"
+        required: true
+        type: string
+      test_frontend_build:
+        description: "Perform a build test"
         required: false
         type: boolean
         default: true
-      build-dist-folder-path:
-        description: "Path to folder that stores build files"
-        required: false
-        type: string
-        default: "${{ inputs.context }}/dist"
-          
-    outputs:
-      artifact-name:
-        description: "Node built artifact"
-        value: ${{ jobs.node-build.outputs.artifact-name }}
 
 jobs:
   node-build:
@@ -119,9 +113,16 @@ jobs:
           parsed_vars=$(jq -n --argjson VARS_CONTEXT "$VARS_CONTEXT" --argjson SECRETS_CONTEXT "$SECRETS_CONTEXT" "$VARS_CONTEXT+$SECRETS_CONTEXT")
           to_envs() { jq -r "to_entries[] | \"\(.key)=\\\"\(.value)\\\"\n\""; }
           echo "$parsed_vars" | to_envs > ${{ inputs.context }}/.env
+
+      - id: test_frontend
+        name: Test Frontend
+        working-directory: ${{ inputs.context }}
+        run: |
+          ${{ inputs.test_frontend_command }}
           
       - id: build_frontend
         name: Build Frontend
+        if: ${{ inputs.test_frontend_build }}
         working-directory: ${{ inputs.context }}
         run: |
           case "${{ inputs.package-manager }}" in
@@ -132,19 +133,4 @@ jobs:
             npm run ${{ inputs.build-script-name }}
             ;;
           esac
-
-      - id: upload_build_artifacts
-        name: Upload build files as build artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ inputs.upload-artifacts }}
-        with:
-          name: ${{ github.repository_id }}-${{ github.sha }}-frontend-build-dist
-          path: ${{ inputs.build-dist-folder-path }}
-          retention-days: 1
-
-      - id: get_artifact_name
-        name: Get First Image Name
-        run: |
-          echo "artifact_name=${{ github.repository_id }}-${{ github.sha }}-frontend-build-dist" >> $GITHUB_OUTPUT
-          echo "Frontend Artifact Name: $artifact_name"
   
