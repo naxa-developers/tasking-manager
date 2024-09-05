@@ -140,6 +140,6 @@ jobs:
       - id: get_artifact_name
         name: Get First Image Name
         run: |
-          echo "artifact_name=${{ github.repository_id }}-${{ github.sha }}-frontend-dist" >> $GITHUB_OUTPUT
+          echo "artifact_name=${{ github.repository_id }}-${{ github.sha }}-frontend-build-dist" >> $GITHUB_OUTPUT
           echo "Frontend Artifact Name: $artifact_name"
   
