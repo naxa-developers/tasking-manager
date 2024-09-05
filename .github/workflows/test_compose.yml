@@ -320,20 +320,20 @@ jobs:
           git push --set-upstream https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
 
       # Specific for generating Playwright traces
-    #   - name: Playwright Tests
-    #     if: ${{ inputs.playwright }}
-    #     run: |
-    #       ${{ inputs.pre_command }}
+      - name: Playwright Tests
+        if: ${{ inputs.playwright }}
+        run: |
+          ${{ inputs.pre_command }}
 
-    #       docker compose --file ${{ inputs.compose_file }} run \
-    #         --no-TTY \
-    #         --volume ${{ github.workspace }}/playwright-report:/app/playwright-report \
-    #         ${{ inputs.compose_service }} ${{ inputs.compose_command }}
+          docker compose --file ${{ inputs.compose_file }} run \
+            --no-TTY \
+            --volume ${{ github.workspace }}/playwright-report:/app/playwright-report \
+            ${{ inputs.compose_service }} ${{ inputs.compose_command }}
 
-    #   - name: Upload Playwright Report
-    #     if: ${{ inputs.playwright && !cancelled() }}
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       path: ${{ github.workspace }}/playwright-report/
-    #       name: playwright-report
-    #       retention-days: 30
+      - name: Upload Playwright Report
+        if: ${{ inputs.playwright && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ github.workspace }}/playwright-report/
+          name: playwright-report
+          retention-days: 30
