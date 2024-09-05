@@ -96,6 +96,6 @@ RUN python -c "import compileall; compileall.compile_path(maxlevels=10, quiet=1)
 RUN python -m compileall .
 EXPOSE 5000/tcp
 USER appuser:appuser
-ENTRYPOINT [ "docker-entrypoint.sh" ]
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD ["uvicorn", "backend.main:api", "--host", "0.0.0.0", "--port", "5000", \
      "--log-level", "error","--reload"]
