@@ -16,8 +16,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  backend-test:
+    uses: hotosm/gh-workflows/.github/workflows/test_compose.yml@2.0.5
+    with:
+      image_name: ghcr.io/${{ github.repository }}/backend
+      pre_command: docker compose up -d traefik
+      compose_service: tm-backend
+      build_target: prod
+      compose_command: |
+        pip install flake8
+        flake8 manage.py backend tests migrations
+        pip install 'black==23.12.1'
+        black --check manage.py backend tests migrations
+      tag_override: ci-${{ github.ref_name }}
+      coverage: true
+    secrets: inherit
+
   backend-build:
     uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
+    needs:
+      - backend-test
     with:
       context: .
       build_target: prod
@@ -26,9 +44,24 @@ jobs:
       scan_image: false
     secrets: inherit
 
+  frontend-test:
+    uses: naxa-developers/tasking-manager/.github/workflows/frontend-test.yml@ci-gh-workflows
+    secrets: inherit
+    with:
+      node-version: 16.x
+      context: ./frontend
+      cache-key-file: ./frontend/yarn.lock
+      package-manager: yarn
+      test_frontend_build: false
+      test_frontend_command: |
+        CI=true yarn test -w 1
+        CI=true GENERATE_SOURCEMAP=false yarn build
+
   frontend-build:
     uses: naxa-developers/tasking-manager/.github/workflows/frontend-build.yml@ci-gh-workflows
     secrets: inherit
+    needs: 
+      - frontend-test
     with:
       node-version: 16.x
       context: ./frontend
@@ -60,7 +93,7 @@ jobs:
       - backend-build
     uses: naxa-developers/tasking-manager/.github/workflows/remote_deploy_compose.yml@ci-gh-workflows
     with:
-      docker_compose_file: docker-compose.vm.yml
+      docker_compose_file: docker-compose.yml
       environment: ${{ github.ref_name }}
       example_env_file_path: example.env
       env_file_path: tasking-manager.env
