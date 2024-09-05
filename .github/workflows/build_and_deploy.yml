@@ -24,7 +24,7 @@ jobs:
       compose_service: tm-backend
       build_target: prod
       compose_command: |
-        pip install flake8
+        # pip install flake8
         # flake8 manage.py backend migrations
         # pip install 'black==23.12.1'
         # black --check manage.py backend migrations
