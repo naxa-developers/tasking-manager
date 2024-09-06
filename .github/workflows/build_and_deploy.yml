@@ -20,7 +20,10 @@ jobs:
     uses: naxa-developers/tasking-manager/.github/workflows/test_compose.yml@ci-gh-workflows
     with:
       image_name: ghcr.io/${{ github.repository }}/backend
-      pre_command: docker compose --file docker-compose.yml up -d
+      pre_command: |
+        docker compose --file docker-compose.yml up -d
+        sleep 15
+        docker compose --file docker-compose.yml logs tm-backend
       compose_service: tm-backend
       build_target: prod
       compose_command: curl -i http://localhost:5000/api/v2/
