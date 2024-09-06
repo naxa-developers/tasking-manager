@@ -82,18 +82,18 @@ jobs:
           echo "GIT_BRANCH=${GIT_BRANCH}" >> ${{ inputs.env_file_path }}
           echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> ${{ inputs.env_file_path }}
 
-      - uses: webfactory/ssh-agent@v0.8.0
-        with:
-          ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
+      # - uses: webfactory/ssh-agent@v0.8.0
+      #   with:
+      #     ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
-      - name: Add host keys to known_hosts
-        run: |
-          ssh-keyscan "${{ vars.SSH_HOST }}" >> ~/.ssh/known_hosts
+      # - name: Add host keys to known_hosts
+      #   run: |
+      #     ssh-keyscan "${{ vars.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy
-        run: |
-          docker compose --file ${{ inputs.docker_compose_file }} pull
-          docker compose --file ${{ inputs.docker_compose_file }} up \
-            --detach --remove-orphans --force-recreate
-        env:
-          DOCKER_HOST: "ssh://${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}"
+      # - name: Deploy
+      #   run: |
+      #     docker compose --file ${{ inputs.docker_compose_file }} pull
+      #     docker compose --file ${{ inputs.docker_compose_file }} up \
+      #       --detach --remove-orphans --force-recreate
+      #   env:
+      #     DOCKER_HOST: "ssh://${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}"
