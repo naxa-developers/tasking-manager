@@ -1,0 +1,338 @@
+# A generic workflow to run tests within a docker compose stack
+
+name: Run Tests
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: "The image root name to build, without tag. E.g. 'ghcr.io/[dollar]{{ github.repository }}'"
+        required: false
+        type: string
+        default: ""
+      build_context:
+        description: "Root directory to start the build from."
+        required: false
+        type: string
+        default: "."
+      build_dockerfile:
+        description: "Name of dockerfile, relative to context dir."
+        required: false
+        type: string
+        default: "Dockerfile"
+      build_target:
+        description: "The target to built to (default to ci stage)."
+        required: false
+        type: string
+        default: "ci"
+      extra_build_args:
+        description: "Space separated list of build args to use for the image."
+        required: false
+        type: string
+      tag_override:
+        description: "An override for the build image tag. Must include tests and have test software installed"
+        required: false
+        type: string
+      cache_image:
+        description: "Cache the built image, for the next run. Default true."
+        required: false
+        type: boolean
+        default: true
+      cache_extra_imgs:
+        description: "Space separated list of images to cache on each run (e.g. to avoid rate limiting)."
+        required: false
+        type: string
+      compose_file:
+        description: "The docker compose file used to run the test."
+        required: false
+        type: string
+        default: docker-compose.yml
+      # compose_entrypoint:
+      #   description: "Override the default entrypoint for the compose service."
+      #   required: false
+      #   type: string
+      compose_service:
+        description: "The docker compose service to run the test against."
+        required: true
+        type: string
+      compose_command:
+        description: "The command to run for the container. Default to built-in image command."
+        required: false
+        type: string
+      pre_command:
+        description: "A initialisation command to run prior to the docker compose command."
+        required: false
+        type: string
+      example_env_file_path:
+        description: "Path to example dotenv file to substitute variables for."
+        type: string
+        default: .env.example
+      coverage:
+        description: "Generate a coverage HTML report (requires coverage.py installed)."
+        required: false
+        type: boolean
+        default: false
+      playwright:
+        description: "Upload the Playwright trace files as an artifact for debugging."
+        required: false
+        type: boolean
+        default: false
+      environment:
+        description: "The environment to use for testing."
+        required: false
+        type: string
+        default: "test"
+      env_file_path:
+        description: "Path to write environment variables to"
+        required: false
+        type: string
+        default: ".env"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # Get cached images from previous runs (when running multiple times)
+  check-img-cache:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.image_name != '' && inputs.cache_image }}
+    environment:
+      name: ${{ inputs.environment }}
+    outputs:
+      cache-hit: ${{ steps.image-cache.outputs.cache-hit }}
+    steps:
+      - id: image-cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/images
+          key: image-cache-${{ runner.os }}
+
+  # Build the test image if required (unless `inputs.image_name` is set)
+  test-img-build:
+    uses: hotosm/gh-workflows/.github/workflows/image_build.yml@1.6.0
+    needs: [check-img-cache]
+    # Only build if no cached image is found
+    if: ${{ inputs.image_name != '' && needs.check-img-cache.outputs.cache-hit != 'true' }}
+    with:
+      context: ${{ inputs.build_context }}
+      dockerfile: ${{ inputs.build_dockerfile }}
+      build_target: ${{ inputs.build_target }}
+      image_name: ${{ inputs.image_name }}
+      # Default to auto-tag, unless override specified
+      image_tags: ${{ inputs.tag_override && format('{0}:{1}', inputs.image_name, inputs.tag_override) || '' }}
+      extra_build_args: ${{ inputs.extra_build_args }}
+      # Build temp image for PR, no multi-arch, scan, or ghcr cache required
+      scan_image: false
+      scan_dockerfile: false
+      cache: false
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: [test-img-build]
+    # Ensure it runs, even if test-img-build does not run
+    # if: always()
+    environment:
+      name: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - id: image-cache
+        if: ${{ inputs.cache_extra_imgs || inputs.cache_image }}
+        uses: actions/cache@v4
+        with:
+          path: /tmp/images
+          key: image-cache-${{ runner.os }}
+
+      # Cache the newly built image, plus extra images used in the compose file
+      - name: Save Local Images
+        if: ${{ (inputs.cache_extra_imgs || inputs.cache_image) && steps.image-cache.outputs.cache-hit != 'true' }}
+        run: |
+          # Function to pull and package Docker image
+          function pull_and_package_image() {
+            local image=$1
+            echo "Processing image ${image}"
+            docker pull "${image}"
+
+            if [ $? -eq 0 ]; then
+              img_underscores=${image//[:\/.]/_}
+              echo "Packaging image ${image} to /tmp/images/${img_underscores}.tar"
+              docker image save "${image}" --output "/tmp/images/${img_underscores}.tar"
+            else
+              echo "Failed to pull the image: ${image}"
+            fi
+          }
+
+          # Make artifact dir
+          mkdir -p /tmp/images
+
+          # Cache main image build
+          CACHE_ENABLED=${{ inputs.cache_image }}
+          echo "Caching enabled: ${CACHE_ENABLED}"
+          if [[ "${CACHE_ENABLED}" == true ]]; then
+              image_name=${{ needs.test-img-build.outputs.image_name }}
+              pull_and_package_image "${image_name}"
+
+              # Export tag to env
+              image_tag=${{ needs.test-img-build.outputs.image_tag }}
+              echo "Setting TAG_OVERRIDE=${image_tag} in github env"
+              echo "TAG_OVERRIDE=${image_tag}" >> $GITHUB_ENV
+          fi
+
+          # Cache extra images
+          extra_images_array=(${{ inputs.cache_extra_imgs }})
+          if [[ -n "${extra_images_array[@]}" ]]; then
+              echo "Images to cache: ${extra_images_array[@]}"
+
+              # Iterate through dependency images
+              for image_name in "${extra_images_array[@]}"; do
+                  pull_and_package_image "${image_name}"
+              done
+          fi
+
+      # Load the cached image .tar files via `docker image load`
+      - name: Load Cached Imgs
+        if: ${{ (inputs.cache_extra_imgs || inputs.cache_image) && steps.image-cache.outputs.cache-hit == 'true' }}
+        run: |
+          # Load images
+          for image_tar in /tmp/images/*; do
+              docker image load --input $image_tar || true
+          done
+
+          # Set TAG_OVERRIDE if image was cached
+          CACHE_ENABLED=${{ inputs.cache_image }}
+          if [[ "${CACHE_ENABLED}" == true ]]; then
+              echo "Getting image tag via docker"
+              image=$(\
+                docker image ls \
+                --filter=reference='${{ inputs.image_name }}' \
+                --format='{{.Tag}}'\
+              )
+              image_tag="${image##*:}"
+              echo "Image Tag: $image_tag"
+              echo "TAG_OVERRIDE=${image_tag}" >> $GITHUB_ENV
+          fi
+
+      # Extract repo vars/secrets into environment variables for the next step
+      # NOTE it may look like secrets are exposed, but they are hidden in the GUI
+      - name: Vars and Secrets to Env
+        env:
+          TAG_OVERRIDE: ${{ env.TAG_OVERRIDE || 'ci-development' }}
+          GIT_BRANCH: ${{ github.ref_name }}
+          VARS_CONTEXT: ${{ toJson(vars) }}
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: |
+          # Random delimeter string for security
+          delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+
+          # Parse JSON with multiline strings, using delimeter (Github specific)
+          to_envs() { jq -r "to_entries[] | \"\(.key)<<$delim\n\(.value)\n$delim\n\""; }
+
+          # Set vars to env for next step
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_ENV
+          echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> $GITHUB_ENV
+
+          # Set VARS_CONTEXT if not null
+          if [ "${VARS_CONTEXT}" != "null" ]; then
+            echo "${VARS_CONTEXT}" | to_envs >> $GITHUB_ENV
+          fi
+
+          # Set SECRETS_CONTEXT if not null
+          if [ "${SECRETS_CONTEXT}" != "null" ]; then
+            echo "${SECRETS_CONTEXT}" | to_envs >> $GITHUB_ENV
+          fi
+
+      # From generated environment variables, create a `.env` file in repo root
+      # If a .env.example exists, the variables are substituted in from Github env
+      - name: Create .env file
+        env:
+          EXAMPLE_DOTENV: ${{ inputs.example_env_file_path }}
+        run: |
+          echo "Checking if ${EXAMPLE_DOTENV} exists"
+          if [ -f ${EXAMPLE_DOTENV} ]; then
+            # Get a8m/envsubst (required for default vals syntax ${VAR:-default})
+            echo "Downloading envsubst"
+            curl -L https://github.com/a8m/envsubst/releases/download/v1.2.0/envsubst-`uname -s`-`uname -m` -o envsubst
+            if [ $? -ne 0 ]; then
+                echo "Failed to download envsubst"
+                exit 1
+            fi
+            chmod +x envsubst
+            echo "Substituting variables from ${EXAMPLE_DOTENV} --> ${{ inputs.env_file_path }}"
+            ./envsubst < "${EXAMPLE_DOTENV}" > ${{ inputs.env_file_path }}
+          else
+            echo "${EXAMPLE_DOTENV} not found, creating empty ${{ inputs.env_file_path }}"
+            touch ${{ inputs.env_file_path }}
+          fi
+
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> ${{ inputs.env_file_path }}
+          echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> ${{ inputs.env_file_path }}
+
+      # Run the tests via a pre-configured docker compose service
+      # For --no-TTY explanation, see: https://github.com/actions/runner-images/issues/5022
+      - name: Run Tests
+        if: ${{ ! inputs.coverage && ! inputs.playwright }}
+        run: |
+          ${{ inputs.pre_command }}
+          
+          docker compose --file ${{ inputs.compose_file }} \
+            exec -i ${{ inputs.compose_service }} ${{ inputs.compose_command }}
+
+      # Specific for generating coverage
+      - name: Run Tests With Coverage
+        if: ${{ inputs.coverage }}
+        run: |
+          ${{ inputs.pre_command }}
+
+          docker compose --file ${{ inputs.compose_file }} \
+            run --no-TTY --entrypoint "sh -c" \
+            --volume ${{ github.workspace }}/coverage:/tmp/coverage \
+            ${{ inputs.compose_service }} \
+            "coverage run -m ${{ inputs.compose_command }} \
+            && coverage report && coverage html \
+            && coverage-badge -o coverage.svg \
+            && mv htmlcov/index.html /tmp/coverage/coverage.html \
+            && mv coverage.svg /tmp/coverage/coverage.svg"
+
+      - name: Upload Coverage
+        if: ${{ inputs.coverage }}
+        run: |
+          # Checkout to gh-pages
+          mkdir tmp_pages
+          cd tmp_pages
+          git init --initial-branch=gh-pages
+          git config user.name svchot
+          git config user.email sysadmin@hotosm.org
+          git pull https://x-access-token:$TOKEN@github.com/${{ github.repository }}.git gh-pages
+
+          # Overwrite coverage index and badge
+          echo "Coverage dir contents:"
+          ls ${{ github.workspace }}/coverage
+          echo ""
+          cp ${{ github.workspace }}/coverage/* .
+
+          # Push content to gh-pages
+          git add .
+          git commit -m "docs: update coverage summary and badge" || true
+          git push --set-upstream https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+
+      # Specific for generating Playwright traces
+      - name: Playwright Tests
+        if: ${{ inputs.playwright }}
+        run: |
+          ${{ inputs.pre_command }}
+
+          docker compose --file ${{ inputs.compose_file }} run \
+            --no-TTY \
+            --volume ${{ github.workspace }}/playwright-report:/app/playwright-report \
+            ${{ inputs.compose_service }} ${{ inputs.compose_command }}
+
+      - name: Upload Playwright Report
+        if: ${{ inputs.playwright && !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ github.workspace }}/playwright-report/
+          name: playwright-report
+          retention-days: 30
