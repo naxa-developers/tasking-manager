@@ -1,0 +1,99 @@
+# Note: variables: SSH_HOST and SSH_USER must be set for your environment.
+# Note: secrets: SSH_PRIVATE_KEY must be set for your environment.
+
+name: Remote Deploy (Compose)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "The Github environment to get variables from. Default repository vars."
+        required: false
+        type: string
+      docker_compose_file:
+        description: "Path to docker compose file to deploy."
+        required: true
+        type: string
+      example_env_file_path:
+        description: "Path to example dotenv file to substitute variables for."
+        type: string
+        default: .env.example
+      env_file_path:
+        description: "Path to write dotenv file"
+        type: string
+        default: .env
+
+jobs:
+  remote-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Vars and Secrets to Env
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
+          VARS_CONTEXT: ${{ toJson(vars) }}
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: |
+          # Random delimeter string for security
+          delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+
+          # Parse JSON with multiline strings, using delimeter (Github specific)
+          to_envs() { jq -r "to_entries[] | \"\(.key)<<$delim\n\(.value)\n$delim\n\""; }
+
+          # Set vars to env for next step
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_ENV
+          echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> $GITHUB_ENV
+
+          # Set VARS_CONTEXT if not null
+          if [ "${VARS_CONTEXT}" != "null" ]; then
+            echo "${VARS_CONTEXT}" | to_envs >> $GITHUB_ENV
+          fi
+
+          # Set SECRETS_CONTEXT if not null
+          if [ "${SECRETS_CONTEXT}" != "null" ]; then
+            echo "${SECRETS_CONTEXT}" | to_envs >> $GITHUB_ENV
+          fi
+
+      - name: Create .env file
+        env:
+          EXAMPLE_DOTENV: ${{ inputs.example_env_file_path }}
+        run: |
+          echo "Checking if ${EXAMPLE_DOTENV} exists"
+          if [ -f ${EXAMPLE_DOTENV} ]; then
+            # Get a8m/envsubst (required for default vals syntax ${VAR:-default})
+            echo "Downloading envsubst"
+            curl -L https://github.com/a8m/envsubst/releases/download/v1.2.0/envsubst-`uname -s`-`uname -m` -o envsubst
+            if [ $? -ne 0 ]; then
+                echo "Failed to download envsubst"
+                exit 1
+            fi
+            chmod +x envsubst
+            echo "Substituting variables from ${EXAMPLE_DOTENV} --> ${{ inputs.env_file_path }}"
+            ./envsubst < "${EXAMPLE_DOTENV}" > ${{ inputs.env_file_path }}
+          else
+            echo "${EXAMPLE_DOTENV} not found, creating empty ${{ inputs.env_file_path }}"
+            touch ${{ inputs.env_file_path }}
+          fi
+
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> ${{ inputs.env_file_path }}
+          echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> ${{ inputs.env_file_path }}
+
+      # - uses: webfactory/ssh-agent@v0.8.0
+      #   with:
+      #     ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
+
+      # - name: Add host keys to known_hosts
+      #   run: |
+      #     ssh-keyscan "${{ vars.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      # - name: Deploy
+      #   run: |
+      #     docker compose --file ${{ inputs.docker_compose_file }} pull
+      #     docker compose --file ${{ inputs.docker_compose_file }} up \
+      #       --detach --remove-orphans --force-recreate
+      #   env:
+      #     DOCKER_HOST: "ssh://${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}"
