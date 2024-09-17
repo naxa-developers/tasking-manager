@@ -2,11 +2,11 @@ name: tasking-manager-main
 
 volumes:
   tm_db_data:
-    name: tm-db-data-main
+    name: tm-db-data-${GIT_BRANCH:-main}
 
 networks:
   tm-net: 
-    name: tm-net
+    name: tm-net-${GIT_BRANCH:-main}
 
 services:
   tm-db:
@@ -26,7 +26,7 @@ services:
       - tm-net
 
   tm-backend:
-    image: ghcr.io/hotosm/tasking-manager/backend:main
+    image: ghcr.io/hotosm/tasking-manager/backend:${GIT_BRANCH:-main}
     build:
       context: .
       target: ${TARGET_TAG:-prod}
@@ -60,10 +60,10 @@ services:
       - tm-net
 
   tm-migration:
-    image: ghcr.io/hotosm/tasking-manager/backend:main
+    image: ghcr.io/hotosm/tasking-manager/backend:${GIT_BRANCH:-main}
     build:
       context: .
-    entrypoint: ["alembic", "-c", "migrations/alembic.ini", "upgrade", "head"]
+    command: ["alembic", "-c", "migrations/alembic.ini", "upgrade", "head"]
     depends_on:
       tm-db:
         condition: service_healthy
