@@ -43,7 +43,7 @@ export default defineMessages({
   },
   buildingsStats: {
     id: 'management.partners.filter.buildingsStats',
-    defaultMessage: 'Building Edits',
+    defaultMessage: 'Buildings mapped',
   },
   contributors: {
     id: 'management.partners.contributors',
@@ -51,11 +51,11 @@ export default defineMessages({
   },
   roadsStats: {
     id: 'management.partners.filter.roadsStats',
-    defaultMessage: 'km of Roads',
+    defaultMessage: 'Km road mapped',
   },
   editsStats: {
     id: 'management.partners.filter.editsStats',
-    defaultMessage: 'Total Edits',
+    defaultMessage: 'Total map edits',
   },
   noPartnersGroup: {
     id: 'partners.group.zero',
@@ -63,15 +63,15 @@ export default defineMessages({
   },
   edits: {
     id: 'management.partners.activity.edits',
-    defaultMessage: 'Edits',
+    defaultMessage: 'Total Map Edits',
   },
   buildings: {
     id: 'management.partners.activity.buildings',
-    defaultMessage: 'Buildings Added',
+    defaultMessage: 'Buildings Mapped',
   },
   roads: {
     id: 'management.partners.activity.roads',
-    defaultMessage: 'km of Roads Added',
+    defaultMessage: 'km of Roads Mapped',
   },
   users: {
     id: 'management.partners.activity.users',
@@ -84,7 +84,7 @@ export default defineMessages({
   learnToMap: {
     id: 'management.partners.learnToMap',
     defaultMessage: 'Learn to Map',
-  }, 
+  },
   myPartners: {
     id: 'management.filter.buttons.myPartners',
     defaultMessage: 'My Partners',
@@ -109,7 +109,7 @@ export default defineMessages({
     id: 'management.partners.titles.partner_information',
     defaultMessage: 'Partner information',
   },
-  permalink:{
+  permalink: {
     id: 'management.partners.titles.partner_permalink',
     defaultMessage: 'Permalink',
   },
@@ -131,5 +131,9 @@ export default defineMessages({
   currentProjects: {
     id: 'management.partners.titles.partner.currentProjects',
     defaultMessage: 'Current projects',
+  },
+  mapSwipeGroupId: {
+    id: 'management.partners.titles.partner_mapSwipeGroupId',
+    defaultMessage: 'MapSwipe Group ID',
   },
 });

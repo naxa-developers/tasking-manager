@@ -2,9 +2,9 @@ const cf = require('@mapbox/cloudfriend');
 
 const Parameters = {
   TaskingManagerBackendAMI: {
-    Type: "AWS::EC2::Image::Id",
+    Type: "String",
     Description: 'AMI ID of Backend VM, currently Ubuntu 20.04 LTS - Was ami-00fa576fb10a52a1c',
-    Default: "ami-0aa2b7722dc1b5612",
+    Default: "/aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
   },
   TaskingManagerBackendInstanceType: {
     Type: 'String',
@@ -369,8 +369,8 @@ const Resources = {
       LaunchTemplateData: {
         IamInstanceProfile: {
           Name: cf.ref('TaskingManagerEC2InstanceProfile'),
-        }, 
-        ImageId: cf.ref('TaskingManagerBackendAMI'),
+        },
+        ImageId: cf.join(':', ["resolve:ssm", cf.ref('TaskingManagerBackendAMI')]),
         InstanceType: cf.ref('TaskingManagerBackendInstanceType'),
         KeyName: 'mbtiles',
         Monitoring: {
@@ -386,10 +386,10 @@ const Resources = {
         // }],
         PrivateDnsNameOptions: {
           EnableResourceNameDnsAAAARecord: true,
-          EnableResourceNameDnsARecord: true, 
+          EnableResourceNameDnsARecord: true,
           HostnameType: 'resource-name'
         },
-        SecurityGroupIds: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))], 
+        SecurityGroupIds: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))],
         TagSpecifications: [
           {
             ResourceType: 'instance',
@@ -423,6 +423,7 @@ const Resources = {
           'export DEBIAN_FRONTEND=noninteractive',
           'export LC_ALL="en_US.UTF-8"',
           'export LC_CTYPE="en_US.UTF-8"',
+          'export PATH=$PATH:/root/.local/bin',
           'dpkg-reconfigure --frontend=noninteractive locales',
           'sudo apt-get -q -y update',
           'sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade',
@@ -436,11 +437,11 @@ const Resources = {
           'git clone --recursive https://github.com/hotosm/tasking-manager.git /opt/tasking-manager',
           'cd /opt/tasking-manager/',
           cf.sub('git reset --hard ${GitSha}'),
-          'pip install --upgrade pip pdm==2.7.4',
+          'pip install --upgrade pip pdm==2.18.1',
+          'pdm export --prod > requirements.txt',
           'wget -6 https://s3.dualstack.us-east-1.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz -O /tmp/aws-cfn-bootstrap-py3-latest.tar.gz',
           'pip install /tmp/aws-cfn-bootstrap-py3-latest.tar.gz',
-          'pdm install',
-          'eval "$(pdm venv activate)"',
+          'pip install --user -r requirements.txt',
           'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf',
           'export LC_ALL=C',
           'wget -6 https://s3.dualstack.us-east-1.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb',
@@ -474,7 +475,7 @@ const Resources = {
           cf.sub('export TM_IMAGE_UPLOAD_API_KEY="${TaskingManagerImageUploadAPIKey}"'),
           'psql "host=$POSTGRES_ENDPOINT dbname=$POSTGRES_DB user=$POSTGRES_USER password=$POSTGRES_PASSWORD" -c "CREATE EXTENSION IF NOT EXISTS postgis"',
           cf.if('DatabaseDumpFileGiven', cf.sub('aws s3 cp ${DatabaseDump} dump.sql; sudo -u postgres psql "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_ENDPOINT/$POSTGRES_DB" < dump.sql'), ''),
-          'pdm run -vv flask db upgrade',
+          'flask db upgrade',
           'echo "------------------------------------------------------------"',
           cf.sub('export NEW_RELIC_LICENSE_KEY="${NewRelicLicense}"'),
           cf.sub('export TM_SENTRY_BACKEND_DSN="${SentryBackendDSN}"'),
@@ -654,10 +655,10 @@ const Resources = {
       SecurityGroups: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'elbs-security-group', cf.region]))],
       Subnets: cf.ref('ELBSubnets'),
       Type: 'application',
-      Tags: [  { 
-          "Key": "stack_name", 
-          "Value": cf.stackName 
-        },  
+      Tags: [  {
+          "Key": "stack_name",
+          "Value": cf.stackName
+        },
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -726,11 +727,11 @@ const Resources = {
       Port: 8000,
       Protocol: 'HTTP',
       VpcId: cf.importValue(cf.join('-', ['hotosm-network-production', 'default-vpc', cf.region])),
-      Tags: [ 
-        { 
-          "Key": "stack_name", 
-          "Value": cf.stackName 
-        },  
+      Tags: [
+        {
+          "Key": "stack_name",
+          "Value": cf.stackName
+        },
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -809,7 +810,7 @@ const Resources = {
         DBSnapshotIdentifier: cf.if('UseASnapshot', cf.ref('DBSnapshot'), cf.noValue),
         VPCSecurityGroups: [cf.importValue(cf.join('-', ['hotosm-network-production', cf.ref('NetworkEnvironment'), 'ec2s-security-group', cf.region]))],
 	      PubliclyAccessible: false,
-        Tags: [   
+        Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -838,7 +839,7 @@ const Resources = {
         IndexDocument: 'index.html'
       },
       AccessControl: "Private",
-      Tags: [ 
+      Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'
@@ -985,7 +986,7 @@ const Resources = {
           SslSupportMethod: 'sni-only'
         }
       },
-      Tags: [ 
+      Tags: [
         {
           Key: 'project',
           Value: 'tasking-manager'

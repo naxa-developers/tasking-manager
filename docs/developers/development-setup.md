@@ -19,13 +19,13 @@ In order to use the frontend, you may need to create keys for OSM:
 1. [Login to OSM][1]
    (_If you do not have an account yet, click the signup
    button at the top navigation bar to create one_).
-   
+
    Click the drop down arrow on the top right of the navigation bar
    and select My Settings.
 
 2. Register your Tasking Manager instance to OAuth 2 applications.
 
-   Put your login redirect url as `http://127.0.0.1:3000/authorized/`
+   Put your login redirect url as `http://127.0.0.1:3000/authorized`
 
    > Note: `127.0.0.1` is required for debugging instead of `localhost`
    > due to OSM restrictions.
@@ -60,10 +60,10 @@ In order to use the frontend, you may need to create keys for OSM:
 >
 > before running the `yarn start` command.
 >
-> Be aware that the staging API can be offline while we are deploying 
-> newer versions to the staging server and that you'll not have access 
-> to some management views due to permissions. Check the 
-> [configuration](#configuration) section to learn more about how 
+> Be aware that the staging API can be offline while we are deploying
+> newer versions to the staging server and that you'll not have access
+> to some management views due to permissions. Check the
+> [configuration](#configuration) section to learn more about how
 > to configure Tasking Manager.
 
 For more details see the [configuration section](#configuration).
@@ -78,7 +78,7 @@ The easiest option to get started with all components may be using Docker.
 
 ### Running Tasking Manager
 
-Once you have the docke engine running, Quickly generate an environment file from an existing `example.env`.
+Once you have the docker engine running, Quickly generate an environment file from an existing `example.env`.
 ```bash
 cp example.env tasking-manager.env
 ```
@@ -86,9 +86,7 @@ cp example.env tasking-manager.env
 Now you can proceed with starting the services.
 
 ```bash
-docker compose pull
-docker compose build
-docker compose up --detach
+docker compose --env-file tasking-manager.env up -d
 ```
 
 Tasking Manager should be available from:
@@ -104,11 +102,10 @@ in addition to any variables including a port, e.g. TM_APP_BASE_URL.
 The default dotenv file can also be changed.
 
 ```bash
-TM_DEV_PORT=9000 ENV_FILE=.env docker compose up --detach
+TM_DEV_PORT=9000 docker compose --env-file tasking-manager.env up -d
 ```
 ```bash
-docker compose build
-docker compose up --detach
+docker compose --env-file tasking-manager.env up -d
 ```
 #### (Optional) Overriding `docker-compose.yml`
 If you want to add custom configuration for the docker services. You can make a copy of `docker-compose.override.sample.yml` which you can edit as per your need.
@@ -121,7 +118,7 @@ cp docker-compose.override.sample.yml docker-compose.override.yml
 ### External or Self Hosted Database
 
 If you want to use your local postgresql server or some other exter database service.
-Find these sets of environment variables in `tasking-manager.env` 
+Find these sets of environment variables in `tasking-manager.env`
 ```bash
 POSTGRES_DB=tasking-manager
 POSTGRES_USER=tm
@@ -131,9 +128,9 @@ POSTGRES_PORT=5432
 ```
 > **_NOTE:_**  If database server is self managed on your local machine, Use your machine's ip address. Also make sure it can be reachable from `tm-backend` container.
 
-Once Updated, recreate containers with 
+Once Updated, recreate containers with
 ```
-docker compose up -d
+docker compose --env-file tasking-manager.env up -d
 ```
 
 ### Frontend Only Deployment
@@ -148,7 +145,7 @@ TM_APP_API_URL=https://tasking-manager-staging-api.hotosm.org
 ```
 Then proceed with starting only frontend service with docker.
 ```
-docker compose up -d tm-frontend
+docker compose --env-file tasking-manager.env up -d tm-frontend
 ```
 
 Check server logs with
@@ -286,7 +283,7 @@ should run after any changes.
 ```
 python3 -m unittest discover tests/backend
 ```
-or 
+or
 ```
 pdm run test
 ```
@@ -330,7 +327,7 @@ command to apply the migrations:
 ```
 flask db upgrade
 ```
-or 
+or
 ```
 pdm run upgrade
 ```
@@ -413,53 +410,9 @@ instances, sign in in the browser and then either:
 
 ## Additional Info
 
-### Creating a local PostGIS database with Docker
+### Creating a local PostGIS database without Docker
 
-If you're not able to connect to an existing tasking-manager DB, we
-have a [Dockerfile]() that will allow you to run PostGIS locally as
-follows.
-
-### Build & Run the PostGIS dockerfile
-
-1. From the root of the project:
-
-`
-docker build -t tasking-manager-db ./scripts/docker/postgis
-`
-
-2. The image should be downloaded and build locally.  Once complete
-   you should see it listed, with
-
-`
-docker images
-`
-
-3. You can now run the image (this will run PostGIS in a docker
-   container, with port 5432 mapped to localhost):
-
-`
-docker run -d -p 5432:5432 tasking-manager-db
-`
-
-4.  Confirm the image is running successfully:
-
-`
-docker ps
-`
-
-5. Finally you can set your env variable to point at your
-   containerised DB:
-
-`
-export TM_DB=postgresql://hottm:hottm@localhost/tasking-manager
-`
-
-6.  Refer to the rest of the instructions in the README to setup the
-    DB and run the app.
-
-## Creating a local PostGIS database without Docker
-
-### Creating the PostGIS database
+#### Creating the PostGIS database
 
 It may be the case you would like to set up the database without using
 Docker for one reason or another. This provides you with a set of
@@ -494,7 +447,7 @@ It is possible to install and run the Tasking Manager using
 [Docker](https://docker.com) and [Docker
 Compose](https://docs.docker.com/compose/).
 
-Clone the Tasking Manager repository and use `docker-compose up` to
+Clone the Tasking Manager repository and use `docker compose --env-file tasking-manager.env up` to
 get a working version of the API running.
 
 ## Sysadmins guide

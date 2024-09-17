@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { TasksMap } from '../taskSelection/map';
+import { Link } from 'react-router-dom';
+import ReactPlaceholder from 'react-placeholder';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Button } from '../button';
-import { Link } from 'react-router-dom';
-import { API_URL } from '../../config';
 
+import { TasksMap } from '../taskSelection/map';
+import { Button } from '../button';
+import { API_URL } from '../../config';
 import messages from './messages';
-import ReactPlaceholder from 'react-placeholder';
 import ProjectProgressBar from '../projectCard/projectProgressBar';
+import { HeaderLine } from '../projectDetail/header';
+import { BigProjectTeaser } from '../projectDetail/bigProjectTeaser';
 
 // Import Swiper styles
 import './styles.scss';
@@ -24,13 +26,9 @@ export function CurrentProjects({ currentProjects }) {
   const [error, setError] = useState(false);
   const pagination = {
     clickable: true,
-    renderBullet: function (index, className) {
-      return '<span class="' + className + '">' + (index + 1) + '</span>';
-    },
+    el: '.swiper-custom-pagination',
   };
 
-  const text = `This remote mapping of buildings will support the implementation of planned activities and
-  largely the generation of data for humanitarian activities in the identified provinces. `;
   const fetchData = async () => {
     try {
       const projectIds = currentProjects.split(',').map((id) => parseInt(id.trim(), 10));
@@ -47,6 +45,8 @@ export function CurrentProjects({ currentProjects }) {
         }
         const jsonData = await response.json();
         const jsonInfo = await responseInfo.json();
+        const contributionResponse = await fetch(API_URL + `projects/${id}/contributions/`);
+        const jsonContributions = await contributionResponse.json();
         return {
           id,
           tasks: jsonData,
@@ -54,6 +54,9 @@ export function CurrentProjects({ currentProjects }) {
           percentMapped: jsonInfo.percentMapped,
           percentValidated: jsonInfo.percentValidated,
           percentBadImagery: jsonInfo.percentBadImagery,
+          organisationName: jsonInfo.organisationName,
+          lastUpdated: jsonInfo.lastUpdated,
+          totalContributors: jsonContributions.userContributions.length,
         };
       });
 
@@ -65,10 +68,14 @@ export function CurrentProjects({ currentProjects }) {
   };
 
   useEffect(() => {
+    if (!currentProjects) return;
     fetchData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProjects]);
+
+  if (!currentProjects)
+    return <h3 className="f3 barlow-condensed blue-dark fw6">There are no current projects.</h3>;
 
   return (
     <ReactPlaceholder
@@ -84,48 +91,89 @@ export function CurrentProjects({ currentProjects }) {
           pagination={pagination}
           modules={[Pagination]}
           swipeHandler={{ draggable: false }}
-          style={{
-            backgroundColor: 'white',
-            width: '100%',
-            borderColor: 'gray',
-            borderRadius: 5,
-            height: 500,
-            border: '1px solid',
-          }}
+          className="shadow-4 bg-white w-100 b--gray"
         >
           {projectsData.map((project) => (
-            <SwiperSlide key={project.id}>
-              <TasksMap className="w-100 h-50 m2-l" mapResults={project.tasks} />
-              <div className="mv2-l mh2 flex justify-between items-center">
-                <h4>
-                  {project.id} - {project.info.name}
-                </h4>
-                <Link to={`/projects/` + project.id}>
+            <SwiperSlide
+              key={project.id}
+              className="pa3"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                gap: '2rem',
+              }}
+            >
+              <div style={{ gridColumn: 'span 3' }}>
+                <HeaderLine
+                  author={project.author}
+                  projectId={project.id}
+                  priority={project.projectPriority}
+                  organisation={project.organisationName}
+                />
+                <div>
+                  <h3
+                    className="f2 fw5 mt3 mt2-ns mb3 ttu barlow-condensed blue-dark dib mr3"
+                    // lang={project.info.locale}
+                  >
+                    {project.info && project.info.name}
+                  </h3>
+                </div>
+                <section className="lh-title h5 overflow-y-auto mt3 mb3 flex flex-column">
+                  <div
+                    className="pr2 blue-dark-abbey markdown-content"
+                    dangerouslySetInnerHTML={{ __html: project.info.shortDescription }}
+                  />
+
+                  <a
+                    href="#description"
+                    className="link base-font bg-white f6 bn pn red pointer mt2"
+                  >
+                    <span className="pr2 ttu f6 fw6 ">
+                      <FormattedMessage {...messages.readMore} />
+                    </span>
+                  </a>
+
+                  <div className="mt-auto" style={{ overflowX: 'clip' }}>
+                    <BigProjectTeaser
+                      className="pt3"
+                      totalContributors={project.totalContributors}
+                      lastUpdated={project.lastUpdated}
+                      style={{ margin: '0.5rem 0', fontSize: '14px' }}
+                    />
+                    <ProjectProgressBar
+                      small={false}
+                      className="pb3 bg-white"
+                      percentMapped={project.percentMapped}
+                      percentValidated={project.percentValidated}
+                      percentBadImagery={project.percentBadImagery}
+                    />
+                  </div>
+                </section>
+              </div>
+              <div className="w-100 relative" style={{ gridColumn: 'span 2' }}>
+                <TasksMap
+                  className="w-100 h-100 m2-l"
+                  mapResults={project.tasks}
+                  style={{ height: '5rem' }}
+                />
+                <Link
+                  to={`/projects/` + project.id}
+                  style={{ position: 'absolute', bottom: '1.5rem', right: '0.75rem' }}
+                >
                   <Button className="bg-red ba b--red white pv2 ph3">
                     <FormattedMessage {...messages.startMapping} />
                   </Button>
-                </Link>
-              </div>
-              <div className="mh3-l mv3-l">
-                <ProjectProgressBar
-                  percentMapped={project.percentMapped}
-                  percentValidated={project.percentValidated}
-                  percentBadImagery={project.percentBadImagery}
-                />
-                <p>{text}</p>
-                <Link
-                  to={`/projects/` + project.id}
-                  className="link base-font f6 mt3 bn pn red pointer"
-                >
-                  <span className="pr2 ttu f6 fw6">
-                    <FormattedMessage {...messages.readMore} />
-                  </span>
                 </Link>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
       )}
+
+      <div
+        className="swiper-custom-pagination mt2 w-100 flex justify-center"
+        style={{ gap: '0.5rem' }}
+      />
     </ReactPlaceholder>
   );
 }

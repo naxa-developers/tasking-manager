@@ -19,6 +19,7 @@ import { useSetTitleTag } from '../hooks/UseMetaTags';
 import { Alert } from '../components/alert';
 import { putEntity } from '../utils/management';
 import { fetchLocalJSONAPI, pushToLocalJSONAPI } from '../network/genericJSONRequest';
+import '../components/partners/styles.scss';
 
 export function ListPartners() {
   useSetTitleTag('Manage partners');
@@ -73,32 +74,27 @@ export function CreatePartner() {
         navigate('/manage/partners');
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err);
       });
   };
+
   useEffect(() => {
     if (!token && !userDetails?.id) {
       navigate('/login');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, token]);
+
   return (
-    <div style={{ backgroundColor: '#f1f1f1' }}>
+    <div>
       {userDetails.role === 'ADMIN' ? (
         <Form
           onSubmit={(values) => createPartner(values)}
           render={({ handleSubmit, pristine, form, submitting, values }) => {
             return (
-              <form
-                onSubmit={handleSubmit}
-                style={{ margin: 'auto' }}
-                className="blue-grey  w-50-l w-50-m "
-              >
-                <div className="w-100 cf pv4 pb5 ">
-                  <h3
-                    style={{ textAlign: 'center' }}
-                    className="f2 mb3 ttu blue-dark fw7 ma0 barlow-condensed "
-                  >
+              <form onSubmit={handleSubmit} className="blue-grey  w-50-l w-50-m ">
+                <div className="w-100 cf pb5 ">
+                  <h3 className="f2 mb3 ttu blue-dark fw7 barlow-condensed ">
                     <FormattedMessage {...messages.newPartner} />
                   </h3>
                   <div className="">
@@ -106,8 +102,10 @@ export function CreatePartner() {
                     <div className="cf pv2 ml2">
                       {error && (
                         <Alert type="error" compact>
-                          {messages[`partnerCreation${error}Error`] ? (
-                            <FormattedMessage {...messages[`partnerCreation${error}Error`]} />
+                          {messages[`partnerCreation${error.message}Error`] ? (
+                            <FormattedMessage
+                              {...messages[`partnerCreation${error.message}Error`]}
+                            />
                           ) : (
                             <FormattedMessage
                               {...messages.entityCreationFailure}
@@ -203,8 +201,9 @@ export function EditPartners() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userDetails, token]);
+
   return (
-    <div style={{ backgroundColor: '#f1f1f1' }}>
+    <div>
       <ReactPlaceholder
         showLoadingAnimation={true}
         type={'media'}
@@ -213,14 +212,14 @@ export function EditPartners() {
         ready={!error && loading === false && typeof partner === 'object'}
       >
         {userDetails.role === 'ADMIN' ? (
-          <div style={{ margin: 'auto' }} className="cf w-50-l w-50-m ">
-            <div style={{ textAlign: 'center' }} className="cf pv4 ">
+          <div className="cf w-50-l w-50-m ">
+            <div className="cf pv4">
               <h3 className="f2 ttu blue-dark fw7 ma0 barlow-condensed v-mid dib">
                 <FormattedMessage {...messages.managePartner} />
               </h3>
               <DeleteModal id={id} name={partner.name} type="partners" />
             </div>
-            <div className="w-100 mt4 fl">
+            <div className="w-100 fl">
               <PartnersForm
                 userDetails={userDetails}
                 partner={partner}
