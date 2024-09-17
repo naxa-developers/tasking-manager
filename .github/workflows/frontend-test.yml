@@ -51,7 +51,7 @@ on:
         description: "Command to do build test on frontend"
         required: false
         type: string
-      
+
 
 jobs:
   node-build:
@@ -72,7 +72,7 @@ jobs:
         uses: actions/checkout@v4
 
       - id: node_setup
-        name: Install node 
+        name: Install node
         uses: actions/setup-node@v4
         #reference: https://github.com/actions/setup-node
         with:
@@ -119,11 +119,10 @@ jobs:
         working-directory: ${{ inputs.context }}
         run: |
           ${{ inputs.test_frontend_command }}
-          
+
       - id: test_frontend_build
         name: Build Frontend
         if: ${{ inputs.test_frontend_build && inputs.build_test_frontend_command }}
         working-directory: ${{ inputs.context }}
         run: |
           ${{ inputs.build_test_frontend_command }}
-  

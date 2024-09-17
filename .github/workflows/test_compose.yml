@@ -276,7 +276,7 @@ jobs:
         if: ${{ ! inputs.coverage && ! inputs.playwright }}
         run: |
           ${{ inputs.pre_command }}
-          
+
           docker compose --file ${{ inputs.compose_file }} \
             exec -i ${{ inputs.compose_service }} ${{ inputs.compose_command }}
 
