@@ -10,9 +10,30 @@ on:
         description: "The Github environment to get variables from. Default repository vars."
         required: false
         type: string
+      terragrunt_deployment:
+        description: "If the service to be deployed on using Terraform"
+        required: false
+        default: false
+        type: boolean
+      tofu_version:
+        description: "OpenToFu version for deployment"
+        type: string
+        default: '1.8.1'
+      tg_version:
+        description: "Terragrunt version for deployment"
+        type: string
+        default: '0.67.0'
+      tg_working_dir:
+        description: "Directory where terragrunt command is applied"
+        type: string
+      docker_depoyment:
+        description: "If the service is to be deployed with docker"
+        type: boolean
+        default: false
+        required: false
       docker_compose_file:
         description: "Path to docker compose file to deploy."
-        required: true
+        required: false
         type: string
       example_env_file_path:
         description: "Path to example dotenv file to substitute variables for."
@@ -33,6 +54,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Vars and Secrets to Env
+        if: ${{ inputs.docker_depoyment }}
         env:
           GIT_BRANCH: ${{ github.ref_name }}
           VARS_CONTEXT: ${{ toJson(vars) }}
@@ -59,6 +81,7 @@ jobs:
           fi
 
       - name: Create .env file
+        if: ${{ inputs.docker_depoyment }}
         env:
           EXAMPLE_DOTENV: ${{ inputs.example_env_file_path }}
         run: |
@@ -83,18 +106,30 @@ jobs:
           echo "TAG_OVERRIDE=${TAG_OVERRIDE}" >> ${{ inputs.env_file_path }}
       
       # TODO: Add step to force new deployment here: also update image_tag accordingly in terraform vars.
-      # - uses: webfactory/ssh-agent@v0.8.0
-      #   with:
-      #     ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
+      - uses: webfactory/ssh-agent@v0.8.0
+        if: ${{ inputs.docker_depoyment }}
+        with:
+          ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
-      # - name: Add host keys to known_hosts
-      #   run: |
-      #     ssh-keyscan "${{ vars.SSH_HOST }}" >> ~/.ssh/known_hosts
+      - name: Add host keys to known_hosts
+        if: ${{ inputs.docker_depoyment }}
+        run: |
+          ssh-keyscan "${{ vars.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      # - name: Deploy
-      #   run: |
-      #     docker compose --file ${{ inputs.docker_compose_file }} pull
-      #     docker compose --file ${{ inputs.docker_compose_file }} up \
-      #       --detach --remove-orphans --force-recreate
-      #   env:
-      #     DOCKER_HOST: "ssh://${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}"
+      - name: Deploy with Docker
+        if: ${{ inputs.docker_depoyment }}
+        run: |
+          docker compose --file ${{ inputs.docker_compose_file }} pull
+          docker compose --file ${{ inputs.docker_compose_file }} up \
+            --detach --remove-orphans --force-recreate
+        env:
+          DOCKER_HOST: "ssh://${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}"
+
+      - name: Check terragrunt HCL
+        if: ${{ inputs.terragrunt_deployment }}
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          tofu_version: ${{ inputs.tofu_version }}
+          tg_version: ${{ inputs.tg_version }}
+          tg_dir: ${{ inputs.tg_working_dir }}
+          tg_command: 'hclfmt --terragrunt-check --terragrunt-diff'

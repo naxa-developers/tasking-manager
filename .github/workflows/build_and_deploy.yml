@@ -94,26 +94,29 @@ jobs:
       env_file_path: tasking-manager.env
     secrets: inherit
   
-  backup-database:
-    runs-on: ubuntu-latest
-    needs: 
-      - backend-test
-    name: Backup Database before deployment
-    steps:
-      - name: Create Snapshot
-        run:
-          echo " TODO Database backup Steps; See CircleCI"
-          # See https://app.circleci.com/pipelines/github/hotosm/tasking-manager/11487/workflows/e98ba643-5812-4b2a-a09f-cc499285b3cc/jobs/23599
-    #TODO: Check circleci for references
+  # backup-database:
+  #   runs-on: ubuntu-latest
+  #   needs: 
+  #     - backend-test
+  #   name: Backup Database before deployment
+  #   steps:
+  #     - name: Create Snapshot
+  #       run:
+  #         echo " TODO Database backup Steps; See CircleCI"
+  #         # See https://app.circleci.com/pipelines/github/hotosm/tasking-manager/11487/workflows/e98ba643-5812-4b2a-a09f-cc499285b3cc/jobs/23599
+  #   #TODO: Check circleci for references
       
   backend_deploy_to_vm:
     name: Deploy Backend to VM
     needs:
-      - backup-database
+      - backend-test
     uses: naxa-developers/tasking-manager/.github/workflows/remote_deploy_compose.yml@ci-gh-workflows
     with:
       docker_compose_file: docker-compose.yml
       environment: ${{ github.ref_name }}
       example_env_file_path: example.env
       env_file_path: tasking-manager.env
+      docker_depoyment: false
+      terragrunt_deployment: true
+      tg_working_dir: 'Projects'
     secrets: inherit
