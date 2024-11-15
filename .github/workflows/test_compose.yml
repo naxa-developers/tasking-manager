@@ -67,6 +67,11 @@ on:
         description: "Path to example dotenv file to substitute variables for."
         type: string
         default: .env.example
+      run_tests:
+        description: "If to run python tests."
+        required: false
+        type: boolean
+        default: false
       coverage:
         description: "Generate a coverage HTML report (requires coverage.py installed)."
         required: false
@@ -131,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test-img-build]
     # Ensure it runs, even if test-img-build does not run
-    # if: always()
+    if: always()
     environment:
       name: ${{ inputs.environment }}
 
@@ -273,10 +278,11 @@ jobs:
       # Run the tests via a pre-configured docker compose service
       # For --no-TTY explanation, see: https://github.com/actions/runner-images/issues/5022
       - name: Run Tests
-        if: ${{ ! inputs.coverage && ! inputs.playwright }}
+        if: ${{ inputs.run_tests }}
         run: |
           ${{ inputs.pre_command }}
           
+          # Docker compose command to run tests.
           docker compose --file ${{ inputs.compose_file }} \
             exec -i ${{ inputs.compose_service }} ${{ inputs.compose_command }}
 

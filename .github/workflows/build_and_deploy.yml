@@ -35,6 +35,8 @@ jobs:
   frontend-build:
     uses: naxa-developers/tasking-manager/.github/workflows/frontend-build.yml@ci-gh-workflows
     secrets: inherit
+    needs:
+      - frontend-test
     with:
       node-version: 16.x
       context: ./frontend
@@ -54,13 +56,25 @@ jobs:
         with:
           name: ${{ needs.frontend-build.outputs.artifact-name }}
           path: ./build
-      
+      #TODO: Handle Auth and upload to respective s3 bucket & do a cloudfront invalidation
       - name: Debug check files
         run: |
           ls -alh
           ls -alh build
 
+  backend-build:
+    uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
+    with:
+      context: .
+      build_target: prod
+      image_name: ghcr.io/${{ github.repository }}/backend
+      dockerfile: Dockerfile
+      scan_image: false
+    secrets: inherit
+
   backend-test:
+    needs: 
+      - backend-build
     uses: naxa-developers/tasking-manager/.github/workflows/test_compose.yml@ci-gh-workflows
     with:
       image_name: ghcr.io/${{ github.repository }}/backend
@@ -73,31 +87,23 @@ jobs:
       # TODO: Compose command to be updated once dev have test setup running. For now just a simple curl command.
       compose_command: curl -i http://localhost:5000/api/v2/
       tag_override: ci-${{ github.ref_name }}
-      # coverage: true
+      run_tests: true
+      coverage: false
+      playwright: false
       example_env_file_path: example.env
       env_file_path: tasking-manager.env
     secrets: inherit
-
-  backend-build:
-    uses: hotosm/gh-workflows/.github/workflows/image_build.yml@2.0.5
-    with:
-      context: .
-      build_target: prod
-      image_name: ghcr.io/${{ github.repository }}/backend
-      dockerfile: Dockerfile
-      scan_image: false
-    secrets: inherit
-        
+  
   backup-database:
     runs-on: ubuntu-latest
     needs: 
-      - backend-build
       - backend-test
     name: Backup Database before deployment
     steps:
       - name: Create Snapshot
         run:
           echo " TODO Database backup Steps; See CircleCI"
+          # See https://app.circleci.com/pipelines/github/hotosm/tasking-manager/11487/workflows/e98ba643-5812-4b2a-a09f-cc499285b3cc/jobs/23599
     #TODO: Check circleci for references
       
   backend_deploy_to_vm:
