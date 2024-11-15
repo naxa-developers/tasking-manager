@@ -85,7 +85,7 @@ jobs:
       compose_service: tm-backend
       build_target: prod
       # TODO: Compose command to be updated once dev have test setup running. For now just a simple curl command.
-      compose_command: curl -i http://localhost:5000/api/v2/
+      compose_command: curl -i http://localhost:5000/api/v2/system/heartbeat/
       tag_override: ci-${{ github.ref_name }}
       run_tests: true
       coverage: false
