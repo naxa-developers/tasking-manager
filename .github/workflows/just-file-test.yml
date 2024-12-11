@@ -1,0 +1,27 @@
+name: Just CI Workflow
+
+on:
+  push:
+    branches:
+      - feat-justfile
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: extractions/setup-just@v2
+        with:
+          just-version: '1.37.0'
+
+      # Step 3: Run backend functional tests
+      - name: Run backend functional tests
+        run: just backend-functional-tests
+
+      # Step 4: Run backend code checks
+      - name: Run backend code checks
+        run: just backend-code-check

@@ -54,11 +54,13 @@ backend-functional-tests:
     "$POSTGRES_IMAGE"
 
   # Build the backend image with a unique name
-  echo "Building backend image: $BACKEND_IMAGE"
   docker build -t "$BACKEND_IMAGE" .
 
+  docker inspect $POSTGRES_CONTAINER_NAME
+  docker network ls
+  docker exec $POSTGRES_CONTAINER_NAME env
+
   # Run the backend container with a unique name
-  echo "Running backend container: $BACKEND_CONTAINER_NAME"
   docker run --rm --name "$BACKEND_CONTAINER_NAME" \
     -e SQLALCHEMY_DATABASE_URI="postgresql://taskingmanager:$POSTGRES_PASSWORD@$POSTGRES_CONTAINER_NAME/test_tm" \
     -e POSTGRES_TEST_DB="test_tm" \
