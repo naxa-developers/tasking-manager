@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -8,6 +8,8 @@ import { Button } from '../button';
 import { StateContext } from '../../views/projectEdit';
 import { PencilIcon, WasteIcon, ExternalLinkIcon } from '../svgIcons';
 import { useFetchWithAbort } from '../../hooks/UseFetch';
+
+const globalValidatorPermissions = ['TEAMS', 'TEAMS_LEVEL'];
 
 export const TeamSelect = () => {
   const intl = useIntl();
@@ -20,6 +22,8 @@ export const TeamSelect = () => {
   const { projectInfo, setProjectInfo } = useContext(StateContext);
   const [teamSelect, setTeamSelect] = useState(nullState);
   const [org, setOrg] = useState(null);
+  // for tracking if hotGlobalValidatorTeam is added to the team by default
+  const isGlobalValidatorAdded = useRef(false);
 
   const [, isOrganisationsLoading, organisationsData] = useFetchWithAbort(
     'organisations/?omitManagerList=true',
@@ -64,6 +68,33 @@ export const TeamSelect = () => {
     setProjectInfo({ ...projectInfo, teams: teams });
     setTeamSelect(nullState);
   };
+
+  // Add hotGlobalValidatorTeam as default for validationPermission set to
+  // 'Only team members' or 'Only intermediate and advanced team members'
+  useEffect(() => {
+    // prevent adding hotGlobalValidatorTeam multiple times
+    if (isGlobalValidatorAdded.current) return;
+    // check if hotGlobalValidatorTeam should be added or not
+    if (!globalValidatorPermissions.includes(projectInfo.validationPermission)) return;
+    // do not add hotGlobalValidatorTeam if already present
+    if (projectInfo.teams.some((team) => team.name === 'HOT Global Validators')) return;
+    const globalValidatorTeam = teamsData.teams.find(
+      (team) => team.name === 'HOT Global Validators',
+    );
+    // return if no globalValidatorTeam found
+    if (!globalValidatorTeam) return;
+    const hotGlobalValidatorTeam = {
+      teamId: globalValidatorTeam.teamId,
+      name: globalValidatorTeam.name,
+      role: 'VALIDATOR',
+    };
+    setProjectInfo({
+      ...projectInfo,
+      teams: [hotGlobalValidatorTeam, ...projectInfo.teams],
+    });
+    // set isGlobalValidatorAdded to true
+    isGlobalValidatorAdded.current = true;
+  }, [projectInfo, setProjectInfo, teamsData]);
 
   const updateTeam = () => {
     const teams = projectInfo.teams.map((t) => {
