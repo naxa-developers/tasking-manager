@@ -27,6 +27,7 @@ const baseCdnUrl = `https://cdn.jsdelivr.net/npm/${rapidPackage.name}@~${rapidPa
  * @return {boolean} true if they are semantically equal
  */
 function equalsUrlParameters(first, second) {
+  console.log();
   if (first.size === second.size) {
     for (const [key, value] of first) {
       if (!second.has(key) || second.get(key) !== value) {

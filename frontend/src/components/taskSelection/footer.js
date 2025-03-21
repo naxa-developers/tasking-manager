@@ -132,6 +132,10 @@ const TaskSelectionFooter = ({
         locale,
       );
       const endpoint = taskAction === 'resumeMapping' ? 'map' : 'validate';
+      // fix this
+      // http://127.0.0.1:3000/projects/23/tasks?page=1
+      console.log(`/projects/${project.projectId}/${endpoint}/${urlParams}`, 'urlParamsx');
+      return;
       navigate(`/projects/${project.projectId}/${endpoint}/${urlParams}`);
     }
   };
