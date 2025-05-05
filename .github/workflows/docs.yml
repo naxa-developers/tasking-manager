@@ -1,0 +1,90 @@
+name: 📖 Publish Docs
+
+on:
+  push:
+    paths:
+      - docs/**
+      - src/**
+      - mkdocs.yml
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build_doxygen:
+    uses: hotosm/gh-workflows/.github/workflows/doxygen_build.yml@3.2.0
+    with:
+      output_path: docs/apidocs
+
+  build_openapi_json:
+    name: Build OpenAPI JSON
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/hotosm/tasking-manager-backend:${{ github.ref_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Load Environment Variables
+        uses: hotosm/gh-workflows/.github/actions/vars_n_secret_to_env@main
+        with:
+          vars_context: ${{ toJson(vars) }}
+          secrets_context: ${{ toJson(secrets) }}
+
+      - name: Create .env File
+        uses: hotosm/gh-workflows/.github/actions/env_substitute@main
+        with:
+          working_directory: "."
+          template_dotenv: "example.env"
+          output_file: ".env"
+
+      - name: Build OpenAPI JSON
+        run: |
+          docker run --rm --name docs --volume /tmp:/tmp --env-file .env -d --entrypoint sleep ${{ env.IMAGE }} infinity
+
+          docker exec -i docs python - <<EOF
+          """Get OpenAPI config from FastAPI and write to file."""
+
+          import os
+          import json
+          from pathlib import Path
+
+          from fastapi.openapi.utils import get_openapi
+          from dotenv import load_dotenv
+
+          load_dotenv(Path(".env"))
+
+          from backend.main import api
+
+
+          with open(Path("/tmp/openapi.json"), "w") as f:
+              openapi = get_openapi(
+                  title=api.title,
+                  version=api.version,
+                  openapi_version=api.openapi_version,
+                  description=api.description,
+                  routes=api.routes,
+                  tags=api.openapi_tags,
+                  servers=api.servers,
+                  terms_of_service=api.terms_of_service,
+                  contact=api.contact,
+                  license_info=api.license_info,
+              )
+              json.dump(openapi, f, separators=(",", ":"))
+          EOF
+
+      - name: Upload Artifact Dir
+        uses: actions/upload-artifact@v4
+        with:
+          path: /tmp/openapi.json
+          name: openapi
+
+  publish_docs:
+    uses: hotosm/gh-workflows/.github/workflows/mkdocs_build.yml@3.2.0
+    needs:
+      - build_doxygen
+      - build_openapi_json
+    with:
+      doxygen: true
+      openapi: true
