@@ -6,8 +6,6 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import WebglUnsupported from '../webglUnsupported';
-import isWebglSupported from '../../utils/isWebglSupported';
 import useSetRTLTextPlugin from '../../utils/useSetRTLTextPlugin';
 import messages from './messages';
 import { MAPBOX_TOKEN, TASK_COLOURS, MAP_STYLE } from '../../config';
@@ -52,18 +50,16 @@ export const TasksMap = ({
     /* May be able to refactor this to just take
      * advantage of useRef instead inside other useLayoutEffect() */
     /* I referenced this initially https://philipprost.com/how-to-use-mapbox-gl-with-react-functional-component/ */
-    isWebglSupported() &&
-      setMapObj(
-        new maplibregl.Map({
-          container: mapRef.current,
-          style: MAP_STYLE,
-          center: [0, 0],
-          zoom: 1,
-          attributionControl: false,
-        })
-          .addControl(new maplibregl.AttributionControl({ compact: false }))
-          .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage })),
-      );
+    const mapInstance = new maplibregl.Map({
+      container: mapRef.current,
+      style: MAP_STYLE,
+      center: [0, 0],
+      zoom: 1,
+      attributionControl: false,
+    });
+    mapInstance.addControl(new maplibregl.AttributionControl({ compact: false }));
+    mapInstance.addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage }));
+    setMapObj(mapInstance);
 
     return () => {
       map && map.remove();
@@ -496,18 +492,14 @@ export const TasksMap = ({
     intl,
   ]);
 
-  if (!isWebglSupported()) {
-    return <WebglUnsupported className={`w-100 h-100 fr ${className || ''}`} />;
-  } else {
-    return (
-      <>
-        {showTaskIds && hoveredTaskId && (
-          <div className="absolute top-1 left-1 bg-red white base-font fw8 f5 ph3 pv2 z-5 mr2">
-            <FormattedMessage {...messages.taskId} values={{ id: hoveredTaskId }} />
-          </div>
-        )}
-        <div id="map" className={className} ref={mapRef}></div>
-      </>
-    );
-  }
+  return (
+    <>
+      {showTaskIds && hoveredTaskId && (
+        <div className="absolute top-1 left-1 bg-red white base-font fw8 f5 ph3 pv2 z-5 mr2">
+          <FormattedMessage {...messages.taskId} values={{ id: hoveredTaskId }} />
+        </div>
+      )}
+      <div id="map" className={className} ref={mapRef}></div>
+    </>
+  );
 };

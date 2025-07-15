@@ -24,7 +24,6 @@ import NavButtons from './navButtons';
 import Review from './review';
 import { Alert } from '../alert';
 import { makeGrid } from '../../utils/taskGrid';
-import isWebglSupported from '../../utils/isWebglSupported';
 import { MAX_AOI_AREA } from '../../config';
 import {
   verifyGeometry,
@@ -303,54 +302,50 @@ const ProjectCreate = () => {
             showProjectsAOILayer={showProjectsAOILayer}
           />
         </Suspense>
-        {isWebglSupported() && (
-          <>
-            <div className="cf absolute bg-white o-90 top-1 left-1 pa3 mw6">
-              {cloneFromId && (
-                <p className="fw6 pv2 blue-grey">
-                  <FormattedMessage
-                    {...messages.cloneProject}
-                    values={{ id: cloneFromId, name: cloneProjectName }}
-                  />
-                </p>
-              )}
-              <div className="pb2">{renderCurrentStep()}</div>
-              {err.error === true && <Alert type="error">{err.message}</Alert>}
-              <NavButtons
-                index={step}
-                setStep={setStep}
-                metadata={metadata}
-                mapObj={mapObj}
-                updateMetadata={updateMetadata}
-                maxArea={MAX_AOI_AREA}
-                setErr={setErr}
-                cloneProjectData={cloneProjectData}
-                handleCreate={() => handleCreate(cloneProjectData)}
+        <div className="cf absolute bg-white o-90 top-1 left-1 pa3 mw6">
+          {cloneFromId && (
+            <p className="fw6 pv2 blue-grey">
+              <FormattedMessage
+                {...messages.cloneProject}
+                values={{ id: cloneFromId, name: cloneProjectName }}
               />
-            </div>
-            <div className="cf absolute" style={{ bottom: '3.5rem', left: '0.6rem' }}>
-              <p
-                className={`fl mr2 pa1 f7-ns white ${
-                  metadata.area > MAX_AOI_AREA || metadata.area === 0 ? 'bg-red' : 'bg-green'
-                }`}
-              >
-                <FormattedMessage
-                  {...messages.areaSize}
-                  values={{
-                    area: <FormattedNumber value={metadata.area} unit="kilometer" />,
-                    sq: <sup>2</sup>,
-                  }}
-                />
-              </p>
-              <p className="fl bg-blue-light white mr2 pa1 f7-ns">
-                <FormattedMessage
-                  {...messages.taskNumber}
-                  values={{ n: <FormattedNumber value={metadata.tasksNumber} /> }}
-                />
-              </p>
-            </div>
-          </>
-        )}
+            </p>
+          )}
+          <div className="pb2">{renderCurrentStep()}</div>
+          {err.error === true && <Alert type="error">{err.message}</Alert>}
+          <NavButtons
+            index={step}
+            setStep={setStep}
+            metadata={metadata}
+            mapObj={mapObj}
+            updateMetadata={updateMetadata}
+            maxArea={MAX_AOI_AREA}
+            setErr={setErr}
+            cloneProjectData={cloneProjectData}
+            handleCreate={() => handleCreate(cloneProjectData)}
+          />
+        </div>
+        <div className="cf absolute" style={{ bottom: '3.5rem', left: '0.6rem' }}>
+          <p
+            className={`fl mr2 pa1 f7-ns white ${
+              metadata.area > MAX_AOI_AREA || metadata.area === 0 ? 'bg-red' : 'bg-green'
+            }`}
+          >
+            <FormattedMessage
+              {...messages.areaSize}
+              values={{
+                area: <FormattedNumber value={metadata.area} unit="kilometer" />,
+                sq: <sup>2</sup>,
+              }}
+            />
+          </p>
+          <p className="fl bg-blue-light white mr2 pa1 f7-ns">
+            <FormattedMessage
+              {...messages.taskNumber}
+              values={{ n: <FormattedNumber value={metadata.tasksNumber} /> }}
+            />
+          </p>
+        </div>
       </div>
     </div>
   );

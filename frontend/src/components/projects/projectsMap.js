@@ -3,8 +3,6 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
-import WebglUnsupported from '../webglUnsupported';
-import isWebglSupported from '../../utils/isWebglSupported';
 import useSetRTLTextPlugin from '../../utils/useSetRTLTextPlugin';
 import { MAPBOX_TOKEN, MAP_STYLE } from '../../config';
 import mapMarker from '../../assets/img/mapMarker.png';
@@ -119,18 +117,17 @@ export const ProjectsMap = ({ mapResults, fullProjectsQuery, setQuery, className
      https://github.com/openmaptiles/fonts/tree/gh-pages/Open%20Sans%20Regular */
 
     /* I referenced this initially https://philipprost.com/how-to-use-mapbox-gl-with-react-functional-component/ */
-    isWebglSupported() &&
-      setMapObj(
-        new maplibregl.Map({
-          container: mapRef.current,
-          style: MAP_STYLE,
-          center: [0, 0],
-          zoom: 0.5,
-          attributionControl: false,
-        })
-          .addControl(new maplibregl.AttributionControl({ compact: false }))
-          .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage })),
-      );
+    setMapObj(
+      new maplibregl.Map({
+        container: mapRef.current,
+        style: MAP_STYLE,
+        center: [0, 0],
+        zoom: 0.5,
+        attributionControl: false,
+      })
+        .addControl(new maplibregl.AttributionControl({ compact: false }))
+        .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage })),
+    );
 
     return () => {
       map && map.remove();
@@ -167,9 +164,5 @@ export const ProjectsMap = ({ mapResults, fullProjectsQuery, setQuery, className
     }
   }, [map, mapResults, clickOnProjectID]);
 
-  if (!isWebglSupported()) {
-    return <WebglUnsupported className={`h-100 w-100  ${className || ''}`} />;
-  } else {
-    return <div id="map" className={`h-100 w-100 ${className || ''}`} ref={mapRef}></div>;
-  }
+  return <div id="map" className={`h-100 w-100 ${className || ''}`} ref={mapRef}></div>;
 };

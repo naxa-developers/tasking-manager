@@ -14,11 +14,9 @@ import useMapboxSupportedLanguage from '../../hooks/UseMapboxSupportedLanguage';
 import { MAPBOX_TOKEN, MAP_STYLE, CHART_COLOURS, TASK_COLOURS } from '../../config';
 import { fetchLocalJSONAPI } from '../../network/genericJSONRequest';
 import { useDebouncedCallback } from '../../hooks/UseThrottle';
-import isWebglSupported from '../../utils/isWebglSupported';
 import useSetRTLTextPlugin from '../../utils/useSetRTLTextPlugin';
 import { BasemapMenu } from '../basemapMenu';
 import { ProjectsAOILayerCheckBox } from './projectsAOILayerCheckBox';
-import WebglUnsupported from '../webglUnsupported';
 
 maplibregl.accessToken = MAPBOX_TOKEN;
 
@@ -71,7 +69,6 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
   }, [showProjectsAOILayer, debouncedGetProjectsAOI, clearProjectsAOI, step]);
 
   useLayoutEffect(() => {
-    if (!isWebglSupported()) return;
     const map = new maplibregl.Map({
       container: mapRef.current,
       style: MAP_STYLE,
@@ -227,7 +224,7 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
   }, [mapObj, existingProjectsList]);
 
   useLayoutEffect(() => {
-    if (mapObj.map !== null && isWebglSupported()) {
+    if (mapObj.map !== null) {
       mapObj.map.on('moveend', (event) => {
         debouncedGetProjectsAOI();
       });
@@ -235,7 +232,7 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
   });
 
   useLayoutEffect(() => {
-    if (mapObj.map !== null && isWebglSupported()) {
+    if (mapObj.map !== null) {
       mapObj.map.on('load', () => {
         mapObj.map.addControl(new maplibregl.NavigationControl());
         mapObj.map.addControl(mapObj.draw);
@@ -275,27 +272,23 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
     }
   }, [mapObj, metadata, updateMetadata, step]);
 
-  if (!isWebglSupported()) {
-    return <WebglUnsupported className="vh-50 h-100-l w-100" />;
-  } else {
-    return (
-      <div className="w-100 h-100-l relative" {...getRootProps()}>
-        <div className="absolute top-0 right-0 z-5 mr2">
-          {step === 1 && (
-            <ProjectsAOILayerCheckBox
-              isActive={showProjectsAOILayer}
-              setActive={setShowProjectsAOILayer}
-              disabled={!aoiCanBeActivated}
-              isAoiLoading={isAoiLoading}
-            />
-          )}
-          <BasemapMenu map={mapObj.map} />
-          <input className="dn" {...getInputProps()} />
-        </div>
-        <div id="project-creation-map" className="vh-50 h-100-l w-100" ref={mapRef}></div>
+  return (
+    <div className="w-100 h-100-l relative" {...getRootProps()}>
+      <div className="absolute top-0 right-0 z-5 mr2">
+        {step === 1 && (
+          <ProjectsAOILayerCheckBox
+            isActive={showProjectsAOILayer}
+            setActive={setShowProjectsAOILayer}
+            disabled={!aoiCanBeActivated}
+            isAoiLoading={isAoiLoading}
+          />
+        )}
+        <BasemapMenu map={mapObj.map} />
+        <input className="dn" {...getInputProps()} />
       </div>
-    );
-  }
+      <div id="project-creation-map" className="vh-50 h-100-l w-100" ref={mapRef}></div>
+    </div>
+  );
 };
 
 export default ProjectCreationMap;

@@ -6,6 +6,7 @@ import { server } from './network/tests/server.js';
 // Used from https://github.com/mapbox/mapbox-gl-js/issues/3436#issuecomment-485535598
 jest.mock('maplibre-gl/dist/maplibre-gl', () => ({
   GeolocateControl: jest.fn(),
+  AttributionControl: jest.fn(),
   Map: jest.fn(() => ({
     addControl: jest.fn(),
     addSource: jest.fn(),

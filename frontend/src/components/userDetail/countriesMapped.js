@@ -8,8 +8,6 @@ import messages from './messages';
 import { MAPBOX_TOKEN, MAP_STYLE } from '../../config';
 import { maplibreLayerDefn } from '../projects/projectsMap';
 import { BarListChart } from './barListChart';
-import WebglUnsupported from '../webglUnsupported';
-import isWebglSupported from '../../utils/isWebglSupported';
 import useSetRTLTextPlugin from '../../utils/useSetRTLTextPlugin';
 import useMapboxSupportedLanguage from '../../hooks/UseMapboxSupportedLanguage';
 
@@ -25,18 +23,17 @@ const UserCountriesMap = ({ projects }) => {
   useSetRTLTextPlugin();
 
   useLayoutEffect(() => {
-    isWebglSupported() &&
-      setMap(
-        new maplibregl.Map({
-          container: mapRef.current,
-          style: MAP_STYLE,
-          center: [0, 0],
-          zoom: 0.5,
-          attributionControl: false,
-        })
-          .addControl(new maplibregl.AttributionControl({ compact: false }))
-          .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage })),
-      );
+    setMap(
+      new maplibregl.Map({
+        container: mapRef.current,
+        style: MAP_STYLE,
+        center: [0, 0],
+        zoom: 0.5,
+        attributionControl: false,
+      })
+        .addControl(new maplibregl.AttributionControl({ compact: false }))
+        .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage })),
+    );
 
     return () => {
       map && map.remove();
@@ -57,11 +54,7 @@ const UserCountriesMap = ({ projects }) => {
     }
   }, [map, navigate, projects.mappedProjects]);
 
-  if (!isWebglSupported()) {
-    return <WebglUnsupported className="w-two-thirds-l w-100 h-100 fl" />;
-  } else {
-    return <div id="map" className="w-two-thirds-l w-100 h-100 fl" ref={mapRef}></div>;
-  }
+  return <div id="map" className="w-two-thirds-l w-100 h-100 fl" ref={mapRef}></div>;
 };
 
 export const CountriesMapped = ({ projects, userStats }) => {

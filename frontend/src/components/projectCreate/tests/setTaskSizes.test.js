@@ -8,16 +8,19 @@ import { IntlProviders } from '../../../utils/testWithIntl';
 
 jest.mock('maplibre-gl/dist/maplibre-gl', () => ({
   GeolocateControl: jest.fn(),
-  Map: jest.fn(() => ({
+  AttributionControl: jest.fn(),
+  Map: jest.fn().mockImplementation(() => ({
     addControl: jest.fn(),
-    on: jest.fn(),
-    remove: jest.fn(),
-    getSource: jest.fn(),
-    fitBounds: jest.fn(),
-    off: jest.fn(),
     addSource: jest.fn(),
+    getSource: jest.fn(),
+    on: jest.fn(),
+    off: jest.fn(),
+    remove: jest.fn(),
   })),
+  addControl: jest.fn(),
   NavigationControl: jest.fn(),
+  supported: jest.fn(),
+  getRTLTextPluginStatus: jest.fn(),
 }));
 
 const map = new maplibregl.Map({
