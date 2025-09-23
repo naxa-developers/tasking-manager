@@ -1,13 +1,10 @@
 import { useState } from 'react';
 
-import { MAPBOX_TOKEN, BASEMAP_OPTIONS } from '../config';
+import { BASEMAP_OPTIONS } from '../config';
 
 export const BasemapMenu = ({ map }) => {
   // Remove elements that require mapbox token;
-  let styles = BASEMAP_OPTIONS;
-  if (!MAPBOX_TOKEN) {
-    styles = BASEMAP_OPTIONS.filter((s) => typeof s.value === 'object');
-  }
+  const styles = BASEMAP_OPTIONS.filter((s) => typeof s.value === 'object');
 
   const [basemap, setBasemap] = useState(styles[0].label);
 

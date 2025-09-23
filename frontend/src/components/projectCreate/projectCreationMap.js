@@ -4,14 +4,13 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { featureCollection } from '@turf/helpers';
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
-import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import { useDropzone } from 'react-dropzone';
 
 import { maplibreLayerDefn } from '../projects/projectsMap';
 import useMapboxSupportedLanguage from '../../hooks/UseMapboxSupportedLanguage';
 
-import { MAPBOX_TOKEN, MAP_STYLE, CHART_COLOURS, TASK_COLOURS } from '../../config';
+import { MAP_STYLE, CHART_COLOURS, TASK_COLOURS } from '../../config';
 import { fetchLocalJSONAPI } from '../../network/genericJSONRequest';
 import { useDebouncedCallback } from '../../hooks/UseThrottle';
 import isWebglSupported from '../../utils/isWebglSupported';
@@ -19,8 +18,6 @@ import useSetRTLTextPlugin from '../../utils/useSetRTLTextPlugin';
 import { BasemapMenu } from '../basemapMenu';
 import { ProjectsAOILayerCheckBox } from './projectsAOILayerCheckBox';
 import WebglUnsupported from '../webglUnsupported';
-
-maplibregl.accessToken = MAPBOX_TOKEN;
 
 const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step, uploadFile }) => {
   const mapRef = createRef();
@@ -82,18 +79,6 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
       .addControl(new maplibregl.AttributionControl({ compact: false }))
       .addControl(new MapboxLanguage({ defaultLanguage: mapboxSupportedLanguage }))
       .addControl(new maplibregl.ScaleControl({ unit: 'metric' }));
-    if (MAPBOX_TOKEN) {
-      map.addControl(
-        new MaplibreGeocoder({
-          accessToken: MAPBOX_TOKEN,
-          maplibregl,
-          marker: false,
-          collapsed: true,
-          language: mapboxSupportedLanguage,
-        }),
-        'top-right',
-      );
-    }
 
     setMapObj({ ...mapObj, map: map });
     return () => {
@@ -252,24 +237,6 @@ const ProjectCreationMap = ({ mapObj, setMapObj, metadata, updateMetadata, step,
           setAOICanBeActivated(false);
         } else {
           setAOICanBeActivated(true);
-        }
-      });
-
-      mapObj.map.on('style.load', (event) => {
-        if (!MAPBOX_TOKEN) {
-          return;
-        }
-        addMapLayers(mapObj.map);
-        const features = mapObj.draw.getAll();
-        if (features.features.length === 0 && mapObj.map.getSource('aoi') !== undefined) {
-          mapObj.map.getSource('aoi').setData(metadata.geom);
-        }
-
-        if (metadata.taskGrid && step !== 1 && mapObj.map.getSource('grid') !== undefined) {
-          mapObj.map.getSource('grid').setData(metadata.taskGrid);
-        } else {
-          mapObj.map.getSource('grid') &&
-            mapObj.map.getSource('grid').setData(featureCollection([]));
         }
       });
     }
