@@ -305,8 +305,20 @@ class MessageService:
                 "pre",
                 "strong",
                 "ul",
+                "pre",
+                "table",
+                "thead",
+                "tbody",
+                "tr",
+                "td",
+                "iframe",
+                "input",
             ]
-            allowed_attributes = {"a": ["href", "rel"], "img": ["src", "alt"]}
+            allowed_attributes = {
+                "a": ["href", "rel"],
+                "img": ["src", "alt"],
+                "iframe": ["width", "height", "src", "title"],
+            }
 
             # Convert comment to HTML using markdown and sanitize it with bleach
             clean_comment = bleach.clean(
