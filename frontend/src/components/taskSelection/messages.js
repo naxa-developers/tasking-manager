@@ -866,4 +866,36 @@ export default defineMessages({
     id: 'project.detail.sandbox.tooltip',
     defaultMessage: 'This is a training project. Edits will not be saved to OpenStreetMap.',
   },
+  invalidationChoropleth: {
+    id: 'project.tasks.map.invalidationChoropleth',
+    defaultMessage: 'Legend',
+  },
+  invalidationChoroplethToggle: {
+    id: 'project.tasks.map.invalidationChoropleth.toggle',
+    defaultMessage: 'Show invalidation heatmap',
+  },
+  invalidationChoroplethLegendTitle: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.title',
+    defaultMessage: 'Invalidation count',
+  },
+  invalidationChoroplethNone: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.none',
+    defaultMessage: 'Never invalidated',
+  },
+  invalidationChoroplethLow: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.low',
+    defaultMessage: '1–2 times',
+  },
+  invalidationChoroplethMedium: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.medium',
+    defaultMessage: '3–5 times',
+  },
+  invalidationChoroplethHigh: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.high',
+    defaultMessage: '6+ times',
+  },
+  invalidationChoroplethRampHint: {
+    id: 'project.tasks.map.invalidationChoropleth.legend.rampHint',
+    defaultMessage: 'Colour blends continuously between stops',
+  },
 });
