@@ -213,6 +213,15 @@ export const router = createBrowserRouter(
           return { Component: NotificationsPage };
         }}
       />
+      <Route
+        path="chat"
+        lazy={async () => {
+          const { RagChatView } = await import(
+            './views/ragChat' /* webpackChunkName: "ragChat" */
+          );
+          return { Component: RagChatView };
+        }}
+      />
       <Route path="authorized" element={<Authorized />} />
       <Route
         path="login"

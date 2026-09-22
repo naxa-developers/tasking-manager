@@ -49,6 +49,7 @@ from backend.models.dtos.project_dto import (
     ProjectSearchDTO,
     ProjectStatsDTO,
     ProjectSummary,
+    ProjectTaskAggregatesDTO,
     ProjectTeamDTO,
     ProjectUserStatsDTO,
 )
@@ -1178,6 +1179,36 @@ class Project(Base):
         stats_dto.time_spent_validating = total_validation_time
         stats_dto.total_time_spent += total_validation_time
         return stats_dto
+
+    @staticmethod
+    async def get_task_aggregates(
+        project_id: int, database: Database
+    ) -> ProjectTaskAggregatesDTO:
+        """Light read-only task aggregates for a project.
+
+        Returns project_id + the four task counters only. Used by TMBot's live
+        stats tool, which needs none of the area/centroid, mapper/comment
+        counts, or task_history time SUMs that get_project_stats computes for
+        the project UI. Raises NotFound when the project row is gone.
+        """
+        query = """
+            SELECT tasks_mapped, tasks_validated, total_tasks, tasks_bad_imagery
+            FROM projects
+            WHERE id = :project_id
+        """
+        result = await database.fetch_one(
+            query=query, values={"project_id": project_id}
+        )
+        if result is None:
+            raise NotFound(sub_code="PROJECT_NOT_FOUND", project_id=project_id)
+
+        aggregates = ProjectTaskAggregatesDTO()
+        aggregates.project_id = project_id
+        aggregates.total_tasks = result["total_tasks"]
+        aggregates.tasks_mapped = result["tasks_mapped"]
+        aggregates.tasks_validated = result["tasks_validated"]
+        aggregates.tasks_bad_imagery = result["tasks_bad_imagery"]
+        return aggregates
 
     @staticmethod
     async def get_project_stats(project_id: int, database: Database) -> ProjectStatsDTO:

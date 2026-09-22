@@ -26,8 +26,12 @@ logs/
 .tx/
 
 #python
+.venv/
 venv/
 *pyc
+__pycache__/
+**/__pycache__/
+chat/retrieval/data/chunks.json
 .pdm.toml
 .pdm-python
 __pypackages__/
@@ -79,3 +83,7 @@ scripts/aws/infra/staging/variables.py
 
 # Files
 tests/test_db_dump/tm_sample_db.sql
+
+
+# Local RAG eval outputs (regenerable run artifacts, incl. 1.6MB JSON runs)
+chat/eval/runs/

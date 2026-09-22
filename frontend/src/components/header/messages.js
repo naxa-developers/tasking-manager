@@ -183,4 +183,8 @@ export default defineMessages({
     id: 'project.detail.sandbox',
     defaultMessage: 'Sandbox Mode',
   },
+  chat: {
+    id: 'header.nav.chat',
+    defaultMessage: 'Help Chat',
+  },
 });

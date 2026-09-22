@@ -1,0 +1,18 @@
+# chat — Tasking Manager flat 51
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Secrets — never commit
+retrieval/.env
+.env
+
+# Built sparse source — generate via chunk.py flat 51; keep sample but git-ignore artifact
+retrieval/data/chunks.json
+
+# HF cache warm (1.2GB) — not committed
+# ~/.cache/huggingface/Qwen--Qwen3-Reranker-0.6B
+
+# Runtime
+*.log

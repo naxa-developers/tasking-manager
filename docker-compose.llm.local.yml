@@ -1,0 +1,113 @@
+name: tasking-manager-llm
+
+volumes:
+  llm-models:
+    name: tm-llm-models
+  embedding-models:
+    name: tm-embedding-models
+
+networks:
+  tm-net:
+    name: tm-net
+
+services:
+  llm:
+    image: ghcr.io/ggml-org/llama.cpp:${LLAMA_CPP_TAG:-server}
+    container_name: tm-llm
+    command:
+      - --port
+      - "8000"
+      - --hf-repo
+      - ggml-org/Qwen3-1.7B-GGUF
+      - --hf-file
+      - Qwen3-1.7B-Q4_K_M.gguf
+      - -c
+      - "4096"
+      - --parallel
+      - "1"
+      - --threads
+      - "3"
+      - --load-mode
+      - mlock
+    restart: unless-stopped
+    cpuset: "${LLM_CPUSET:-}"
+    memswap_limit: 4G
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          cpus: "3"
+          memory: 4G
+        reservations:
+          cpus: "2"
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 10s
+      retries: 5
+      start_period: 60s
+      timeout: 5s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - llm-models:/root/.cache/huggingface
+    networks:
+      - tm-net
+
+  embedding:
+    image: ghcr.io/ggml-org/llama.cpp:${LLAMA_CPP_TAG:-server}
+    container_name: tm-embedding
+    command:
+      - --port
+      - "8001"
+      - -hf
+      - Qwen/Qwen3-Embedding-0.6B-GGUF:Q8_0
+      - --embedding
+      - --pooling
+      - last
+      - -c
+      - "2048"
+      - --parallel
+      - "1"
+      - --threads
+      - "1"
+      - --load-mode
+      - mlock
+    restart: unless-stopped
+    cpuset: "${EMBEDDING_CPUSET:-}"
+    memswap_limit: 2G
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8001/health"]
+      interval: 10s
+      retries: 5
+      start_period: 60s
+      timeout: 5s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - embedding-models:/root/.cache/huggingface
+    networks:
+      - tm-net

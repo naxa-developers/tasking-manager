@@ -1,0 +1,64 @@
+/* Tight markdown spacing for TMBot chat bubbles.
+ * Scoped to .rag-markdown so nothing else in the app is affected.
+ * marked emits <p>/<ol>/<ul>/<li> with roomy default margins; these pull the
+ * intro, list and items into the compact look the chat UI had before. */
+.rag-markdown {
+  /* Cancel the bubble's `white-space: pre-wrap` for rendered markdown:
+   * otherwise every newline shows twice (once raw, once via block margins). */
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.rag-markdown > p:first-child {
+  margin-top: 0;
+}
+
+.rag-markdown > :first-child {
+  margin-top: 0;
+}
+
+.rag-markdown > p:last-child,
+.rag-markdown > ol:last-child,
+.rag-markdown > ul:last-child,
+.rag-markdown > pre:last-child,
+.rag-markdown > blockquote:last-child,
+.rag-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.rag-markdown p {
+  margin: 0 0 0.4em;
+}
+
+.rag-markdown ol,
+.rag-markdown ul {
+  margin: 0.3em 0 0.4em;
+  padding-left: 1.3em;
+}
+
+/* Closing line right after a list sits a single space below the final step. */
+.rag-markdown ol:not(:last-child),
+.rag-markdown ul:not(:last-child) {
+  margin-bottom: 0.15em;
+}
+
+.rag-markdown li {
+  margin-bottom: 0.15em;
+}
+
+.rag-markdown li:last-child {
+  margin-bottom: 0;
+}
+
+.rag-markdown a {
+  color: #0074d9;
+}
+
+.rag-markdown pre {
+  margin: 0.4em 0;
+  padding: 0.5em 0.6em;
+  overflow-x: auto;
+}
+
+.rag-markdown code {
+  font-size: 0.92em;
+}

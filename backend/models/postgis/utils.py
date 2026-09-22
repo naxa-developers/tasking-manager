@@ -1,5 +1,7 @@
 import datetime
 import json
+from html import unescape
+
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction
 from loguru import logger
@@ -250,6 +252,22 @@ def sanitize_markdown(text: str | None) -> str | None:
     clean_message = bleach.linkify(clean_message, parse_email=True)
 
     return clean_message
+
+
+def html_to_text(html_content: str) -> str:
+    """Convert HTML to plain text (shared by emails and the RAG evidence path)."""
+    if not html_content:
+        return ""
+    text = re.sub(
+        r"<(style|script)[^>]*>.*?</\1>", "", html_content, flags=re.DOTALL | re.I
+    )
+    text = re.sub(r"<br\s*/?>|</p>|</div>|</tr>|</h[1-6]>", "\n", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = unescape(text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n ", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 class DateTimeEncoder(json.JSONEncoder):

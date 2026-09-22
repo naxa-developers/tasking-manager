@@ -61,6 +61,76 @@ class ProjectService:
         return project
 
     @staticmethod
+    def _project_field(project, name: str):
+        """Read a field off a DB record / ORM object / mapping; None when absent."""
+        try:
+            if isinstance(project, dict):
+                return project.get(name)
+            if hasattr(project, name):
+                return getattr(project, name)
+            try:
+                return project[name]
+            except Exception:
+                return None
+        except Exception:
+            return None
+
+    @staticmethod
+    async def can_user_read_project(project, user_id, db: Database) -> bool:
+        """Shared project visibility gate for the project APIs and the RAG tools.
+
+        Public published projects are readable by anyone. Draft and private
+        projects require the user to be a manager (author/org manager/admin/
+        project-manager team), an allowed user, or a member of an assigned
+        team. Fails closed when the project carries no visibility fields.
+        """
+        private_raw = ProjectService._project_field(project, "private")
+        status_raw = ProjectService._project_field(project, "status")
+        if private_raw is None and status_raw is None:
+            return False
+        status = getattr(status_raw, "value", status_raw)
+        private = bool(private_raw) if private_raw is not None else False
+        if not private and status != ProjectStatus.DRAFT.value:
+            return True
+        if not user_id:
+            return False
+
+        project_id = ProjectService._project_field(project, "id")
+        if project_id is None:
+            project_id = ProjectService._project_field(project, "project_id")
+        try:
+            is_manager = await ProjectAdminService.is_user_action_permitted_on_project(
+                user_id, project_id, db
+            )
+        except Exception:
+            return False
+        if is_manager:
+            return True
+        # Draft projects: managers only.
+        if status == ProjectStatus.DRAFT.value:
+            return False
+        try:
+            if await ProjectService.is_user_in_the_allowed_list(
+                project_id, user_id, db
+            ):
+                return True
+        except Exception:
+            return False
+        try:
+            allowed_roles = [
+                TeamRoles.MAPPER.value,
+                TeamRoles.VALIDATOR.value,
+                TeamRoles.PROJECT_MANAGER.value,
+            ]
+            return bool(
+                await TeamService.check_team_membership(
+                    project_id, allowed_roles, user_id, db
+                )
+            )
+        except Exception:
+            return False
+
+    @staticmethod
     async def exists(project_id: int, db: Database) -> bool:
         # Query to check if the project exists
         query = """
@@ -217,63 +287,15 @@ class ProjectService:
         :raises ProjectServiceError, NotFound
         """
         project = await ProjectService.get_project_by_id(project_id, db)
-        # if project is public and is not draft, we don't need to check permissions
-        if not project.private and not project.status == ProjectStatus.DRAFT.value:
+        # Single visibility predicate shared with the RAG domain tools.
+        if await ProjectService.can_user_read_project(project, current_user_id, db):
             return await Project.as_dto_for_mapping(
                 project.id, db, current_user_id, locale, abbrev
-            )
-
-        is_allowed_user = True
-        is_team_member = None
-        is_manager_permission = False
-
-        if current_user_id:
-            is_manager_permission = (
-                await ProjectAdminService.is_user_action_permitted_on_project(
-                    current_user_id, project_id, db
-                )
             )
         # Draft Projects - admins, authors, org admins & team managers permitted
         if project.status == ProjectStatus.DRAFT.value:
-            if not is_manager_permission:
-                is_allowed_user = False
-                raise ProjectServiceError("ProjectNotFetched- Unable to fetch project")
-
-        # Private Projects - allowed_users, admins, org admins &
-        # assigned teams (mappers, validators, project managers), authors permitted
-
-        if project.private and not is_manager_permission:
-            is_allowed_user = False
-            if current_user_id:
-                # Query to check if the current user is an allowed user for the project
-                allowed_user_check_query = """
-                    SELECT 1
-                    FROM project_allowed_users pau
-                    WHERE pau.project_id = :project_id AND pau.user_id = :user_id
-                """
-                result = await db.fetch_one(
-                    allowed_user_check_query,
-                    {"project_id": project.id, "user_id": current_user_id},
-                )
-                is_allowed_user = result is not None
-
-        if not (is_allowed_user or is_manager_permission):
-            if current_user_id:
-                allowed_roles = [
-                    TeamRoles.MAPPER.value,
-                    TeamRoles.VALIDATOR.value,
-                    TeamRoles.PROJECT_MANAGER.value,
-                ]
-                is_team_member = await TeamService.check_team_membership(
-                    project.id, allowed_roles, current_user_id, db
-                )
-
-        if is_allowed_user or is_manager_permission or is_team_member:
-            return await Project.as_dto_for_mapping(
-                project.id, db, current_user_id, locale, abbrev
-            )
-        else:
-            return None
+            raise ProjectServiceError("ProjectNotFetched- Unable to fetch project")
+        return None
 
     @staticmethod
     async def get_project_tasks(

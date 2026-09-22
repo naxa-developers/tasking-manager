@@ -1,6 +1,4 @@
-import re
 import urllib.parse
-from html import unescape
 
 from databases import Database
 from fastapi_mail import MessageSchema, MessageType
@@ -13,26 +11,11 @@ from backend import mail
 from backend.config import settings
 from backend.models.postgis.message import Message as PostgisMessage
 from backend.models.postgis.statuses import EncouragingEmailType
+from backend.models.postgis.utils import html_to_text
 from backend.services.messaging.template_service import (
     format_username_link,
     get_template,
 )
-
-
-def html_to_text(html_content: str) -> str:
-    """Convert HTML to plain text for email alternative body."""
-    if not html_content:
-        return ""
-    text = re.sub(
-        r"<(style|script)[^>]*>.*?</\1>", "", html_content, flags=re.DOTALL | re.I
-    )
-    text = re.sub(r"<br\s*/?>|</p>|</div>|</tr>|</h[1-6]>", "\n", text, flags=re.I)
-    text = re.sub(r"<[^>]+>", "", text)
-    text = unescape(text)
-    text = re.sub(r"[ \t]+", " ", text)
-    text = re.sub(r"\n ", "\n", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
 
 
 class SMTPService:

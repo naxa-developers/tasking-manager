@@ -384,6 +384,7 @@ class ProjectSearchDTO(BaseModel):
     last_updated_gte: Optional[str] = None
     created_lte: Optional[str] = None
     created_gte: Optional[str] = None
+    due_date_lte: Optional[str] = None
     partner_id: Optional[int] = None
     partnership_from: Optional[str] = None
     partnership_to: Optional[str] = None
@@ -634,6 +635,19 @@ class ProjectStatsDTO(BaseModel):
     time_to_finish_validating: Optional[int] = Field(
         None, alias="timeToFinishValidating"
     )
+
+    class Config:
+        populate_by_name = True
+
+
+class ProjectTaskAggregatesDTO(BaseModel):
+    """Light read-only task counters for a project (TMBot live stats)."""
+
+    project_id: Optional[int] = Field(None, alias="projectId")
+    total_tasks: Optional[int] = Field(None, alias="totalTasks")
+    tasks_mapped: Optional[int] = Field(None, alias="tasksMapped")
+    tasks_validated: Optional[int] = Field(None, alias="tasksValidated")
+    tasks_bad_imagery: Optional[int] = Field(None, alias="tasksBadImagery")
 
     class Config:
         populate_by_name = True

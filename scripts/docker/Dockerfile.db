@@ -1,0 +1,17 @@
+# tm-db — postgis + pgvector (single DB, TMBot kb_nodes).
+#
+# The rag chat tables migration runs CREATE EXTENSION vector, and chat/retrieval
+# PGVectorStore needs the vector type. The stock postgis/postgis image does
+# not bundle pgvector, so it is installed here from the PGDG apt repository
+# already present in the postgres base image.
+ARG POSTGIS_TAG=14-3.3
+FROM postgis/postgis:${POSTGIS_TAG}
+
+# PGDG packages pgvector as postgresql-<major>-pgvector. PG_MAJOR is set by
+# the postgres/postgis base image (e.g. 14), so this stays in sync with
+# POSTGIS_TAG without hardcoding the major version here.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends "postgresql-${PG_MAJOR}-pgvector" \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*

@@ -42,6 +42,7 @@ from backend.api.users import openstreetmap as users_openstreetmap
 from backend.api.users import resources as user_resources
 from backend.api.users import statistics as user_statistics
 from backend.api.users import tasks as users_tasks
+from chat.api import resources as rag_resources
 
 v2 = APIRouter(prefix="/api/v2")
 
@@ -118,5 +119,8 @@ def add_api_end_points(api):
     v2.include_router(issue_resources.router)
     v2.include_router(partners_resources.router)
     v2.include_router(partners_statistics.router)
+
+    # RAG Chat — single-voice TMBot (lives in chat/, mounted here)
+    v2.include_router(rag_resources.router)
 
     api.include_router(v2)

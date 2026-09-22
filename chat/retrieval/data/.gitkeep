@@ -1,0 +1,5 @@
+# Placeholder: flat 51 chunks.json (sparse source, BM25 even after pgvector filled)
+# Build with:
+#   python chat/retrieval/chunk.py --kb chat/knowledge-base --write chat/retrieval/data/chunks.json --sample 5
+# Shape: {"count": 51, "chunks": [{"id": "chat/knowledge-base/general/03-task-states...#h=anchor#0", "text": "...", "metadata": {...}}, ...]}
+# Ground-up import: python chat/retrieval/scripts/index_kb.py --chunks chat/retrieval/data/chunks.json --table kb_nodes

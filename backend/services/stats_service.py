@@ -578,6 +578,65 @@ class StatsService:
         return dto
 
     @staticmethod
+    async def get_rag_global_stats(db: Database) -> dict:
+        """Read-only site-wide counters for RAG chat (no cache, no writes)."""
+        mapped_states = (TaskStatus.MAPPED.value, TaskStatus.VALIDATED.value)
+        total_users = await db.fetch_val(select(func.count(User.id)))
+        total_projects = await db.fetch_val(select(func.count(Project.id)))
+        mappers_online = await db.fetch_val(
+            select(func.count(Task.locked_by.distinct())).where(
+                Task.locked_by.isnot(None)
+            )
+        )
+        tasks_mapped = await db.fetch_val(
+            select(func.count()).where(Task.task_status.in_(mapped_states))
+        )
+        tasks_validated = await db.fetch_val(
+            select(func.count()).where(Task.task_status == TaskStatus.VALIDATED.value)
+        )
+        total_validators = await db.fetch_val(
+            select(func.count(Task.validated_by.distinct())).where(
+                Task.task_status == TaskStatus.VALIDATED.value
+            )
+        )
+        total_organisations = await db.fetch_val(select(func.count(Organisation.id)))
+        total_campaigns = await db.fetch_val(select(func.count(Campaign.id)))
+        org_rows = await db.fetch_all(
+            select(Organisation.name, func.count(Project.organisation_id))
+            .join(Project.organisation)
+            .group_by(Organisation.id)
+            .order_by(func.count(Project.organisation_id).desc())
+            .limit(10)
+        )
+        campaign_rows = await db.fetch_all(
+            select(Campaign.name, func.count())
+            .join(
+                campaign_projects,
+                Campaign.id == campaign_projects.c.campaign_id,
+            )
+            .group_by(Campaign.id)
+            .order_by(func.count().desc())
+            .limit(10)
+        )
+        return {
+            "total_users": total_users,
+            "total_projects": total_projects,
+            "mappers_online": mappers_online,
+            "tasks_mapped": tasks_mapped,
+            "tasks_validated": tasks_validated,
+            "total_validators": total_validators,
+            "total_organisations": total_organisations,
+            "total_campaigns": total_campaigns,
+            "organisations": [
+                {"organisation": row[0], "projects_created": row[1]} for row in org_rows
+            ],
+            "campaigns": [
+                {"campaign": row[0], "projects_created": row[1]}
+                for row in campaign_rows
+            ],
+        }
+
+    @staticmethod
     async def update_all_project_stats(db: Database):
         query = "SELECT id FROM projects"
         project_ids = await db.fetch_all(query)

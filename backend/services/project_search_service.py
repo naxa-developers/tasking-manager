@@ -844,6 +844,10 @@ class ProjectSearchService:
             filters.append("p.created <= :created_lte")
             params["created_lte"] = validate_date_input(search_dto.created_lte)
 
+        if search_dto.due_date_lte:
+            filters.append("p.due_date <= :due_date_lte")
+            params["due_date_lte"] = validate_date_input(search_dto.due_date_lte)
+
         if search_dto.sandbox is not None:
             filters.append("p.sandbox = :sandbox")
             params["sandbox"] = search_dto.sandbox

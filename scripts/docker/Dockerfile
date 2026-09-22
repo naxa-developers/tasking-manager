@@ -100,6 +100,7 @@ COPY --from=build --chown=appuser:appuser --chmod=755 /opt/python /opt/python
 
 # Copy application code
 COPY --chown=appuser:appuser --chmod=755 backend backend/
+COPY --chown=appuser:appuser --chmod=755 chat chat/
 COPY --chown=appuser:appuser --chmod=755 migrations migrations/
 COPY --chown=appuser:appuser --chmod=755 scripts/world scripts/world/
 COPY --chown=appuser:appuser --chmod=755 scripts/database scripts/database/
