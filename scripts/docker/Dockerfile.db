@@ -10,7 +10,10 @@ FROM postgis/postgis:${POSTGIS_TAG}
 # PGDG packages pgvector as postgresql-<major>-pgvector. PG_MAJOR is set by
 # the postgres/postgis base image (e.g. 14), so this stays in sync with
 # POSTGIS_TAG without hardcoding the major version here.
-RUN apt-get update \
+# Some postgis/postgis builds ship /tmp as 0775, which makes apt's _apt sandbox
+# user unable to create temp files. Restore standard perms before running apt.
+RUN chmod 1777 /tmp \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends "postgresql-${PG_MAJOR}-pgvector" \
     && apt-get clean \
