@@ -81,9 +81,11 @@ class UserContributionEvidence(EvidenceBase):
     tasks_mapped: Optional[int] = None
     tasks_validated: Optional[int] = None
     tasks_invalidated: Optional[int] = None
-    projects_contributed: Optional[int] = None
+    distinct_projects_mapped: Optional[int] = None
     countries_contributed: Optional[int] = None
     months: Tuple[Tuple[str, int], ...] = ()
+    this_month: Optional[Tuple[str, int]] = None
+    last_month: Optional[Tuple[str, int]] = None
     projects: Tuple[ContributionProject, ...] = ()
     provenance: str = CONTRIBUTION_PROVENANCE
 
@@ -114,13 +116,19 @@ class UserContributionEvidence(EvidenceBase):
             lines.append(f"tasks_validated_all_time: {self.tasks_validated}")
         if self.tasks_invalidated is not None:
             lines.append(f"tasks_invalidated_all_time: {self.tasks_invalidated}")
-        if self.projects_contributed is not None:
-            lines.append(f"projects_contributed_to: {self.projects_contributed}")
+        if self.distinct_projects_mapped is not None:
+            lines.append(f"distinct_projects_mapped: {self.distinct_projects_mapped}")
         if self.countries_contributed is not None:
             lines.append(f"countries_contributed_to: {self.countries_contributed}")
         if self.months:
             recent = ", ".join(f"{month}: {count}" for month, count in self.months)
             lines.append(f"task_contributions_by_month: {recent}")
+        if self.this_month is not None:
+            month, count = self.this_month
+            lines.append(f"contributions_this_month ({month}): {count}")
+        if self.last_month is not None:
+            month, count = self.last_month
+            lines.append(f"contributions_last_month ({month}): {count}")
         if self.projects:
             parts = []
             for project in self.projects[:_MAX_PROJECTS]:
@@ -131,6 +139,8 @@ class UserContributionEvidence(EvidenceBase):
                     f"validated {project.tasks_validated})"
                 )
             lines.append("recent_projects: " + "; ".join(parts))
+        elif self.distinct_projects_mapped == 0:
+            lines.append("recent_projects: none — no contributed projects yet")
         return lines
 
 
@@ -159,6 +169,15 @@ async def get_user_contribution_evidence(
         except Exception:
             logger.exception(f"user {user_id} daily contributions fetch failed")
 
+        totals = dict(months)
+        today = datetime.date.today()
+        current_key = today.strftime("%Y-%m")
+        previous_key = (today.replace(day=1) - datetime.timedelta(days=1)).strftime(
+            "%Y-%m"
+        )
+        this_month = (current_key, totals.get(current_key, 0))
+        last_month = (previous_key, totals.get(previous_key, 0))
+
         projects: List[ContributionProject] = []
         try:
             dto = await UserModel.get_mapped_projects(user_id, "en", db)
@@ -185,9 +204,11 @@ async def get_user_contribution_evidence(
             tasks_mapped=_attr(stats, "tasks_mapped"),
             tasks_validated=_attr(stats, "tasks_validated"),
             tasks_invalidated=_attr(stats, "tasks_invalidated"),
-            projects_contributed=_attr(stats, "projects_mapped"),
+            distinct_projects_mapped=_attr(stats, "projects_mapped"),
             countries_contributed=_attr(countries, "total"),
             months=months,
+            this_month=this_month,
+            last_month=last_month,
             projects=tuple(projects),
         )
     except Exception:

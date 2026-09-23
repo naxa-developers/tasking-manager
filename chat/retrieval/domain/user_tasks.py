@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
@@ -12,6 +12,7 @@ USER_TASKS_OPERATION = "get_user_recent_tasks"
 USER_TASKS_PROVENANCE = "UserService.get_tasks_dto"
 
 _MAX_TASKS = 5
+_MAX_INVALIDATIONS = 3
 
 
 def _attr(obj: Any, name: str) -> Any:
@@ -41,6 +42,15 @@ class UserTaskEntry:
 
 
 @dataclass(frozen=True)
+class InvalidationEntry:
+    project_id: Optional[int]
+    task_id: Optional[int]
+    invalidated: str = ""
+    invalidator: Optional[str] = None
+    validator_comment: Optional[str] = None
+
+
+@dataclass(frozen=True)
 class UserTasksEvidence(EvidenceBase):
     """Recent tasks the asker interacted with, with current status."""
 
@@ -48,6 +58,7 @@ class UserTasksEvidence(EvidenceBase):
     user_id: int
     operation: str = USER_TASKS_OPERATION
     tasks: Tuple[UserTaskEntry, ...] = ()
+    invalidations: Tuple[InvalidationEntry, ...] = ()
     provenance: str = USER_TASKS_PROVENANCE
 
     _CONTEXT_FIELD = "user_id"
@@ -64,19 +75,48 @@ class UserTasksEvidence(EvidenceBase):
         return self.user_id
 
     def _body_lines(self) -> List[str]:
-        if not self.tasks:
-            return ["recent tasks: none — the user has no task activity yet"]
-        lines = [f"recent_tasks ({len(self.tasks)}):"]
-        for entry in self.tasks[:_MAX_TASKS]:
-            parts = [f"task #{entry.task_id}"]
-            if entry.project_id is not None:
-                parts.append(f"project {entry.project_id}")
-            if entry.task_status:
-                parts.append(f"status: {safe_value(entry.task_status, 32)}")
-            if entry.last_updated:
-                parts.append(f"last action: {entry.last_updated}")
-            parts.append(f"comments: {entry.comments}")
-            lines.append("- " + " | ".join(parts))
+        if self.tasks:
+            lines = [f"recent_tasks ({len(self.tasks)}):"]
+            for entry in self.tasks[:_MAX_TASKS]:
+                parts = [f"task #{entry.task_id}"]
+                if entry.project_id is not None:
+                    parts.append(f"project {entry.project_id}")
+                if entry.task_status:
+                    parts.append(f"status: {safe_value(entry.task_status, 32)}")
+                if entry.last_updated:
+                    parts.append(f"last action: {entry.last_updated}")
+                parts.append(f"comments: {entry.comments}")
+                lines.append("- " + " | ".join(parts))
+            counts: Dict[str, int] = {}
+            for entry in self.tasks:
+                key = entry.task_status or "UNKNOWN"
+                counts[key] = counts.get(key, 0) + 1
+            summary = " | ".join(f"{key}: {counts[key]}" for key in sorted(counts))
+            lines.append(f"task_status_summary: {summary}")
+        else:
+            lines = ["recent tasks: none — the user has no task activity yet"]
+        if self.invalidations:
+            lines.append(f"recent_invalidations ({len(self.invalidations)}):")
+            for invalidation in self.invalidations[:_MAX_INVALIDATIONS]:
+                parts = []
+                if invalidation.project_id is not None:
+                    parts.append(f"project {invalidation.project_id}")
+                if invalidation.task_id is not None:
+                    parts.append(f"task #{invalidation.task_id}")
+                if invalidation.invalidated:
+                    parts.append(f"invalidated: {invalidation.invalidated}")
+                if invalidation.invalidator:
+                    parts.append(f"by: {safe_value(invalidation.invalidator, 60)}")
+                if invalidation.validator_comment:
+                    parts.append(
+                        "validator comment: "
+                        f'"{safe_value(invalidation.validator_comment, 200)}"'
+                    )
+                else:
+                    parts.append("validator comment: none recorded")
+                lines.append("- " + " | ".join(parts))
+        else:
+            lines.append("recent_invalidations: none — no invalidated tasks")
         return lines
 
 
@@ -105,8 +145,48 @@ async def get_user_tasks_evidence(user_id: int, db: Any) -> UserTasksEvidence:
                 )
             )
 
+        invalidations: List[InvalidationEntry] = []
+        try:
+            rows = await db.fetch_all(
+                query="""
+                    SELECT tih.project_id, tih.task_id, tih.invalidated_date,
+                           u.username AS invalidator_username,
+                           (
+                               SELECT th.action_text
+                               FROM task_history th
+                               WHERE th.project_id = tih.project_id
+                                 AND th.task_id = tih.task_id
+                                 AND th.action = 'COMMENT'
+                                 AND th.user_id = tih.invalidator_id
+                               ORDER BY th.action_date DESC
+                               LIMIT 1
+                           ) AS validator_comment
+                    FROM task_invalidation_history tih
+                    LEFT JOIN users u ON u.id = tih.invalidator_id
+                    WHERE tih.mapper_id = :user_id
+                    ORDER BY tih.invalidated_date DESC NULLS LAST
+                    LIMIT :limit
+                """,
+                values={"user_id": user_id, "limit": _MAX_INVALIDATIONS},
+            )
+            for row in rows or []:
+                invalidations.append(
+                    InvalidationEntry(
+                        project_id=_attr(row, "project_id"),
+                        task_id=_attr(row, "task_id"),
+                        invalidated=_when(_attr(row, "invalidated_date")),
+                        invalidator=_attr(row, "invalidator_username"),
+                        validator_comment=_attr(row, "validator_comment"),
+                    )
+                )
+        except Exception:
+            logger.exception(f"user {user_id} invalidation fetch failed")
+
         return UserTasksEvidence(
-            status="OK", user_id=user_id, tasks=tuple(entries[:_MAX_TASKS])
+            status="OK",
+            user_id=user_id,
+            tasks=tuple(entries[:_MAX_TASKS]),
+            invalidations=tuple(invalidations),
         )
     except Exception:
         logger.exception(f"user {user_id} recent task fetch failed")

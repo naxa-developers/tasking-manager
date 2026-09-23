@@ -133,6 +133,36 @@ _USER_CONTRIBUTIONS_RE = re.compile(
     re.I,
 )
 
+# Authored/created projects — authorship, never inferred from mapping or
+# validation. First-person creation markers only, so procedural asks
+# ("how do I create a project?") stay KB how-to questions.
+_USER_CREATED_PROJECTS_RE = re.compile(
+    r"\bprojects?\b.{0,30}\bi\s+(?:have\s+|had\s+)?"
+    r"(?:created|authored|made|owned)\b"
+    r"|\bprojects?\b.{0,30}\bi['’]?ve\s+(?:created|authored|made)\b"
+    r"|\b(?:how\s+many|number\s+of|count\s+of|total)\b.{0,40}\bprojects?\b"
+    r".{0,40}\b(?:have\s+i|did\s+i|do\s+i|i\s+have|i['’]?ve)\b"
+    r".{0,30}\b(?:created|create|authored|author|made|own|owned)\b"
+    r"|\b(?:created|authored|made|owned)\s+by\s+(?:me|myself)\b"
+    r"|\b(?:which|what|list|show|see|view)\b.{0,30}\bprojects?\b"
+    r".{0,40}\b(?:i\s+(?:created|authored|made|own|owned)"
+    r"|i['’]?ve\s+(?:created|authored|made)"
+    r"|did\s+i\s+(?:create|author|make))\b"
+    r"|\bmy\s+created\s+projects?\b",
+    re.I,
+)
+
+# Projects run by the asker's own organisation(s). Requires a project noun so
+# procedural asks ("how do I get my organization added?") stay KB how-to.
+_USER_ORG_PROJECTS_RE = re.compile(
+    r"\bmy\s+(?:organisation|organization|org)\b"
+    r"|\bour\s+(?:organisation|organization|org)\b"
+    r"|\b(?:organisation|organization|org)\b.{0,30}"
+    r"\b(?:i\s+(?:manage|run|own)|i['’]?m\s+(?:part\s+of|in))\b"
+    r"|\bprojects?\b.{0,40}\b(?:my|our)\s+(?:organisation|organization|org)\b",
+    re.I,
+)
+
 # Streak / validation-vs-mapping split.
 _USER_ACTIVITY_RE = re.compile(
     r"\bstreak\b"
@@ -168,7 +198,12 @@ def _user_ops(text: str) -> tuple:
     ops = []
     if is_user_profile_intent(text):
         ops.append("user_profile")
-    if is_user_contributions_intent(text):
+    if is_user_org_projects_intent(text):
+        ops.append("user_org_projects")
+    if is_user_created_projects_intent(text):
+        # Authorship is its own capability: never inferred from contributions.
+        ops.append("user_projects_created")
+    elif is_user_contributions_intent(text):
         ops.append("user_contributions")
     if is_user_activity_intent(text):
         ops.append("user_activity")
@@ -252,6 +287,32 @@ def is_user_contributions_intent(query: str) -> bool:
     """True when the question asks for the asker's contribution totals."""
     text = query or ""
     return bool(_FIRST_PERSON_RE.search(text) and _USER_CONTRIBUTIONS_RE.search(text))
+
+
+def is_user_created_projects_intent(query: str) -> bool:
+    """True when the asker asks about projects they authored/created.
+
+    Authorship is kept distinct from contribution: questions about mapped,
+    validated, or worked-on projects never satisfy this intent.
+    """
+    text = query or ""
+    if not _FIRST_PERSON_RE.search(text):
+        return False
+    return bool(_USER_CREATED_PROJECTS_RE.search(text))
+
+
+def is_user_org_projects_intent(query: str) -> bool:
+    """True when the asker asks what their own organisation(s) are running."""
+    text = query or ""
+    if not re.search(r"\bprojects?\b", text, re.I):
+        return False
+    if not _USER_ORG_PROJECTS_RE.search(text):
+        return False
+    if _HOWTO_STRICT_RE.search(text) and not re.search(
+        r"\b(?:what|which|list|show|see|view)\b", text, re.I
+    ):
+        return False
+    return True
 
 
 def is_user_activity_intent(query: str) -> bool:
@@ -427,6 +488,13 @@ _GLOBAL_STATS_RE = re.compile(
     r"have\s+been|altogether)\b",
     re.I,
 )
+# Org/campaign leaderboard asks ("which organizations have the most projects")
+# are site-wide aggregates, not trend rankings.
+_ORG_LEADERBOARD_RE = re.compile(
+    r"\b(?:countries|organisations?|organizations?|orgs?|campaigns?)\b"
+    r".{0,50}\b(?:most|top|largest|busiest|active|with\s+the\s+most)\b",
+    re.I,
+)
 _PROJECT_ANCHOR_RE = re.compile(_PROJECT_ANCHOR, re.I)
 _SKILL_MATCH_RE = re.compile(
     r"\bmatch\s+my\s+(?:skill|level)\b|\bmy\s+skill\s+level\b|"
@@ -461,7 +529,8 @@ _TRAILING_FILLER_RE = re.compile(
 # not an org name ("my organization added to Tasking Manager").
 _ORG_NAME_STOPWORDS_RE = re.compile(
     r"^(?:added|currently|running|involved|working|active|that|which|who|"
-    r"is|are|was|were|has|have|had|to|for|on|in|at|the|a|an|my|our)\b",
+    r"is|are|was|were|has|have|had|to|for|on|in|at|the|a|an|my|our|"
+    r"me|us|myself|ourselves)\b",
     re.I,
 )
 _EXPIRING_DAYS_RE = re.compile(r"\b(?:within|next|in)\s+(\d{1,2})\s+days?\b", re.I)
@@ -544,6 +613,11 @@ def is_global_stats_intent(query: str) -> bool:
     return bool(_GLOBAL_STATS_RE.search(query or ""))
 
 
+def is_org_leaderboard_intent(query: str) -> bool:
+    """True when the question ranks organisations/campaigns/countries."""
+    return bool(_ORG_LEADERBOARD_RE.search(query or ""))
+
+
 def is_project_search_intent(query: str) -> bool:
     """True when discovery filters identify a project-search question."""
     return bool(_discovery_filters(query or ""))
@@ -553,6 +627,8 @@ def _discovery_ops(text: str) -> tuple:
     """Global/discovery capabilities, only for questions without a project id."""
     if is_recommendation_intent(text):
         return ("user_recommendations",)
+    if is_org_leaderboard_intent(text):
+        return ("global_stats",)
     if is_trending_intent(text):
         return ("trending_projects",)
     if is_project_search_intent(text):

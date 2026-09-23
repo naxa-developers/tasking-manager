@@ -85,13 +85,14 @@ class GlobalStatsEvidence(EvidenceBase):
                 f"{safe_value(name, 60)}: {count}"
                 for name, count in self.top_organisations[:_MAX_ORGS]
             )
-            lines.append(f"projects_per_organisation: {orgs}")
+            lines.append(f"organisations_by_project_count (highest first): {orgs}")
         if self.top_campaigns:
             campaigns = "; ".join(
                 f"{safe_value(name, 60)}: {count}"
                 for name, count in self.top_campaigns[:_MAX_CAMPAIGNS]
             )
-            lines.append(f"projects_per_campaign: {campaigns}")
+            lines.append(f"campaigns_by_project_count (highest first): {campaigns}")
+        lines.append("countries: not tracked in this aggregate")
         return lines
 
 

@@ -91,7 +91,8 @@ class UserProfileEvidence(EvidenceBase):
             )
             lines.append(f"earned_badges ({len(self.earned_badges)}): {badges}")
         else:
-            lines.append("earned_badges: none")
+            lines.append("earned_badges: none — no badges earned yet")
+            lines.append("earned_badges_count: 0")
         if self.missing_badges:
             missing = ", ".join(
                 safe_value(b, 64) for b in self.missing_badges[:_MAX_BADGES]

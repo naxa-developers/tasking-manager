@@ -94,6 +94,17 @@ class UserActivityEvidence(EvidenceBase):
         return self.user_id
 
     def _body_lines(self) -> List[str]:
+        no_split = "none — no mapped or validated tasks yet"
+        mapped_share = (
+            f"{self.mapping_share_percent}%"
+            if self.mapping_share_percent is not None
+            else no_split
+        )
+        validation_share = (
+            f"{self.validation_share_percent}%"
+            if self.validation_share_percent is not None
+            else no_split
+        )
         return [
             f"current_mapping_streak_days: {self.current_streak_days}",
             f"longest_mapping_streak_days: {self.longest_streak_days}",
@@ -101,8 +112,8 @@ class UserActivityEvidence(EvidenceBase):
             f"tasks_mapped_all_time: {self.tasks_mapped}",
             f"tasks_validated_all_time: {self.tasks_validated}",
             f"tasks_invalidated_all_time: {self.tasks_invalidated}",
-            f"mapping_share_percent: {self.mapping_share_percent}",
-            f"validation_share_percent: {self.validation_share_percent}",
+            f"mapping_share_percent: {mapped_share}",
+            f"validation_share_percent: {validation_share}",
         ]
 
 

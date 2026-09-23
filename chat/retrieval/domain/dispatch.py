@@ -26,6 +26,8 @@ OP_NAMES = frozenset(
         "mywork",
         "user_profile",
         "user_contributions",
+        "user_projects_created",
+        "user_org_projects",
         "user_activity",
         "user_teams",
         "user_tasks",
@@ -80,7 +82,11 @@ def _default_fetchers() -> Dict[str, Fetcher]:
     from chat.retrieval.domain.user_contributions import (
         get_user_contribution_evidence,
     )
+    from chat.retrieval.domain.user_orgs import get_user_org_projects_evidence
     from chat.retrieval.domain.user_profile import get_user_profile_evidence
+    from chat.retrieval.domain.user_projects import (
+        get_user_projects_created_evidence,
+    )
     from chat.retrieval.domain.user_tasks import get_user_tasks_evidence
     from chat.retrieval.domain.user_teams import get_user_teams_evidence
 
@@ -95,6 +101,12 @@ def _default_fetchers() -> Dict[str, Fetcher]:
         ),
         "user_contributions": lambda user_id, project_id, db: (
             get_user_contribution_evidence(user_id, db)
+        ),
+        "user_projects_created": lambda user_id, project_id, db: (
+            get_user_projects_created_evidence(user_id, db)
+        ),
+        "user_org_projects": lambda user_id, project_id, db: (
+            get_user_org_projects_evidence(user_id, db)
         ),
         "user_activity": lambda user_id, project_id, db: get_user_activity_evidence(
             user_id, db

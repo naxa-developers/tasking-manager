@@ -89,6 +89,8 @@ try:
         "user_activity",
         "user_contributions",
         "user_profile",
+        "user_projects",
+        "user_orgs",
         "user_tasks",
         "user_teams",
     ):
