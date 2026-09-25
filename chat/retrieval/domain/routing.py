@@ -522,6 +522,27 @@ _CAMPAIGN_TEXT_RE = re.compile(
     r"\bcampaign\s+(?:called\s+|named\s+)?([A-Za-z0-9][\w .&'\-]{1,60})",
     re.I,
 )
+# Trailing "<name> campaign" form ("Which projects are in the Test
+# campaign?"). The capture is capped at three tokens so preceding prose is
+# mostly excluded; whatever prose the leftmost match still consumes is
+# removed by _LEADING_CAMPAIGN_STOPWORDS_RE below.
+_TRAILING_CAMPAIGN_TEXT_RE = re.compile(
+    r"([A-Za-z0-9][\w&'\-]*(?:\s+[A-Za-z0-9][\w&'\-]*){0,2})\s+campaign\b",
+    re.I,
+)
+# Lead words that mark prose, never a campaign name ("i create a" → "").
+_CAMPAIGN_LEAD_WORDS = (
+    r"the|a|an|in|of|for|with|by|from|on|at|to|about|over|under|and|or|"
+    r"are|is|was|were|that|which|who|my|our|this|these|those|any|all|part|"
+    r"parts|list|lists|show|me|what|i|you|he|she|we|they|it|its|do|does|did|"
+    r"create|creates|created|creating|make|made|makes|tell|tells|told|know|"
+    r"see|find|get"
+)
+# A leading run of prose stripped from a trailing-form capture in one pass.
+_LEADING_CAMPAIGN_STOPWORDS_RE = re.compile(
+    rf"^(?:{_CAMPAIGN_LEAD_WORDS})\b" rf"(?:\s+(?:{_CAMPAIGN_LEAD_WORDS})\b)*" r"\s*",
+    re.I,
+)
 _TRAILING_FILLER_RE = re.compile(
     r"\b(?:projects?|tasks?|right\s+now|currently|please|thanks)\b", re.I
 )
@@ -584,6 +605,13 @@ def _discovery_filters(text: str) -> dict:
 
     campaign = _CAMPAIGN_TEXT_RE.search(text)
     campaign = _clean_phrase(campaign.group(1)) if campaign else None
+    if not campaign:
+        # Front form ("campaign <name>") takes precedence; fall back to the
+        # trailing "<name> campaign" form with leading prose stripped.
+        trailing = list(_TRAILING_CAMPAIGN_TEXT_RE.finditer(text))
+        if trailing:
+            name = _LEADING_CAMPAIGN_STOPWORDS_RE.sub("", trailing[-1].group(1))
+            campaign = _clean_phrase(name)
     if campaign:
         filters["campaign"] = campaign
 
