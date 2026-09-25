@@ -69,17 +69,25 @@ class EvidenceBase:
         return []
 
     def to_prompt_block(self) -> str:
-        """Small structured block for the LLM. Empty unless authorized."""
+        """Small structured block for the LLM. Empty unless authorized.
+
+        A ``user_id`` subject is audit metadata, never prompt content: it is
+        masked here and stays available in citations and span metadata. Any
+        other context field (e.g. ``project_id``) is still rendered, since
+        the LLM needs it to attribute the numbers.
+        """
         if not self.authorized:
             return ""
-        context = (
-            f"{safe_value(self._CONTEXT_FIELD, 64)}: "
-            f"{safe_value(getattr(self, self._CONTEXT_FIELD), 64)}"
+        source_line = (
+            "source: tasking_manager | " f"operation: {safe_value(self.operation, 64)}"
         )
-        lines = [
-            _HEADER,
-            f"source: tasking_manager | operation: {safe_value(self.operation, 64)} | {context}",
-        ]
+        if self._CONTEXT_FIELD != "user_id":
+            context = (
+                f"{safe_value(self._CONTEXT_FIELD, 64)}: "
+                f"{safe_value(getattr(self, self._CONTEXT_FIELD), 64)}"
+            )
+            source_line += f" | {context}"
+        lines = [_HEADER, source_line]
         lines.extend(self._body_lines())
         lines.append(f"provenance: {safe_value(self.provenance, 120)}")
         return _cap_block("\n".join(lines))
