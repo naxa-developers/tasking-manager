@@ -61,9 +61,13 @@ class MyWorkEvidence(EvidenceBase):
         return self.user_id
 
     def _body_lines(self) -> List[str]:
+        # Lead with a direct second-person answer: small models copy a plain
+        # statement ("you currently have task #11 locked") far more reliably
+        # than they attribute a structured line to the asker (r02).
         if not self.groups:
-            return ["locked tasks: none — the user has no task locked right now"]
+            return ["you currently have no task locked right now"]
         lines: List[str] = []
+        flat: List[str] = []
         for group in self.groups:
             proj = (
                 f" in project {group.project_id}"
@@ -73,6 +77,9 @@ class MyWorkEvidence(EvidenceBase):
             state = f" ({group.task_status})" if group.task_status else ""
             tasks = ", ".join(f"#{t}" for t in group.task_ids)
             lines.append(f"locked tasks{proj}{state}: {tasks}")
+            flat.extend(f"task #{t}{proj}{state}" for t in group.task_ids)
+        noun = "1 task" if len(flat) == 1 else f"{len(flat)} tasks"
+        lines.insert(0, f"you currently have {noun} locked: " + "; ".join(flat))
         return lines
 
 
