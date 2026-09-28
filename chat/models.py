@@ -44,6 +44,16 @@ rag_messages = Table(
     Index("ix_rag_messages_session_created", "session_id", "created_at"),
 )
 
+# Per-user fixed-window counters for chat turns (see chat/rate_limit.py).
+# Raw SQL like rag_messages: keep it on Base.metadata in sync with migrations.
+rag_rate_limits = Table(
+    "rag_rate_limits",
+    Base.metadata,
+    Column("user_id", BigInteger, primary_key=True, autoincrement=False),
+    Column("window_start", DateTime(timezone=True), nullable=False),
+    Column("count", Integer, nullable=False),
+)
+
 
 def _parse_citations(citations: Any) -> List[Dict[str, Any]]:
     """Decode a stored ``citations`` value into citation dicts."""

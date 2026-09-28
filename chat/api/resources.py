@@ -18,6 +18,7 @@ from chat.dtos import (
     RagSessionUpdateDTO,
 )
 from chat.retrieval.query_kb import DEFAULT_TOP_K
+from chat.rate_limit import check_chat_rate_limit
 from chat.service import RagAnswerFailed, RagService
 
 router = APIRouter(
@@ -42,6 +43,18 @@ def _rag_unavailable() -> JSONResponse:
             "SubCode": "RAGUnavailable",
         },
         status_code=503,
+    )
+
+
+def _rag_rate_limited(retry_after: int) -> JSONResponse:
+    return JSONResponse(
+        content={
+            "Error": "Rate limit exceeded",
+            "detail": f"Too many chat messages. Try again in {retry_after} seconds.",
+            "SubCode": "RAGRateLimited",
+        },
+        status_code=429,
+        headers={"Retry-After": str(retry_after)},
     )
 
 
@@ -123,6 +136,9 @@ async def session_chat(
     q = (req.question or "").strip()
     if not q:
         raise HTTPException(status_code=400, detail="question required")
+    decision = await check_chat_rate_limit(user.id, db)
+    if not decision.allowed:
+        return _rag_rate_limited(decision.retry_after)
     try:
         result = await RagService.chat(
             session_id,
