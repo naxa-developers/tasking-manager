@@ -11,6 +11,9 @@ retrieval/.env
 # Built sparse source — generate via chunk.py flat 51; keep sample but git-ignore artifact
 retrieval/data/chunks.json
 
+# Qwen3 tokenizer artifact — scp like chunks.json, never commit
+retrieval/tokenizers/qwen3-1.7b.json
+
 # HF cache warm (1.2GB) — not committed
 # ~/.cache/huggingface/Qwen--Qwen3-Reranker-0.6B
 

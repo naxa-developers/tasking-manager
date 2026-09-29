@@ -11,6 +11,10 @@ from chat.retrieval.config import get_generation_config
 from chat.retrieval.guardrails import REFUSAL_TEMPLATES
 from chat.retrieval.policy import LOW_CONFIDENCE_ANSWER
 from chat.retrieval.query_kb import ScoredNode
+from chat.retrieval.tokenizer import (
+    count_tokens as _qwen_count,
+    truncate_to_tokens as _qwen_truncate,
+)
 
 
 # Prompt cap: the LLM sees only the most recent N prior messages (all callers).
@@ -136,7 +140,6 @@ def _split_evidence(evidence: str) -> List[str]:
 _DEFAULT_PROMPT_TOKEN_BUDGET = 3200
 # Reserve for the separators/joins added after section fitting.
 _PROMPT_OVERHEAD_TOKENS = 16
-_TOKEN_ENCODING = None  # None = not loaded yet; False = tiktoken unavailable
 
 
 def _prompt_token_budget() -> int:
@@ -148,45 +151,14 @@ def _prompt_token_budget() -> int:
     return value if value > 0 else _DEFAULT_PROMPT_TOKEN_BUDGET
 
 
-def _encoding():  # type: ignore[no-untyped-def]
-    global _TOKEN_ENCODING
-    if _TOKEN_ENCODING is None:
-        try:
-            import tiktoken  # type: ignore
-
-            _TOKEN_ENCODING = tiktoken.get_encoding("o200k_base")
-        except Exception:
-            _TOKEN_ENCODING = False
-    return _TOKEN_ENCODING
-
-
 def _count_tokens(text: str) -> int:
-    """Approximate prompt tokens (tiktoken when available, else chars/3)."""
-    if not text:
-        return 0
-    enc = _encoding()
-    if enc:
-        try:
-            return len(enc.encode(text, disallowed_special=()))
-        except Exception:
-            pass
-    return len(text) // 3 + 1
+    """Count prompt tokens with the Qwen3 tokenizer (see tokenizer.py)."""
+    return _qwen_count(text)
 
 
 def _truncate_to_tokens(text: str, max_tokens: int) -> str:
-    """Trim text to at most ``max_tokens`` on a token/word boundary."""
-    if max_tokens <= 0:
-        return ""
-    if _count_tokens(text) <= max_tokens:
-        return text
-    enc = _encoding()
-    if enc:
-        try:
-            tokens = enc.encode(text, disallowed_special=())[:max_tokens]
-            return enc.decode(tokens).rstrip() + " …"
-        except Exception:
-            pass
-    return text[: max_tokens * 3].rsplit(" ", 1)[0] + " …"
+    """Trim text to at most ``max_tokens`` Qwen tokens on a token boundary."""
+    return _qwen_truncate(text, max_tokens)
 
 
 def _fit_history(history: Optional[List[Dict[str, str]]], budget: int) -> str:
