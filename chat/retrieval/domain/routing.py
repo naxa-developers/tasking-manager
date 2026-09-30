@@ -623,9 +623,6 @@ def discovery_filters(query: str) -> dict:
     return _discovery_filters(query or "")
 
 
-_EXPIRING_DAYS_RE = re.compile(r"\b(?:within|next|in)\s+(\d{1,2})\s+days?\b", re.I)
-
-
 def is_trending_intent(query: str) -> bool:
     """True when the question asks for popular or most-active projects."""
     return bool(_TRENDING_RE.search(query or ""))

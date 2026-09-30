@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 import textwrap
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 import litellm  # type: ignore
 
@@ -441,19 +441,3 @@ class LLMService:
                 yield pending
         if not yielded_any:
             yield _NO_EVIDENCE_ANSWER
-
-
-def result_to_log_item(scored: ScoredNode) -> dict[str, Any]:
-    meta = scored.node.metadata or {}
-    return {
-        "node_id": scored.node.id_,
-        "title": meta.get("title", ""),
-        "doc_id": meta.get("doc_id", ""),
-        "status": meta.get("status", "active"),
-        "source_refs": (meta.get("source_refs") or meta.get("sources") or [])[:2],
-        "needs_verification": bool(meta.get("needs_verification")),
-        "needs_verification_ids": meta.get("needs_verification_ids", []),
-        "fused_score": round(float(scored.fused_score), 4),
-        "vector_rank": scored.vector_rank,
-        "bm25_rank": scored.bm25_rank,
-    }
