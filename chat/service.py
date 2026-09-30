@@ -21,6 +21,7 @@ from fastapi import HTTPException
 from loguru import logger
 from starlette.concurrency import run_in_threadpool
 
+from chat.constants import MAX_ROUTING_HISTORY
 from chat.dtos import (
     RagChatResponseDTO,
     RagMessageDTO,
@@ -37,7 +38,7 @@ try:
     from chat.turn.decide import GenerateTurn, decide_early_turn, decide_turn
     from chat.turn.emit import emit_canned_turn, emit_generated_turn
     from chat.turn.persist import persist_user_turn
-    from chat.turn.plan import MAX_ROUTING_HISTORY, prepare_turn
+    from chat.turn.plan import prepare_turn
 
     for _domain_module in (
         "global_stats",

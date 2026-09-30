@@ -2,3 +2,6 @@
 
 # Maximum accepted question length; mirrored by the frontend input maxLength.
 MAX_QUESTION_CHARS = 4000
+
+# Server-side history lookback for the deterministic layer (not the LLM cap).
+MAX_ROUTING_HISTORY = 10

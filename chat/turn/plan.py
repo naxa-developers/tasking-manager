@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from loguru import logger
 from starlette.concurrency import run_in_threadpool
 
+from chat.constants import MAX_ROUTING_HISTORY
 from chat.dtos import RagCitationDTO
 from chat.models import RagSession
 from chat.retrieval.domain.dispatch import collect_evidence
@@ -33,9 +34,6 @@ from chat.retrieval.query_kb import (
     retrieve,
 )
 from chat.turn.persist import persist_user_turn
-
-# Server-side history lookback for the deterministic layer (not the LLM cap).
-MAX_ROUTING_HISTORY = 10
 
 
 def _build_citations(resp: Any) -> List[RagCitationDTO]:
