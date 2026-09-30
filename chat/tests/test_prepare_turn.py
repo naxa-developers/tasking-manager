@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from chat.retrieval.query_kb import RetrievalResponse
-from chat.service import _prepare_turn
+from chat.turn.plan import prepare_turn
 
 
 def _run(coro):
@@ -46,15 +46,15 @@ def _prepare(
     persist=None,
 ):
     guards = guard or MagicMock(verdict="ok", gate="scope", reason="")
-    patches = [patch("chat.service._persist_user_turn", new=persist or AsyncMock())]
-    patches.append(patch("chat.service.retrieve", new=retrieve))
+    patches = [patch("chat.turn.plan.persist_user_turn", new=persist or AsyncMock())]
+    patches.append(patch("chat.turn.plan.retrieve", new=retrieve))
     if collect is not None:
-        patches.append(patch("chat.service.collect_evidence", new=collect))
+        patches.append(patch("chat.turn.plan.collect_evidence", new=collect))
     for started in patches:
         started.start()
     try:
         return _run(
-            _prepare_turn(
+            prepare_turn(
                 q,
                 5,
                 {"id": 1, "user_id": 7, "message_count": 0, "title": None},
