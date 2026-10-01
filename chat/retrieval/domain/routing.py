@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional
 
+from chat.retrieval.domain.countries import find_country
+
 Route = Literal["KB", "DOMAIN", "BOTH"]
 
 # project #123 / project 123 / project id 123 (case-insensitive).
@@ -34,8 +36,8 @@ _PROJECT_ANCHOR = (
 # Mapped/validated/status phrasing needs a project anchor — bare "a task
 # mapped" or "status of a task" is a KB how-to, not a live aggregate.
 _STATS_RE = re.compile(
-    r"\b(how many|count|total|number of)\b.{0,60}\btasks?\b"
-    r"|\btasks?\b.{0,60}\b(how many|count|total|number)\b"
+    r"\b(how many|count|counts\s+(?:of|for)|total|number of)\b.{0,60}\btasks?\b"
+    r"|\btasks?\b.{0,60}\b(how many|counts?|total|number)\b"
     rf"|\b(?:validated|mapped)\b.{{0,40}}(?:{_PROJECT_ANCHOR})"
     rf"|\btasks?\b.{{0,60}}\b(?:validated|mapped)\b.{{0,40}}(?:{_PROJECT_ANCHOR})"
     rf"|\bstatus\b.{{0,25}}\btasks?\b.{{0,40}}(?:{_PROJECT_ANCHOR})"
@@ -57,6 +59,24 @@ _HOWTO_STRICT_RE = re.compile(
     r"\b(how do i|how to|how can i|steps?|instructions?|procedure|guide)\b",
     re.I,
 )
+
+# Explanatory sub-clauses next to a live op still need KB evidence (BOTH):
+# definitional, guidance, or reasoning phrasing the how-to regexes miss.
+# Alternatives are validated against the route-eval corpus — each matches only
+# its intended case and no currently-passing case.
+_EXPLANATION_RE = re.compile(
+    r"\bwhat\s+does\b|\bwhat\s+do\s+i\s+need\b|\bmean(?:s)?\b|"
+    r"difference\s+between|\bexplain\b|required\s+editor|validator\s+say|"
+    r"\bbased\s+on\b|\bcontact\b|\bwhy\b|"
+    r"\bnew\s+account\b|\bnothing\s+mapped\b|\bnever\s+mapped\b|"
+    r"\bjust\s+started\b",
+    re.I,
+)
+
+# Live project attributes that keep the summary default alive inside
+# procedural wrappers ("how can I find out who owns ...", "guide me to
+# ... stats").
+_LIVE_ATTRIBUTE_RE = re.compile(r"\b(?:stats|statistics|owner|owns|owned)\b", re.I)
 
 # Summary intent — live project attributes matched as "<keyword> ... project".
 # The project must be an anchored reference; bare "a project" stays KB.
@@ -92,12 +112,16 @@ _CHAT_RE = re.compile(
 # My-work intent — the asker's own locked/current tasks; no project id needed.
 # "working on" only counts in the first person so third-party questions
 # ("who is working on project 5?") fall through to the project fallback.
+# "sitting on" needs the same first-person anchoring ("sitting on the queue"
+# is a platform question, not the asker's work).
 # Count questions ("how many tasks have I mapped?") belong to contributions.
 _MYWORK_RE = re.compile(
     r"\bmy\b.{0,30}\btasks?\b"
     r"|\b(?:i\s+am|i['’]?m|am\s+i)\b.{0,20}\bworking\s+on\b"
     r"|\blocked\b.{0,20}\btasks?\b"
-    r"|\btasks?\b.{0,30}\blocked\b",
+    r"|\btasks?\b.{0,30}\blocked\b"
+    r"|\b(?:i['’]?m|i\s+am|am\s+i|my|we['’]?re|we\s+are)\b"
+    r"[^?]{0,20}\bsitting\s+on\b",
     re.I,
 )
 
@@ -115,7 +139,10 @@ _USER_PROFILE_RE = re.compile(
     r"|\bbadges?\b.{0,40}\b(?:have\s+i|i\s+have|i['’]?ve|i\s+earned|earned|"
     r"do\s+i\s+have|on\s+my\s+profile|my\s+profile)\b"
     r"|\bdo\s+i\s+have\b.{0,30}\bbadges?\b"
-    r"|\b(?:my|earned)\s+badges?\b",
+    r"|\b(?:my|earned)\s+badges?\b"
+    r"|\bmy\s+rank\b"
+    r"|\bdid\s+i\b[^?]{0,30}\bbadges?\b"
+    r"|\bbadges?\s+for\s+me\b",
     re.I,
 )
 
@@ -170,7 +197,9 @@ _USER_ACTIVITY_RE = re.compile(
     r"split|compared|ratio)\b.{0,30}\b(?:mapping|mapped|mapper)\b"
     r"|\b(?:mapping|mapped)\b.{0,30}\b(?:versus|vs\.?|and|split|compared|ratio)\b"
     r".{0,30}\b(?:validation|validating|validated)\b"
-    r"|\bsplit\b.{0,40}\b(?:validation|validating|mapped|mapping)\b",
+    r"|\bsplit\b.{0,40}\b(?:validation|validating|mapped|mapping)\b"
+    r"|\bhow\s+long\b.{0,30}\b(?:been\s+)?"
+    r"(?:mapping|mapped|validating|validated)\b",
     re.I,
 )
 
@@ -179,7 +208,8 @@ _USER_TEAMS_RE = re.compile(
     r"\bmy\b.{0,20}\bteams?\b"
     r"|\bteams?\b.{0,40}\b(?:am\s+i|i\s+am|i['’]?m|i\s+belong|do\s+i\s+belong|"
     r"part\s+of|member\s+of|membership)\b"
-    r"|\b(?:which|what)\s+teams?\b.{0,30}\b(?:part\s+of|belong|member)\b",
+    r"|\b(?:which|what)\s+teams?\b.{0,30}\b(?:part\s+of|belong|member)\b"
+    r"|\b(?:am|are)\s+i\s+in\s+(?:any\s+|a\s+|the\s+)?teams?\b",
     re.I,
 )
 
@@ -488,6 +518,30 @@ _GLOBAL_STATS_RE = re.compile(
     r"have\s+been|altogether)\b",
     re.I,
 )
+# Scope-less platform counts ("how many projects are there") are site-wide
+# asks. The explicit-marker regex above misses common phrasings; this rule
+# defaults to global stats unless the count is scoped — a named country or a
+# project reference — a project id is present, or discovery filters match
+# (project_search wins by order in _discovery_ops). Incidental prepositions
+# ("interested in contributing") do not scope a count.
+_PLATFORM_COUNT_RE = re.compile(
+    r"\b(?:how\s+many|number\s+of|counts?\s+of|total(?:\s+number\s+of)?)\b"
+    r".{0,40}\b(?:users?|mappers?|accounts?|projects?|tasks?|"
+    r"organi[sz]ations?|orgs?|campaigns?)\b",
+    re.I,
+)
+_SCOPED_PROJECT_RE = re.compile(
+    r"\b(?:in|for|from|near|on)\s+(?:\w+\s+){0,2}projects?\b"
+    r"|\bproject\s*#?\s*\d{1,8}\b",
+    re.I,
+)
+
+
+def _platform_count_is_scoped(text: str) -> bool:
+    """True when a platform count names a country or a specific project."""
+    return bool(find_country(text) or _SCOPED_PROJECT_RE.search(text))
+
+
 # Org/campaign leaderboard asks ("which organizations have the most projects")
 # are site-wide aggregates, not trend rankings.
 _ORG_LEADERBOARD_RE = re.compile(
@@ -502,12 +556,14 @@ _SKILL_MATCH_RE = re.compile(
     re.I,
 )
 _HEALTH_RE = re.compile(r"\bhealth(?:care|-oriented)?\b|\bhospital", re.I)
-_ACTION_MAP_RE = re.compile(r"\bprojects?\s+(?:i\s+can\s+)?(?:to\s+)?map\b", re.I)
+_ACTION_MAP_RE = re.compile(
+    r"\bprojects?\s+(?:i\s+can\s+)?(?:to\s+)?map\b"
+    r"|\bprojects?\b[^?]{0,30}\b(?:need|needs|require|requires)\b"
+    r"[^?]{0,20}\b(?:mapping|mapped|map)\b",
+    re.I,
+)
 _ACTION_VALIDATE_RE = re.compile(
     r"\bprojects?\s+(?:i\s+can\s+)?(?:to\s+)?validat(?:e|ing)\b", re.I
-)
-_COUNTRY_TEXT_RE = re.compile(
-    r"\b(?:in|from|near)\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,2})\b"
 )
 _ORGANISATION_TEXT_RE = re.compile(
     r"\b(?:organi[sz]ation|org)\s+(?:called\s+|named\s+)?"
@@ -573,7 +629,7 @@ def _discovery_filters(text: str) -> dict:
     low = text.lower()
 
     for word, canonical in _DIFFICULTY_WORDS.items():
-        if re.search(rf"\b{re.escape(word)}\b", low):
+        if re.search(rf"\b{re.escape(word)}s?\b", low):
             filters["difficulty"] = canonical
             break
 
@@ -593,8 +649,7 @@ def _discovery_filters(text: str) -> dict:
     if _ACTION_MAP_RE.search(text) or _ACTION_VALIDATE_RE.search(text):
         filters["action"] = "map" if _ACTION_MAP_RE.search(text) else "validate"
 
-    country_match = _COUNTRY_TEXT_RE.search(text)
-    country = _clean_phrase(country_match.group(1) if country_match else None)
+    country = find_country(text)
     if country:
         filters["country"] = country
 
@@ -635,7 +690,10 @@ def is_recommendation_intent(query: str) -> bool:
 
 def is_global_stats_intent(query: str) -> bool:
     """True when the question asks for site-wide totals."""
-    return bool(_GLOBAL_STATS_RE.search(query or ""))
+    text = query or ""
+    if _GLOBAL_STATS_RE.search(text):
+        return True
+    return bool(_PLATFORM_COUNT_RE.search(text) and not _platform_count_is_scoped(text))
 
 
 def is_org_leaderboard_intent(query: str) -> bool:
@@ -708,7 +766,17 @@ def route_query(query: str) -> DomainRoute:
         if discovery == ("project_search",):
             filters = _discovery_filters(text)
     if not ops and pid is not None:
-        ops = ("summary",)
+        # Default only for non-procedural asks: "how do I ... project 42?"
+        # stays KB; "who owns project 5?" defaults to summary. Procedural
+        # wrappers around a live attribute keep live evidence ("how can I
+        # find out who owns project 5?", "guide me to ... stats"). Explanation
+        # markers (contact, required editor, ...) do not suppress the default
+        # either — they signal BOTH once the op exists (route-eval corpus:
+        # golden-tm-eval-019/-e05/-026).
+        procedural = _HOWTO_RE.search(text)
+        live_signal = _EXPLANATION_RE.search(text) or _LIVE_ATTRIBUTE_RE.search(text)
+        if not procedural or live_signal:
+            ops = ("summary",)
     if not ops:
         if project_ops:
             return DomainRoute(
@@ -719,6 +787,8 @@ def route_query(query: str) -> DomainRoute:
     # bare "mapping"/"validation" nouns must not force a KB lookup.
     personal_only = all(op not in ("stats", "summary", "teams", "chat") for op in ops)
     howto = _HOWTO_STRICT_RE.search(text) if personal_only else _HOWTO_RE.search(text)
+    if not howto and (_EXPLANATION_RE.search(text) or _SKILL_MATCH_RE.search(text)):
+        howto = True
     if howto:
         return DomainRoute(route="BOTH", project_id=pid, ops=ops, filters=filters)
     return DomainRoute(route="DOMAIN", project_id=pid, ops=ops, filters=filters)
