@@ -70,6 +70,164 @@ def _last_user_message(prior: List[Dict[str, Any]]) -> Optional[str]:
     return None
 
 
+def _guardrail_hint(guard: Any) -> str:
+    """``gate:verdict reason`` tag; reasons stay server-side."""
+    return f"{guard.gate}:{guard.verdict} {guard.reason}"
+
+
+def _empty_response(mode: str, query: str) -> RetrievalResponse:
+    """RetrievalResponse with no KB hits (turns that never call retrieval)."""
+    return RetrievalResponse(
+        results=[],
+        denied_count=0,
+        denied_reasons=[],
+        candidate_count=0,
+        mode=mode,
+        query=query,
+    )
+
+
+def _detect_third_party(query: str) -> tuple[bool, Optional[str]]:
+    """Third-party profile ask and its username; degrades to (False, None)."""
+    try:
+        is_third_party = is_third_party_user_query(query)
+        username = extract_third_party_username(query) if is_third_party else None
+    except Exception:
+        return False, None
+    return is_third_party, username
+
+
+def _merge_domain_citations(
+    citations: List[RagCitationDTO],
+    domain_status: Optional[str],
+    pending: List[Dict[str, Any]],
+) -> List[RagCitationDTO]:
+    """Append domain citations when the domain evidence is authorized."""
+    if domain_status != "OK":
+        return citations
+    for cite in pending:
+        try:
+            citations.append(
+                RagCitationDTO(
+                    id=cite["id"],
+                    title=cite["title"],
+                    doc_id=cite["doc_id"],
+                    heading=cite["heading"],
+                    source_refs=cite["source_refs"],
+                    commit=cite.get("commit"),
+                )
+            )
+        except Exception:
+            continue
+    return citations
+
+
+def _expand_followup(
+    q: str,
+    prior: List[Dict[str, Any]],
+    guard: Any,
+    guardrail_hint: Optional[str],
+) -> tuple[str, Any, Optional[str]]:
+    """Expand a vague follow-up with the last in-scope question for retrieval.
+
+    History-first order reads naturally and keeps BM25 term proximity stable.
+    """
+    if guard.verdict != "out_of_scope" or not is_followup_query(q):
+        return q, guard, guardrail_hint
+    last_user_q = _last_user_message(prior)
+    if not last_user_q or classify_query(last_user_q).verdict != "ok":
+        return q, guard, guardrail_hint
+    retrieval_q = f"{last_user_q} {q}"
+    guard = classify_query(retrieval_q)
+    guardrail_hint = None  # inherit scope from history
+    if guard.verdict != "unsafe":
+        # Never let merge word order decide an inherited-unsafe verdict.
+        reverse = classify_query(f"{q} {last_user_q}")
+        if reverse.verdict == "unsafe":
+            guard = reverse
+            guardrail_hint = _guardrail_hint(guard)
+    return retrieval_q, guard, guardrail_hint
+
+
+def _strip_smalltalk(
+    retrieval_q: str, guard: Any, guardrail_hint: Optional[str]
+) -> tuple[str, Any, Optional[str]]:
+    """Strip a leading small-talk prefix for retrieval; original q is persisted."""
+    try:
+        cleaned, had_prefix = strip_smalltalk_prefix(retrieval_q)
+    except Exception:
+        return retrieval_q, guard, guardrail_hint
+    if not had_prefix:
+        return retrieval_q, guard, guardrail_hint
+    retrieval_q = cleaned
+    try:
+        guard = classify_query(retrieval_q)
+    except Exception:
+        pass
+    guardrail_hint = (
+        _guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
+    )
+    return retrieval_q, guard, guardrail_hint
+
+
+def _resolve_domain_route(
+    retrieval_q: str, prior: List[Dict[str, Any]]
+) -> tuple[str, Optional[DomainRoute], bool]:
+    """Route the question, folding pending clarifications and inherited ids."""
+    # Pending clarification: fold the pending question with the supplied id.
+    pending_q = pending_clarification_question(prior)
+    if pending_q is not None:
+        supplied = resolve_supplied_project_id(retrieval_q)
+        if supplied is not None:
+            retrieval_q = f"{pending_q} project {supplied}"
+    try:
+        dron: Optional[DomainRoute] = route_query(retrieval_q)
+    except Exception:
+        dron = None
+    needs_project_id = False
+    if dron is not None and dron.needs_project_id:
+        # Never guess an id: use this turn's text, else the latest explicit id.
+        supplied = resolve_supplied_project_id(retrieval_q)
+        if supplied is not None:
+            retrieval_q = f"{retrieval_q} project {supplied}"
+            dron = route_query(retrieval_q)
+        if dron.needs_project_id:
+            inherited = latest_explicit_project_id(prior)
+            if inherited is not None:
+                retrieval_q = f"{retrieval_q} project {inherited}"
+                dron = route_query(retrieval_q)
+        if dron.needs_project_id:
+            needs_project_id = True
+            dron = None
+    return retrieval_q, dron, needs_project_id
+
+
+async def _dispatch_evidence(user_id: int, dron: DomainRoute, db: Any) -> Any:
+    """Run domain evidence collection; None means keep the KB path alive."""
+    try:
+        return await collect_evidence(user_id, dron, db)
+    except Exception:
+        logger.exception("domain dispatch failed; continuing KB-only")
+        return None
+
+
+async def _retrieve_for_turn(
+    retrieval_q: str,
+    top_k: int,
+    dron: Optional[DomainRoute],
+    needs_project_id: bool,
+) -> RetrievalResponse:
+    """Pick the retrieval arm: clarification, DOMAIN-only, or KB (off-loop)."""
+    if needs_project_id:
+        # No retrieval/embedding call for a clarification turn.
+        return _empty_response("clarify", retrieval_q)
+    if dron is not None and dron.route == "DOMAIN":
+        # DOMAIN-only turn: skip embedding + BM25 entirely.
+        return _empty_response("domain-only", retrieval_q)
+    # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
+    return await run_in_threadpool(retrieve, retrieval_q, top_k=top_k)
+
+
 @dataclass(frozen=True)
 class PreparedTurn:
     """Everything one chat turn needs after guardrails + retrieval."""
@@ -99,9 +257,9 @@ async def prepare_turn(
 ) -> PreparedTurn:
     """Validate, persist the user turn, hydrate history, and run retrieval."""
     session_id = session["id"]
-    guardrail_hint = None
-    if guard.verdict in {"unsafe", "out_of_scope"}:
-        guardrail_hint = f"{guard.gate}:{guard.verdict} {guard.reason}"
+    guardrail_hint = (
+        _guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
+    )
 
     top_k = max(TOP_K_MIN, min(TOP_K_MAX, top_k_raw or DEFAULT_TOP_K))
 
@@ -112,47 +270,16 @@ async def prepare_turn(
         )
     history_dicts = _history_dicts(prior)
 
-    retrieval_q = q
-    # Follow-up handling: vague q + TM context in history -> expand it.
-    # History-first order reads naturally and keeps BM25 term proximity stable.
-    if guard.verdict == "out_of_scope" and is_followup_query(q):
-        last_user_q = _last_user_message(prior)
-        if last_user_q and classify_query(last_user_q).verdict == "ok":
-            retrieval_q = f"{last_user_q} {q}"
-            guardrail_hint = None  # inherit scope from history
-            guard = classify_query(retrieval_q)
-            if guard.verdict != "unsafe":
-                # Never let merge word order decide an inherited-unsafe verdict.
-                reverse = classify_query(f"{q} {last_user_q}")
-                if reverse.verdict == "unsafe":
-                    guard = reverse
-                    guardrail_hint = f"{guard.gate}:{guard.verdict} {guard.reason}"
-
-    # Strip a leading small-talk prefix for retrieval; original q is persisted.
-    try:
-        _cleaned, _had_prefix = strip_smalltalk_prefix(retrieval_q)
-    except Exception:
-        _cleaned, _had_prefix = retrieval_q, False
-    if _had_prefix:
-        retrieval_q = _cleaned
-        try:
-            guard = classify_query(retrieval_q)
-        except Exception:
-            pass
-        if guard.verdict in {"unsafe", "out_of_scope"}:
-            guardrail_hint = f"{guard.gate}:{guard.verdict} {guard.reason}"
-        else:
-            guardrail_hint = None
+    # Follow-up expansion and small-talk stripping adjust the retrieval query.
+    retrieval_q, guard, guardrail_hint = _expand_followup(
+        q, prior, guard, guardrail_hint
+    )
+    retrieval_q, guard, guardrail_hint = _strip_smalltalk(
+        retrieval_q, guard, guardrail_hint
+    )
 
     # Third-party profile asks: deterministic web redirect, never LLM evidence.
-    try:
-        third_party_user = is_third_party_user_query(retrieval_q)
-        third_party_username = (
-            extract_third_party_username(retrieval_q) if third_party_user else None
-        )
-    except Exception:
-        third_party_user = False
-        third_party_username = None
+    third_party_user, third_party_username = _detect_third_party(retrieval_q)
 
     await persist_user_turn(session_id, session, q, db)
 
@@ -160,14 +287,7 @@ async def prepare_turn(
         # No domain dispatch, no retrieval, no generation for another user's data.
         return PreparedTurn(
             history=history_dicts,
-            resp=RetrievalResponse(
-                results=[],
-                denied_count=0,
-                denied_reasons=[],
-                candidate_count=0,
-                mode="third-party",
-                query=retrieval_q,
-            ),
+            resp=_empty_response("third-party", retrieval_q),
             citations=[],
             guardrail_hint=guardrail_hint,
             scope_verdict=guard.verdict,
@@ -189,37 +309,10 @@ async def prepare_turn(
     needs_project_id = False
     dron: Optional[DomainRoute] = None
     if user_id is not None:
-        # Pending clarification: fold the pending question with the supplied id.
-        pending_q = pending_clarification_question(prior)
-        if pending_q is not None:
-            supplied = resolve_supplied_project_id(retrieval_q)
-            if supplied is not None:
-                retrieval_q = f"{pending_q} project {supplied}"
-        try:
-            dron = route_query(retrieval_q)
-        except Exception:
-            dron = None
-        if dron is not None and dron.needs_project_id:
-            # Never guess an id: use this turn's text, else the latest explicit id.
-            supplied = resolve_supplied_project_id(retrieval_q)
-            if supplied is not None:
-                retrieval_q = f"{retrieval_q} project {supplied}"
-                dron = route_query(retrieval_q)
-            if dron.needs_project_id:
-                inherited = latest_explicit_project_id(prior)
-                if inherited is not None:
-                    retrieval_q = f"{retrieval_q} project {inherited}"
-                    dron = route_query(retrieval_q)
-            if dron.needs_project_id:
-                needs_project_id = True
-                dron = None
+        retrieval_q, dron, needs_project_id = _resolve_domain_route(retrieval_q, prior)
         if dron is not None and dron.route in ("DOMAIN", "BOTH"):
             # DOMAIN/BOTH always carry ops; guard keeps the KB path alive if dispatch breaks.
-            try:
-                outcome = await collect_evidence(user_id, dron, db)
-            except Exception:
-                logger.exception("domain dispatch failed; continuing KB-only")
-                outcome = None
+            outcome = await _dispatch_evidence(user_id, dron, db)
             if outcome is not None:
                 domain_route_str = outcome.route
                 domain_project_id = outcome.project_id
@@ -227,45 +320,10 @@ async def prepare_turn(
                 domain_block = outcome.block
                 pending_citations = [dict(c) for c in outcome.citations]
 
-    if needs_project_id:
-        # No retrieval/embedding call for a clarification turn.
-        resp = RetrievalResponse(
-            results=[],
-            denied_count=0,
-            denied_reasons=[],
-            candidate_count=0,
-            mode="clarify",
-            query=retrieval_q,
-        )
-    elif dron is not None and dron.route == "DOMAIN":
-        # DOMAIN-only turn: skip embedding + BM25 entirely.
-        resp = RetrievalResponse(
-            results=[],
-            denied_count=0,
-            denied_reasons=[],
-            candidate_count=0,
-            mode="domain-only",
-            query=retrieval_q,
-        )
-    else:
-        # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
-        resp = await run_in_threadpool(retrieve, retrieval_q, top_k=top_k)
-    citations = _build_citations(resp)
-    if domain_status == "OK":
-        for cite in pending_citations:
-            try:
-                citations.append(
-                    RagCitationDTO(
-                        id=cite["id"],
-                        title=cite["title"],
-                        doc_id=cite["doc_id"],
-                        heading=cite["heading"],
-                        source_refs=cite["source_refs"],
-                        commit=cite.get("commit"),
-                    )
-                )
-            except Exception:
-                continue
+    resp = await _retrieve_for_turn(retrieval_q, top_k, dron, needs_project_id)
+    citations = _merge_domain_citations(
+        _build_citations(resp), domain_status, pending_citations
+    )
 
     return PreparedTurn(
         history=history_dicts,
