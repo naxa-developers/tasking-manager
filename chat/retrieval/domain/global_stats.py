@@ -5,6 +5,7 @@ from typing import Any, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 GLOBAL_STATS_OPERATION = "get_global_stats"
@@ -12,15 +13,6 @@ GLOBAL_STATS_PROVENANCE = "StatsService.get_rag_global_stats"
 
 _MAX_ORGS = 8
 _MAX_CAMPAIGNS = 8
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 def _int_or_none(value: Any) -> Optional[int]:

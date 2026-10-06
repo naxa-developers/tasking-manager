@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 USER_TASKS_OPERATION = "get_user_recent_tasks"
@@ -13,15 +14,6 @@ USER_TASKS_PROVENANCE = "UserService.get_tasks_dto"
 
 _MAX_TASKS = 5
 _MAX_INVALIDATIONS = 3
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 def _when(value: Any) -> str:

@@ -5,17 +5,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase
 
 MYWORK_OPERATION = "get_my_work"
 MYWORK_PROVENANCE = "Task.get_locked_tasks_details_for_user"
-
-
-def _attr(row: Any, name: str) -> Any:
-    """Read a field off a task row (ORM record or mapping); None when absent."""
-    if isinstance(row, dict):
-        return row.get(name)
-    return getattr(row, name, None)
 
 
 def _status_name(raw: Any) -> Optional[str]:

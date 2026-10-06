@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 CONTRIBUTION_OPERATION = "get_user_contributions"
@@ -13,15 +14,6 @@ CONTRIBUTION_PROVENANCE = "UserService.get_detailed_stats"
 
 _MAX_MONTHS = 6
 _MAX_PROJECTS = 10
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 def _int_or_zero(value: Any) -> int:

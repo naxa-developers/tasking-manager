@@ -4,18 +4,10 @@ import datetime
 from dataclasses import dataclass
 from typing import Any, List, Optional, Sequence
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import safe_value
 
 _MAX_RENDERED = 8
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 def _text(value: Any) -> str:

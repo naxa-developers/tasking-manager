@@ -5,21 +5,13 @@ from typing import Any, List, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 TEAMS_FOR_USER_OPERATION = "get_user_teams"
 TEAMS_FOR_USER_PROVENANCE = "TeamService.get_all_teams"
 
 _MAX_TEAMS = 15
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 @dataclass(frozen=True)

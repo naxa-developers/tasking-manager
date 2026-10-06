@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.retrieval.domain._rows import _attr
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase
 from chat.retrieval.domain.project_entries import (
     ProjectEntry,
@@ -19,15 +20,6 @@ DISCOVERY_PROVENANCE = "ProjectSearchService.search_projects"
 
 _DEFAULT_EXPIRING_DAYS = 14
 _RESULT_LIMIT = 8
-
-
-def _attr(obj: Any, name: str) -> Any:
-    """Read a field off a DTO/ORM object or mapping; None when absent."""
-    if obj is None:
-        return None
-    if isinstance(obj, dict):
-        return obj.get(name)
-    return getattr(obj, name, None)
 
 
 @dataclass(frozen=True)
