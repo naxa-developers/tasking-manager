@@ -397,13 +397,15 @@ class TestChatCLI:
 
 
 class TestRefusalCopySingleSourced:
-    def test_system_prompt_uses_precision_template(self):
-        """The LLM-side refusal must be the shared precision sentence."""
+    def test_system_prompt_has_no_refusal_copy(self):
+        """Refusals are served by guardrails/canned answers; the generation
+        prompt must not quote them (a 1.7B model echoed the copy verbatim)."""
         from chat.retrieval.guardrails import REFUSAL_TEMPLATES
         from chat.retrieval.llm_answer import _SYSTEM_PROMPT
 
-        assert REFUSAL_TEMPLATES["out_of_scope"] in _SYSTEM_PROMPT
-        assert REFUSAL_TEMPLATES["unsafe"] in _SYSTEM_PROMPT
+        assert REFUSAL_TEMPLATES["out_of_scope"] not in _SYSTEM_PROMPT
+        assert REFUSAL_TEMPLATES["unsafe"] not in _SYSTEM_PROMPT
+        assert "UNSAFE_REQUEST" in _SYSTEM_PROMPT
         assert "That question is outside" not in _SYSTEM_PROMPT
 
     def test_no_duplicate_system_prompt(self):
@@ -412,8 +414,7 @@ class TestRefusalCopySingleSourced:
         from chat.retrieval import llm_answer
 
         src = open(llm_answer.__file__).read()
-        # The repair prompt (_REPAIR_SYSTEM_PROMPT) is deliberate; only the
-        # main system prompt must be defined exactly once.
+        # The main system prompt must be defined exactly once.
         assert len(re.findall(r"^_SYSTEM_PROMPT = ", src, re.M)) == 1
 
 

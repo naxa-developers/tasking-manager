@@ -6,7 +6,7 @@ when evidence is present. If the prompt is ever trimmed, these fail loudly.
 """
 
 from chat.retrieval.domain.mywork import LockedTaskGroup, MyWorkEvidence
-from chat.retrieval.llm_answer import _REPAIR_SYSTEM_PROMPT, _SYSTEM_PROMPT
+from chat.retrieval.llm_answer import _SYSTEM_PROMPT
 
 
 def test_totals_rule_present():
@@ -18,12 +18,12 @@ def test_cover_every_value_rule_present():
     assert "Cover every value the evidence provides" in _SYSTEM_PROMPT
 
 
-def test_no_refusal_when_evidence_present_rule_intact():
-    assert "never reply with a refusal when evidence is present" in _SYSTEM_PROMPT
-
-
-def test_repair_prompt_still_never_refuses():
-    assert "Never refuse" in _REPAIR_SYSTEM_PROMPT
+def test_no_refusal_copy_in_system_prompt():
+    """Regression: the 1.7B model echoed refusal copy verbatim (113/219 in-scope
+    questions in the audit); the prompt must not quote user-visible refusals."""
+    assert "Could you be more precise" not in _SYSTEM_PROMPT
+    assert "I can't help with that" not in _SYSTEM_PROMPT
+    assert "UNSAFE_REQUEST" in _SYSTEM_PROMPT
 
 
 def test_mywork_block_leads_with_direct_answer():
