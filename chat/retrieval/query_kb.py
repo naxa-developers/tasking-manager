@@ -7,10 +7,10 @@ import time
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:  # annotations only; runtime imports stay lazy (see from_chunks)
-    from llama_index.core.schema import QueryBundle, TextNode
+    from llama_index.core.schema import TextNode
     from llama_index.retrievers.bm25 import BM25Retriever
 
 RETRIEVAL_DIR = Path(__file__).resolve().parent
@@ -125,59 +125,64 @@ class RankedCandidates:
     nodes: Dict[str, "TextNode"] = field(default_factory=dict)
 
 
-class _RankCapture:
-    """Per-call record of one retrieval arm's ranked output and latency."""
-
-    def __init__(self) -> None:
-        self.ranked = RankedCandidates([], {})
-        self.elapsed_ms = 0.0
+_RRF_K = 60.0  # reciprocal-rank-fusion constant (Cormack et al.)
 
 
-_CANDIDATE_RETRIEVER_CLS = None
+def _reciprocal_rank_fusion(
+    vec: RankedCandidates,
+    bm25: RankedCandidates,
+    node_map: Dict[str, "TextNode"],
+    top_k: int,
+) -> List[ScoredNode]:
+    """Fuse the two ranked arms by reciprocal rank, best-first.
 
+    Each arm is ranked by score (stable), nodes are keyed by content hash (so
+    duplicate content collapses, last occurrence winning), and scores sum
+    ``1 / (rank + 60)`` across arms — the recipe llama-index's reciprocal-rank
+    fusion applied here before.
+    """
+    fused_scores: Dict[str, float] = {}
+    hash_to_ranked: Dict[str, Tuple[str, "TextNode"]] = {}
+    for arm in (vec, bm25):
+        ranked = [
+            (nid, arm.nodes.get(nid) or node_map.get(nid), arm.scores.get(nid))
+            for nid in arm.ids
+            if arm.nodes.get(nid) is not None or nid in node_map
+        ]
+        for rank, (nid, node, score) in enumerate(
+            sorted(ranked, key=lambda item: item[2] or 0.0, reverse=True)
+        ):
+            node_hash = node.hash
+            hash_to_ranked[node_hash] = (nid, node)
+            fused_scores[node_hash] = fused_scores.get(node_hash, 0.0) + 1.0 / (
+                rank + _RRF_K
+            )
 
-def _candidate_retriever_class():
-    """Return the thin BaseRetriever adapter over RankedCandidates producers."""
-    global _CANDIDATE_RETRIEVER_CLS
-    if _CANDIDATE_RETRIEVER_CLS is None:
-        from llama_index.core.base.base_retriever import BaseRetriever  # type: ignore
-        from llama_index.core.schema import NodeWithScore  # type: ignore
-
-        class _CandidateRetriever(BaseRetriever):
-            def __init__(
-                self,
-                produce: Callable[[str], RankedCandidates],
-                node_map: Dict[str, "TextNode"],
-                capture: _RankCapture,
-            ) -> None:
-                self._produce = produce
-                self._node_map = node_map
-                self._capture = capture
-                self._last_query: Optional[str] = None
-                self._last_nodes: List["NodeWithScore"] = []
-                super().__init__()
-
-            def _retrieve(self, query_bundle: "QueryBundle") -> List["NodeWithScore"]:
-                question = query_bundle.query_str
-                if question != self._last_query:
-                    t0 = time.perf_counter()
-                    ranked = self._produce(question)
-                    self._capture.elapsed_ms += (time.perf_counter() - t0) * 1000
-                    self._capture.ranked = ranked
-                    self._last_query = question
-                    # Prefer the arm's own nodes; fall back to node_map for id-only arms.
-                    self._last_nodes = [
-                        NodeWithScore(
-                            node=ranked.nodes.get(nid) or self._node_map[nid],
-                            score=ranked.scores.get(nid),
-                        )
-                        for nid in ranked.ids
-                        if nid in ranked.nodes or nid in self._node_map
-                    ]
-                return list(self._last_nodes)
-
-        _CANDIDATE_RETRIEVER_CLS = _CandidateRetriever
-    return _CANDIDATE_RETRIEVER_CLS
+    vec_rank_index = {nid: idx + 1 for idx, nid in enumerate(vec.ids)}
+    bm25_rank_index = {nid: idx + 1 for idx, nid in enumerate(bm25.ids)}
+    results: List[ScoredNode] = []
+    seen_ids: set = set()
+    for node_hash, fused_score in sorted(
+        fused_scores.items(), key=lambda item: item[1], reverse=True
+    )[:top_k]:
+        nid, ranked_node = hash_to_ranked[node_hash]
+        if nid in seen_ids:
+            # Fused by content hash; keep one logical result per node_id.
+            continue
+        # Prefer the vector store's node; fall back to chunks/BM25 node.
+        node = vec.nodes.get(nid) or node_map.get(nid) or ranked_node
+        seen_ids.add(nid)
+        results.append(
+            ScoredNode(
+                node=node,
+                vector_rank=vec_rank_index.get(nid),
+                bm25_rank=bm25_rank_index.get(nid),
+                vector_score=vec.scores.get(nid),
+                bm25_score=bm25.scores.get(nid),
+                fused_score=float(fused_score or 0.0),
+            )
+        )
+    return results
 
 
 class Retriever:
@@ -355,23 +360,14 @@ class Retriever:
         Strict: raises RetrievalUnavailable instead of serving partial results
         when either arm fails or the index is empty.
         """
-        from llama_index.core.llms import MockLLM  # type: ignore
-        from llama_index.core.retrievers import QueryFusionRetriever  # type: ignore
-
-        adapter_cls = _candidate_retriever_class()
-        vec_cap = _RankCapture()
-        bm25_cap = _RankCapture()
-        vec_r = adapter_cls(self.vector_candidates, self.node_map, vec_cap)
-        bm25_r = adapter_cls(self.bm25_candidates, self.node_map, bm25_cap)
-
         t0 = time.perf_counter()
 
-        # Run each arm once up front (memoized); strict checks follow below.
-        vec_r.retrieve(question)
-        bm25_r.retrieve(question)
-
-        vec = vec_cap.ranked
-        bm25 = bm25_cap.ranked
+        t_arm = time.perf_counter()
+        vec = self.vector_candidates(question)
+        vec_ms = (time.perf_counter() - t_arm) * 1000
+        t_arm = time.perf_counter()
+        bm25 = self.bm25_candidates(question)
+        bm25_ms = (time.perf_counter() - t_arm) * 1000
 
         if self.load_error:
             # chunks.json missing / BM25 init failed: hybrid retrieval cannot run.
@@ -383,11 +379,9 @@ class Retriever:
                     f"vector search failed: {vec.error}", kind="too_large"
                 )
             # One transient retry: an embedding blip must not fail the turn.
-            # Rebuild the adapter so fusion consumes the retry's results.
-            vec_cap = _RankCapture()
-            vec_r = adapter_cls(self.vector_candidates, self.node_map, vec_cap)
-            vec_r.retrieve(question)
-            vec = vec_cap.ranked
+            t_arm = time.perf_counter()
+            vec = self.vector_candidates(question)
+            vec_ms = (time.perf_counter() - t_arm) * 1000
             if vec.error:
                 raise RetrievalUnavailable(f"vector search failed: {vec.error}")
         if bm25.error:
@@ -396,45 +390,11 @@ class Retriever:
             raise RetrievalUnavailable("no candidates from vector or BM25")
 
         candidate_count = len(set(vec.ids) | set(bm25.ids))
-
-        # num_queries=1: fuse the original query only; MockLLM avoids Settings.llm.
-        fusion = QueryFusionRetriever(
-            retrievers=[vec_r, bm25_r],
-            llm=MockLLM(),
-            mode="reciprocal_rerank",
-            similarity_top_k=top_k,
-            num_queries=1,
-            use_async=False,
-            verbose=False,
-        )
-        fused_nodes = fusion.retrieve(question)
-
-        vec_rank_index = {nid: idx + 1 for idx, nid in enumerate(vec.ids)}
-        bm25_rank_index = {nid: idx + 1 for idx, nid in enumerate(bm25.ids)}
-        results = []
-        seen_ids: set = set()
-        for nws in fused_nodes:
-            nid = nws.node.id_
-            if nid in seen_ids:
-                # Fusion keys by node hash; keep one logical result per node_id (store content).
-                continue
-            # Prefer the vector store's node; fall back to BM25/chunks node or fused node.
-            node = vec.nodes.get(nid) or self.node_map.get(nid) or nws.node
-            seen_ids.add(nid)
-            results.append(
-                ScoredNode(
-                    node=node,
-                    vector_rank=vec_rank_index.get(nid),
-                    bm25_rank=bm25_rank_index.get(nid),
-                    vector_score=vec.scores.get(nid),
-                    bm25_score=bm25.scores.get(nid),
-                    fused_score=float(nws.score or 0.0),
-                )
-            )
+        results = _reciprocal_rank_fusion(vec, bm25, self.node_map, top_k)
 
         t_done = time.perf_counter()
         timing: Dict[str, float] = {
-            "retrieval_ms": vec_cap.elapsed_ms + bm25_cap.elapsed_ms,
+            "retrieval_ms": vec_ms + bm25_ms,
             "total_ms": (t_done - t0) * 1000,
         }
         return RetrievalResponse(
