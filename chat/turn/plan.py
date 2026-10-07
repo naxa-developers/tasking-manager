@@ -71,7 +71,9 @@ def guardrail_hint(guard: Any) -> str:
 
 def initial_guardrail_hint(guard: Any) -> Optional[str]:
     """Hint for a fresh turn: only unsafe/out-of-scope verdicts carry one."""
-    return guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
+    return (
+        guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
+    )
 
 
 def empty_response(mode: str, query: str) -> RetrievalResponse:

@@ -139,9 +139,8 @@ def test_canned_answer_precedence():
     )
     empty = _FakeResp(results=[], candidate_count=0)
     assert _decide("how do I map a task?", resp=empty) == LOW_CONFIDENCE_ANSWER
-    assert (
-        _decide("what is the capital of France?", resp=empty)
-        == refusal_for("out_of_scope")
+    assert _decide("what is the capital of France?", resp=empty) == refusal_for(
+        "out_of_scope"
     )
     good = _FakeResp(results=[_FakeScored(node=_FakeNode(id_="kb-1", text="hi"))])
     assert _decide("how do I map a task?", resp=good) is None
