@@ -9,31 +9,9 @@ from typing import List, Optional
 from dotenv import load_dotenv  # type: ignore
 from llama_index.embeddings.litellm import LiteLLMEmbedding  # type: ignore
 
+from chat.env import env_float, env_int, env_optional
+
 load_dotenv(Path(__file__).resolve().parents[2] / "tasking-manager.env", override=False)
-
-
-# Env parsing helpers — one place for getenv/convert/fallback.
-def _env_int(name: str, default: int) -> int:
-    try:
-        return int((os.getenv(name) or str(default)).strip())
-    except ValueError:
-        return default
-
-
-def _env_float(name: str, default: float) -> float:
-    try:
-        return float((os.getenv(name) or str(default)).strip())
-    except ValueError:
-        return default
-
-
-def _env_optional(*names: str) -> Optional[str]:
-    """First non-empty env var among names, in order."""
-    for name in names:
-        value = os.getenv(name)
-        if value:
-            return value
-    return None
 
 
 # LiteLLM / embedding
@@ -87,21 +65,21 @@ class EmbeddingConfig:
 
 
 def get_embedding_config() -> EmbeddingConfig:
-    model = (_env_optional("EMBEDDING_MODEL") or "").strip()
+    model = (env_optional("EMBEDDING_MODEL") or "").strip()
     if not model:
         raise RuntimeError(
             "Embedding model is not configured — set EMBEDDING_MODEL in "
             "tasking-manager.env (see example.env TMBot section)."
         )
-    dimension = _env_int("EMBEDDING_DIMENSION", 0)
+    dimension = env_int("EMBEDDING_DIMENSION", 0)
     if dimension <= 0:
         raise RuntimeError(
             "Embedding dimension is not configured — set EMBEDDING_DIMENSION in "
             "tasking-manager.env to match the indexed vectors (see example.env "
             "TMBot section)."
         )
-    api_key = _env_optional("LLM_API_KEY", "LITELLM_API_KEY")
-    api_base = _env_optional("EMBEDDING_API_BASE", "LLM_API_BASE", "LITELLM_API_BASE")
+    api_key = env_optional("LLM_API_KEY", "LITELLM_API_KEY")
+    api_base = env_optional("EMBEDDING_API_BASE", "LLM_API_BASE", "LITELLM_API_BASE")
     reg_q, reg_d = lookup_model_prefixes(model)
     query_prefix = os.getenv("EMBEDDING_QUERY_PREFIX", reg_q)
     doc_prefix = os.getenv("EMBEDDING_DOC_PREFIX", reg_d)
@@ -136,7 +114,7 @@ class GenerationConfig:
 
 
 def get_generation_config() -> GenerationConfig:
-    model = _env_optional("LITELLM_MODEL", "GENERATION_MODEL")
+    model = env_optional("LITELLM_MODEL", "GENERATION_MODEL")
     if not model:
         raise RuntimeError(
             "Generation model is not configured — set LITELLM_MODEL (or "
@@ -144,12 +122,12 @@ def get_generation_config() -> GenerationConfig:
             "section)."
         )
     model = model.strip()
-    api_key = _env_optional("LLM_API_KEY", "LITELLM_API_KEY")
-    api_base = _env_optional("GENERATION_API_BASE", "LLM_API_BASE", "LITELLM_API_BASE")
-    temp = _env_float("LITELLM_TEMPERATURE", 0.2)
-    max_tokens = _env_int("LITELLM_MAX_TOKENS", 512)
-    timeout = _env_float("LITELLM_TIMEOUT", 30.0)
-    num_retries = max(0, _env_int("LITELLM_NUM_RETRIES", 2))
+    api_key = env_optional("LLM_API_KEY", "LITELLM_API_KEY")
+    api_base = env_optional("GENERATION_API_BASE", "LLM_API_BASE", "LITELLM_API_BASE")
+    temp = env_float("LITELLM_TEMPERATURE", 0.2)
+    max_tokens = env_int("LITELLM_MAX_TOKENS", 512)
+    timeout = env_float("LITELLM_TIMEOUT", 30.0)
+    num_retries = max(0, env_int("LITELLM_NUM_RETRIES", 2))
     return GenerationConfig(
         model=model,
         api_key=api_key,
@@ -179,7 +157,7 @@ def get_pgvector_config(embed_dim: Optional[int] = None) -> PGVectorConfig:
     # PGVECTOR_* wins; POSTGRES_* fallback lets deployments reuse the RDS creds.
     host = os.getenv("PGVECTOR_HOST") or os.getenv("POSTGRES_ENDPOINT") or "localhost"
     # tm-db single DB
-    port = _env_int("PGVECTOR_PORT", _env_int("POSTGRES_PORT", 5432))
+    port = env_int("PGVECTOR_PORT", env_int("POSTGRES_PORT", 5432))
     database = (
         os.getenv("PGVECTOR_DATABASE")
         or os.getenv("PGVECTOR_DB")

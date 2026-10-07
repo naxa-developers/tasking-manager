@@ -9,21 +9,15 @@ turns per user; set the limit to 0 to disable limiting.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 
 from databases import Database
 from loguru import logger
 
+from chat.env import env_int
+
 DEFAULT_RATE_LIMIT = 20
 DEFAULT_RATE_WINDOW_SECONDS = 60
-
-
-def _env_int(name: str, default: int) -> int:
-    try:
-        return int((os.getenv(name) or str(default)).strip())
-    except ValueError:
-        return default
 
 
 @dataclass(frozen=True)
@@ -41,9 +35,9 @@ class RateLimitDecision:
 
 def get_rate_limit_config() -> RateLimitConfig:
     return RateLimitConfig(
-        limit=_env_int("RAG_CHAT_RATE_LIMIT", DEFAULT_RATE_LIMIT),
+        limit=env_int("RAG_CHAT_RATE_LIMIT", DEFAULT_RATE_LIMIT),
         window_seconds=max(
-            1, _env_int("RAG_CHAT_RATE_WINDOW_SECONDS", DEFAULT_RATE_WINDOW_SECONDS)
+            1, env_int("RAG_CHAT_RATE_WINDOW_SECONDS", DEFAULT_RATE_WINDOW_SECONDS)
         ),
     )
 
