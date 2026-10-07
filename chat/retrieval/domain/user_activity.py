@@ -6,7 +6,7 @@ from typing import Any, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _int_or_zero
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase
 
 ACTIVITY_OPERATION = "get_user_activity"
@@ -21,13 +21,6 @@ def _as_date(value: Any) -> Optional[datetime.date]:
     if isinstance(value, datetime.date):
         return value
     return None
-
-
-def _int_or_zero(value: Any) -> int:
-    try:
-        return int(value) if value is not None else 0
-    except (TypeError, ValueError):
-        return 0
 
 
 def _streaks(days: List[datetime.date], today: datetime.date) -> Tuple[int, int]:

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _int_or_zero
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 CONTRIBUTION_OPERATION = "get_user_contributions"
@@ -14,13 +14,6 @@ CONTRIBUTION_PROVENANCE = "UserService.get_detailed_stats"
 
 _MAX_MONTHS = 6
 _MAX_PROJECTS = 10
-
-
-def _int_or_zero(value: Any) -> int:
-    try:
-        return int(value) if value is not None else 0
-    except (TypeError, ValueError):
-        return 0
 
 
 def _hours(seconds: Any) -> Optional[float]:

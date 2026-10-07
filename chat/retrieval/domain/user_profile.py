@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _names
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 PROFILE_OPERATION = "get_user_profile"
@@ -16,17 +16,6 @@ PROFILE_PROVENANCE = (
 
 _MAX_BADGES = 12
 _MAX_METRICS = 12
-
-
-def _names(rows: Any, limit: int = _MAX_BADGES) -> Tuple[str, ...]:
-    names: List[str] = []
-    for row in rows or []:
-        name = _attr(row, "name")
-        if name:
-            names.append(str(name))
-        if len(names) >= limit:
-            break
-    return tuple(names)
 
 
 @dataclass(frozen=True)
@@ -104,7 +93,7 @@ async def get_user_profile_evidence(user_id: int, db: Any) -> UserProfileEvidenc
         current_level = _attr(level, "name")
 
         earned_rows = await MappingBadge.get_public_for_user(user_id, db)
-        earned_badges = _names(earned_rows)
+        earned_badges = _names(earned_rows, limit=_MAX_BADGES)
 
         earned_ids = set()
         try:

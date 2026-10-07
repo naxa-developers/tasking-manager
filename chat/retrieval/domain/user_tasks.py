@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import datetime
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _iso_day
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 USER_TASKS_OPERATION = "get_user_recent_tasks"
@@ -14,14 +13,6 @@ USER_TASKS_PROVENANCE = "UserService.get_tasks_dto"
 
 _MAX_TASKS = 5
 _MAX_INVALIDATIONS = 3
-
-
-def _when(value: Any) -> str:
-    if isinstance(value, datetime.datetime):
-        return value.strftime("%Y-%m-%d")
-    if isinstance(value, datetime.date):
-        return value.strftime("%Y-%m-%d")
-    return ""
 
 
 @dataclass(frozen=True)
@@ -132,7 +123,7 @@ async def get_user_tasks_evidence(user_id: int, db: Any) -> UserTasksEvidence:
                     task_id=_attr(task, "task_id") or _attr(task, "taskId"),
                     project_id=_attr(task, "project_id"),
                     task_status=_attr(task, "task_status"),
-                    last_updated=_when(_attr(task, "last_updated")),
+                    last_updated=_iso_day(_attr(task, "last_updated")),
                     comments=int(_attr(task, "comments_number") or 0),
                 )
             )
@@ -166,7 +157,7 @@ async def get_user_tasks_evidence(user_id: int, db: Any) -> UserTasksEvidence:
                     InvalidationEntry(
                         project_id=_attr(row, "project_id"),
                         task_id=_attr(row, "task_id"),
-                        invalidated=_when(_attr(row, "invalidated_date")),
+                        invalidated=_iso_day(_attr(row, "invalidated_date")),
                         invalidator=_attr(row, "invalidator_username"),
                         validator_comment=_attr(row, "validator_comment"),
                     )

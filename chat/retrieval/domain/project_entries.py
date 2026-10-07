@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import datetime
 from dataclasses import dataclass
 from typing import Any, List, Optional, Sequence
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _iso_day
 from chat.retrieval.domain.evidence import safe_value
 
 _MAX_RENDERED = 8
@@ -16,14 +15,6 @@ def _text(value: Any) -> str:
     if isinstance(value, (list, tuple)):
         return ", ".join(str(v) for v in value if v)
     return str(value)
-
-
-def _day(value: Any) -> str:
-    if isinstance(value, datetime.datetime):
-        return value.strftime("%Y-%m-%d")
-    if isinstance(value, datetime.date):
-        return value.strftime("%Y-%m-%d")
-    return ""
 
 
 @dataclass(frozen=True)
@@ -63,7 +54,7 @@ def entry_from_dto(dto: Any) -> ProjectEntry:
         percent_mapped=_attr(dto, "percent_mapped"),
         percent_validated=_attr(dto, "percent_validated"),
         active_mappers=_attr(dto, "active_mappers"),
-        due_date=_day(_attr(dto, "due_date")),
+        due_date=_iso_day(_attr(dto, "due_date")),
         campaigns=campaign_names,
     )
 

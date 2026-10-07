@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _int_or_none
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 GLOBAL_STATS_OPERATION = "get_global_stats"
@@ -13,13 +13,6 @@ GLOBAL_STATS_PROVENANCE = "StatsService.get_rag_global_stats"
 
 _MAX_ORGS = 8
 _MAX_CAMPAIGNS = 8
-
-
-def _int_or_none(value: Any) -> Optional[int]:
-    try:
-        return int(value) if value is not None else None
-    except (TypeError, ValueError):
-        return None
 
 
 @dataclass(frozen=True)

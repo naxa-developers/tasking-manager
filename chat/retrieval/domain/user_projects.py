@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import datetime
 from dataclasses import dataclass
 from typing import Any, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain._rows import _attr
+from chat.retrieval.domain._rows import _attr, _iso_day
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 CREATED_PROJECTS_OPERATION = "get_user_projects_created"
@@ -14,14 +13,6 @@ CREATED_PROJECTS_PROVENANCE = "ProjectSearchService.get_managed_projects"
 
 _MAX_PROJECTS = 10
 _PREFERRED_LOCALE = "en"
-
-
-def _day(value: Any) -> str:
-    if isinstance(value, datetime.datetime):
-        return value.strftime("%Y-%m-%d")
-    if isinstance(value, datetime.date):
-        return value.strftime("%Y-%m-%d")
-    return ""
 
 
 def _status_label(value: Any) -> Optional[str]:
@@ -134,7 +125,7 @@ async def get_user_projects_created_evidence(
                 project_id=_attr(row, "id"),
                 name=_attr(row, "name"),
                 status=_status_label(_attr(row, "status")),
-                created=_day(_attr(row, "created")),
+                created=_iso_day(_attr(row, "created")),
             )
             for row in rows or []
         )

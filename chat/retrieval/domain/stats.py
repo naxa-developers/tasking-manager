@@ -7,10 +7,8 @@ from typing import Any, List, Optional, Tuple
 from aiocache import SimpleMemoryCache
 from loguru import logger
 
-from chat.retrieval.domain.auth import (
-    authorize_project,
-    can_read_project,
-)
+from chat.retrieval.domain._rows import _attr, _int_or_none, _names
+from chat.retrieval.domain.auth import authorize_project
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 OPERATION = "get_project_stats"
@@ -62,27 +60,8 @@ async def reset_stats_cache() -> None:
     await _STATS_CACHE.clear()
 
 
-def _raw_field(obj: Any, name: str) -> Any:
-    """Read an attribute/key off a DTO-ish object; None when absent."""
-    if hasattr(obj, name):
-        return getattr(obj, name)
-    if isinstance(obj, dict):
-        return obj.get(name)
-    try:
-        return obj[name]
-    except Exception:
-        return None
-
-
-def _int_or_none(value: Any) -> Optional[int]:
-    try:
-        return int(value) if value is not None else None
-    except (TypeError, ValueError):
-        return None
-
-
 def _int_field(obj: Any, name: str) -> Optional[int]:
-    return _int_or_none(_raw_field(obj, name))
+    return _int_or_none(_attr(obj, name))
 
 
 @dataclass(frozen=True)
@@ -237,7 +216,7 @@ async def get_project_summary_evidence(
         logger.exception(f"project {project_id} summary fetch failed")
         return ProjectSummaryEvidence(status="UNAVAILABLE", project_id=project_id)
 
-    info = _raw_field(summary, "project_info")
+    info = _attr(summary, "project_info")
     name = None
     short_description = None
     if info is not None:
@@ -252,27 +231,27 @@ async def get_project_summary_evidence(
             else info.get("name")
         )
 
-    private = _raw_field(summary, "private")
-    due_date = _raw_field(summary, "due_date")
+    private = _attr(summary, "private")
+    due_date = _attr(summary, "due_date")
     return ProjectSummaryEvidence(
         status="OK",
         project_id=project_id,
         name=str(name) if name else None,
-        project_status=_raw_field(summary, "status"),
+        project_status=_attr(summary, "status"),
         private=bool(private) if private is not None else None,
-        priority=_raw_field(summary, "priority"),
-        difficulty=_raw_field(summary, "difficulty"),
-        organisation_name=_raw_field(summary, "organisation_name"),
+        priority=_attr(summary, "priority"),
+        difficulty=_attr(summary, "difficulty"),
+        organisation_name=_attr(summary, "organisation_name"),
         percent_mapped=_int_field(summary, "percent_mapped"),
         percent_validated=_int_field(summary, "percent_validated"),
         short_description=(str(short_description) if short_description else None),
         due_date=(
             due_date.strftime("%Y-%m-%d") if hasattr(due_date, "strftime") else None
         ),
-        campaigns=_names(_raw_field(summary, "campaigns")),
-        country=_str_tuple(_raw_field(summary, "country_tag")),
-        mapping_editors=_str_tuple(_raw_field(summary, "mapping_editors")),
-        validation_editors=_str_tuple(_raw_field(summary, "validation_editors")),
+        campaigns=_names(_attr(summary, "campaigns")),
+        country=_str_tuple(_attr(summary, "country_tag")),
+        mapping_editors=_str_tuple(_attr(summary, "mapping_editors")),
+        validation_editors=_str_tuple(_attr(summary, "validation_editors")),
     )
 
 
@@ -283,18 +262,3 @@ def _str_tuple(value: Any) -> Tuple[str, ...]:
     if isinstance(value, str):
         return (value,)
     return tuple(str(item) for item in value if item is not None)
-
-
-def _names(rows: Any) -> Tuple[str, ...]:
-    """Extract ``name`` values from DTO-ish campaign rows."""
-    if not rows:
-        return ()
-    names = []
-    for row in rows:
-        if isinstance(row, dict):
-            name = row.get("name")
-        else:
-            name = getattr(row, "name", None)
-        if name:
-            names.append(str(name))
-    return tuple(names)
