@@ -219,15 +219,11 @@ _FAREWELL_UNIT = r"(?:" + _FAREWELL_ALT + r")" + _SMALLTALK_ADDRESS
 _SMALLTALK_UNIT = r"(?:" + _GREETING_UNIT + r"|" + _THANKS_UNIT + r"|" + _FAREWELL_UNIT + r")"
 # Prefix match — substantive query starting with small-talk stays in-scope.
 _SMALLTALK_PREFIX_RE = re.compile(r"^\s*(?:" + _GREETING_ALT + r"|" + _THANKS_ALT + r"|" + _FAREWELL_ALT + r")\b", re.I)
-# Back-compat alias: historic name treated everything as a greeting.
-_GREETING_RE = _SMALLTALK_PREFIX_RE
 # Pure small-talk — 1-3 units joined by punctuation (full-match only).
 _SMALLTALK_PURE_RE = re.compile(
     r"^\s*" + _SMALLTALK_UNIT + r"(?:\s*[,!?.\u2026;:\-\u2014\u2013]+\s*" + _SMALLTALK_UNIT + r"){0,2}\s*[!?.\u2026]*\s*$",
     re.I,
 )
-# Deprecated aliases kept for compatibility.
-_GREETING_PURE_RE = _SMALLTALK_PURE_RE
 _HELP_ME_RE = re.compile(r"^\s*help\s+me\s*[!?.]*\s*$", re.I)
 # Leading-prefix strip — one leading unit + delimiters, remainder captured.
 _SMALLTALK_STRIP_RE = re.compile(
@@ -250,11 +246,6 @@ def is_smalltalk_query(query: str) -> bool:
     if _HELP_ME_RE.fullmatch(normalized):
         return True
     return False
-
-
-def is_greeting_query(query: str) -> bool:
-    """Back-compat alias for is_smalltalk_query."""
-    return is_smalltalk_query(query)
 
 
 def smalltalk_kind(query: str) -> str:
