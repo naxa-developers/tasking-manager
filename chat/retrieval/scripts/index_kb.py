@@ -8,7 +8,12 @@ import sys
 from pathlib import Path
 from typing import Any, List, Optional
 
-from chat.retrieval.config import get_embedding_config, get_pgvector_config
+from chat.retrieval.config import (
+    get_embedding_config,
+    get_embedding_model,
+    get_pgvector_config,
+    get_vector_store,
+)
 
 RETRIEVAL_DIR = Path(__file__).resolve().parents[1]
 
@@ -70,18 +75,6 @@ def _load_chunks(chunks_path: Path, limit: int = 0) -> List[dict]:
     return raw  # type: ignore
 
 
-def _get_embedding_model():  # type: ignore[no-untyped-def]
-    from chat.retrieval.config import get_embedding_model
-
-    return get_embedding_model()
-
-
-def _get_vector_store(table_name: str):  # type: ignore[no-untyped-def]
-    from chat.retrieval.config import get_vector_store
-
-    return get_vector_store(table_name=table_name)
-
-
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser(description="Index flat 53 chunks.json → pgvector 5432 via litellm")
     ap.add_argument("--chunks", type=Path, default=RETRIEVAL_DIR / "data" / "chunks.json", help="chunks.json path")
@@ -100,7 +93,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(f"[index] loaded {len(raw_chunks)} chunks from {chunks_path}")
 
     # Validate LiteLLM embedding is reachable (one probe query)
-    emb = _get_embedding_model()
+    emb = get_embedding_model()
     probe = raw_chunks[0].get("text", "")[:500] if raw_chunks else "hello"
     print(f"[index] probe embedding model {get_embedding_config().model} ...")
     if not args.dry_run:
@@ -126,7 +119,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             file=sys.stderr,
         )
         return 2
-    store = _get_vector_store(table)
+    store = get_vector_store(table_name=table)
     print(f"[index] pgvector {get_pgvector_config().host}:{get_pgvector_config().port}/{get_pgvector_config().database} table={table}")
 
     # Convert to TextNodes then embed + add (PGVectorStore.add expects node.embedding set)

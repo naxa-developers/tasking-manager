@@ -19,8 +19,6 @@ from chat.retrieval.tokenizer import (
 
 # Prompt cap: the LLM sees only the most recent N prior messages (all callers).
 _MAX_HISTORY_MESSAGES = 4
-# Historic name for the shared low-confidence copy (policy.py is canonical).
-_NO_EVIDENCE_ANSWER = LOW_CONFIDENCE_ANSWER
 
 # Single call per turn: the LLM is called exactly once. The generation prompt
 # never quotes user-visible refusal copy (a 1.7B model echoed it verbatim on
@@ -321,15 +319,15 @@ class LLMService:
     ) -> str:
         """One completion. Transport errors propagate; empty output degrades."""
         if not results and not (domain_evidence and domain_evidence.strip()):
-            return _NO_EVIDENCE_ANSWER
+            return LOW_CONFIDENCE_ANSWER
         if not self._require_key():
-            return _NO_EVIDENCE_ANSWER
+            return LOW_CONFIDENCE_ANSWER
 
         system_prompt, user_prompt = self._build_messages(
             question, results, history, domain_evidence
         )
         if user_prompt is None:
-            return _NO_EVIDENCE_ANSWER
+            return LOW_CONFIDENCE_ANSWER
 
         # Transport failures propagate: callers retry / map to 503. Only an
         # empty completion degrades to the canned no-evidence answer.
@@ -349,8 +347,8 @@ class LLMService:
         if _sentinel_in(content):
             content = REFUSAL_TEMPLATES["unsafe"]
         elif _refusal_in(content):
-            content = _NO_EVIDENCE_ANSWER
-        return content or _NO_EVIDENCE_ANSWER
+            content = LOW_CONFIDENCE_ANSWER
+        return content or LOW_CONFIDENCE_ANSWER
 
     def stream(
         self,
@@ -361,17 +359,17 @@ class LLMService:
     ):  # type: ignore[no-untyped-def]
         """Yield chunks via litellm.completion(stream=True). Falls back to one chunk."""
         if not results and not (domain_evidence and domain_evidence.strip()):
-            yield _NO_EVIDENCE_ANSWER
+            yield LOW_CONFIDENCE_ANSWER
             return
         if not self._require_key():
-            yield _NO_EVIDENCE_ANSWER
+            yield LOW_CONFIDENCE_ANSWER
             return
 
         system_prompt, user_prompt = self._build_messages(
             question, results, history, domain_evidence
         )
         if user_prompt is None:
-            yield _NO_EVIDENCE_ANSWER
+            yield LOW_CONFIDENCE_ANSWER
             return
 
         # Transport failures propagate: the service retries once, then emits an
@@ -408,7 +406,7 @@ class LLMService:
             if _refusal_in(pending):
                 decided = True
                 yielded_any = True
-                yield _NO_EVIDENCE_ANSWER
+                yield LOW_CONFIDENCE_ANSWER
                 pending = ""
                 continue
             if any(
@@ -423,9 +421,9 @@ class LLMService:
             if _sentinel_in(pending):
                 pending = REFUSAL_TEMPLATES["unsafe"]
             elif _refusal_in(pending):
-                pending = _NO_EVIDENCE_ANSWER
+                pending = LOW_CONFIDENCE_ANSWER
             if pending:
                 yielded_any = True
                 yield pending
         if not yielded_any:
-            yield _NO_EVIDENCE_ANSWER
+            yield LOW_CONFIDENCE_ANSWER
