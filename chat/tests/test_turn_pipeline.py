@@ -454,7 +454,7 @@ class TestRagServiceChatWiring:
     def _chat(self, question="how do I lock a task?", stream=False):
         from chat.service import RagService
 
-        return RagService.chat(1, 2, question, 5, stream, None)
+        return RagService.chat(1, 2, question, stream, None)
 
     def test_early_decision_persists_and_emits_canned(self):
         early = CannedTurn(answer="x", guardrail="safety:unsafe")

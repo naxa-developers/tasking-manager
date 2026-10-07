@@ -344,7 +344,6 @@ class RagService:
         session_id: int,
         user_id: int,
         question: str,
-        top_k: int,
         stream: bool,
         db: Database,
     ) -> Union[RagChatResponseDTO, AsyncIterator[str]]:
@@ -377,9 +376,7 @@ class RagService:
             session_id, db, limit=MAX_ROUTING_HISTORY, newest_first=True
         )
 
-        prepared = await prepare_turn(
-            q, top_k, session, db, guard, user_id, prior=prior
-        )
+        prepared = await prepare_turn(q, session, db, guard, user_id, prior=prior)
         decision = decide_turn(prepared)
 
         if isinstance(decision, GenerateTurn):

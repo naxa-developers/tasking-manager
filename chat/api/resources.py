@@ -17,7 +17,7 @@ from chat.dtos import (
     RagSessionDTO,
     RagSessionUpdateDTO,
 )
-from chat.retrieval.query_kb import DEFAULT_TOP_K, RetrievalUnavailable
+from chat.retrieval.query_kb import RetrievalUnavailable
 from chat.rate_limit import check_chat_rate_limit
 from chat.service import RagAnswerFailed, RagService
 
@@ -144,8 +144,6 @@ async def session_chat(
             session_id,
             user.id,
             q,
-            # Server-owned retrieval depth: req.top_k is deprecated/ignored.
-            DEFAULT_TOP_K,
             req.stream is not False,
             db,
         )

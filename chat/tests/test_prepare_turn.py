@@ -57,7 +57,6 @@ def _prepare(
         return _run(
             prepare_turn(
                 q,
-                5,
                 {"id": 1, "user_id": 7, "message_count": 0, "title": None},
                 MagicMock(),
                 guards,

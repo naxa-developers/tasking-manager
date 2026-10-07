@@ -26,13 +26,7 @@ from chat.retrieval.project_context import (
     pending_clarification_question,
     resolve_supplied_project_id,
 )
-from chat.retrieval.query_kb import (
-    DEFAULT_TOP_K,
-    TOP_K_MAX,
-    TOP_K_MIN,
-    RetrievalResponse,
-    retrieve,
-)
+from chat.retrieval.query_kb import RetrievalResponse, retrieve
 from chat.turn.persist import persist_user_turn
 
 
@@ -215,7 +209,6 @@ async def _dispatch_evidence(user_id: int, dron: DomainRoute, db: Any) -> Any:
 
 async def _retrieve_for_turn(
     retrieval_q: str,
-    top_k: int,
     dron: Optional[DomainRoute],
     needs_project_id: bool,
 ) -> RetrievalResponse:
@@ -227,7 +220,7 @@ async def _retrieve_for_turn(
         # DOMAIN-only turn: skip embedding + BM25 entirely.
         return empty_response("domain-only", retrieval_q)
     # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
-    return await run_in_threadpool(retrieve, retrieval_q, top_k=top_k)
+    return await run_in_threadpool(retrieve, retrieval_q)
 
 
 @dataclass(frozen=True)
@@ -250,7 +243,6 @@ class PreparedTurn:
 
 async def prepare_turn(
     q: str,
-    top_k_raw: int,
     session: Any,
     db: Any,
     guard: Any,
@@ -260,8 +252,6 @@ async def prepare_turn(
     """Validate, persist the user turn, hydrate history, and run retrieval."""
     session_id = session["id"]
     guardrail_hint = initial_guardrail_hint(guard)
-
-    top_k = max(TOP_K_MIN, min(TOP_K_MAX, top_k_raw or DEFAULT_TOP_K))
 
     # Hydrate history from DB unless the caller already did (semantic path).
     if prior is None:
@@ -320,7 +310,7 @@ async def prepare_turn(
                 domain_block = outcome.block
                 pending_citations = [dict(c) for c in outcome.citations]
 
-    resp = await _retrieve_for_turn(retrieval_q, top_k, dron, needs_project_id)
+    resp = await _retrieve_for_turn(retrieval_q, dron, needs_project_id)
     citations = _merge_domain_citations(
         _build_citations(resp), domain_status, pending_citations
     )

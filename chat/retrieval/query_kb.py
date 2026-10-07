@@ -19,8 +19,6 @@ RETRIEVAL_DIR = Path(__file__).resolve().parent
 
 CANDIDATE_K = 50  # maximum candidates per retriever (never backfilled)
 DEFAULT_TOP_K = 5
-TOP_K_MIN = 1
-TOP_K_MAX = 5
 CHUNKS_PATH = RETRIEVAL_DIR / "data" / "chunks.json"
 _CHUNKS_BUILD_HINT = (
     f"chunks.json not found at {CHUNKS_PATH} — run python chat/retrieval/chunk.py "
