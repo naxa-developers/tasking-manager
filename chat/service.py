@@ -171,6 +171,19 @@ async def _cached_probe(base_url: Optional[str], api_key: Optional[str]) -> str:
     return result
 
 
+def _provider_state(cfg_getter: Any, label: str) -> Tuple[str, Optional[str]]:
+    """(health field value, degraded reason) for one LLM provider config."""
+    try:
+        cfg = cfg_getter()
+    except Exception:
+        return "missing_model", f"{label} model missing"
+    try:
+        cfg.require_api_key()
+    except Exception:
+        return "missing_key", f"{label} key missing"
+    return "configured", None
+
+
 class RagService:
     """Session CRUD + the RAG answer pipeline."""
 
@@ -216,30 +229,14 @@ class RagService:
             "table": os.getenv("PGVECTOR_TABLE", "kb_nodes"),
         }
         degraded_reasons: List[str] = []
-        try:
-            generation_cfg = get_generation_config()
-        except Exception:
-            payload["generation"] = "missing_model"
-            degraded_reasons.append("generation model missing")
-        else:
-            try:
-                generation_cfg.require_api_key()
-                payload["generation"] = "configured"
-            except Exception:
-                payload["generation"] = "missing_key"
-                degraded_reasons.append("generation key missing")
-        try:
-            embedding_cfg = get_embedding_config()
-        except Exception:
-            payload["embedding"] = "missing_model"
-            degraded_reasons.append("embedding model missing")
-        else:
-            try:
-                embedding_cfg.require_api_key()
-                payload["embedding"] = "configured"
-            except Exception:
-                payload["embedding"] = "missing_key"
-                degraded_reasons.append("embedding key missing")
+        for provider, cfg_getter in (
+            ("generation", get_generation_config),
+            ("embedding", get_embedding_config),
+        ):
+            state, reason = _provider_state(cfg_getter, provider)
+            payload[provider] = state
+            if reason:
+                degraded_reasons.append(reason)
         chunks_count = await run_in_threadpool(_chunks_file_count)
         if chunks_count is not None:
             payload["chunks_file_count"] = chunks_count
