@@ -82,9 +82,6 @@ class EmbeddingConfig:
             )
         return self.api_key
 
-    def apply_query_prefix(self, text: str) -> str:
-        return f"{self.query_prefix}{text}" if self.query_prefix else text
-
     def apply_doc_prefix(self, text: str) -> str:
         return f"{self.doc_prefix}{text}" if self.doc_prefix else text
 
@@ -175,15 +172,7 @@ class PGVectorConfig:
     user: str
     password: str
     table_name: str
-    table_test: str
     embed_dim: int
-
-    def connection_string(self, async_: bool = False) -> str:
-        proto = "postgresql+asyncpg://" if async_ else "postgresql://"
-        return f"{proto}{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
-
-    def pgvector_connection_kwargs(self) -> dict:
-        return dict(host=self.host, port=self.port, database=self.database, user=self.user, password=self.password)
 
 
 def get_pgvector_config(embed_dim: Optional[int] = None) -> PGVectorConfig:
@@ -200,11 +189,10 @@ def get_pgvector_config(embed_dim: Optional[int] = None) -> PGVectorConfig:
     user = os.getenv("PGVECTOR_USER") or os.getenv("POSTGRES_USER") or "rag"
     password = os.getenv("PGVECTOR_PASSWORD") or os.getenv("POSTGRES_PASSWORD") or "rag"
     table_name = os.getenv("PGVECTOR_TABLE", "kb_nodes")
-    table_test = os.getenv("PGVECTOR_TABLE_TEST", "kb_nodes_test")
     if embed_dim is None:
         embed_dim = get_embedding_config().dimension
     return PGVectorConfig(
-        host=host, port=port, database=database, user=user, password=password, table_name=table_name, table_test=table_test, embed_dim=embed_dim
+        host=host, port=port, database=database, user=user, password=password, table_name=table_name, embed_dim=embed_dim
     )
 
 
@@ -263,7 +251,6 @@ def get_vector_store(table_name: Optional[str] = None, embed_dim: Optional[int] 
             user=pg_cfg.user,
             password=pg_cfg.password,
             table_name=table_name,
-            table_test=pg_cfg.table_test,
             embed_dim=pg_cfg.embed_dim,
         )
     try:
@@ -274,17 +261,15 @@ def get_vector_store(table_name: Optional[str] = None, embed_dim: Optional[int] 
             "Install requirements.txt (project root) / pyproject.toml "
             f"({e})"
         ) from e
-    if hasattr(PGVectorStore, "from_params"):
-        return PGVectorStore.from_params(
-            database=pg_cfg.database,
-            host=pg_cfg.host,
-            password=pg_cfg.password,
-            port=pg_cfg.port,
-            user=pg_cfg.user,
-            table_name=pg_cfg.table_name,
-            embed_dim=pg_cfg.embed_dim,
-        )
-    return PGVectorStore(connection_string=pg_cfg.connection_string(), table_name=pg_cfg.table_name, embed_dim=pg_cfg.embed_dim)
+    return PGVectorStore.from_params(
+        database=pg_cfg.database,
+        host=pg_cfg.host,
+        password=pg_cfg.password,
+        port=pg_cfg.port,
+        user=pg_cfg.user,
+        table_name=pg_cfg.table_name,
+        embed_dim=pg_cfg.embed_dim,
+    )
 
 
 def get_db_connection():  # type: ignore[no-untyped-def]
