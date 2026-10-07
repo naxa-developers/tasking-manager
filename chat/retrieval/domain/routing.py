@@ -701,24 +701,20 @@ def is_org_leaderboard_intent(query: str) -> bool:
     return bool(_ORG_LEADERBOARD_RE.search(query or ""))
 
 
-def is_project_search_intent(query: str) -> bool:
-    """True when discovery filters identify a project-search question."""
-    return bool(_discovery_filters(query or ""))
-
-
 def _discovery_ops(text: str) -> tuple:
-    """Global/discovery capabilities, only for questions without a project id."""
+    """Global/discovery capability plus its filters (no project id involved)."""
     if is_recommendation_intent(text):
-        return ("user_recommendations",)
+        return ("user_recommendations",), {}
     if is_org_leaderboard_intent(text):
-        return ("global_stats",)
+        return ("global_stats",), {}
     if is_trending_intent(text):
-        return ("trending_projects",)
-    if is_project_search_intent(text):
-        return ("project_search",)
+        return ("trending_projects",), {}
+    filters = _discovery_filters(text)
+    if filters:
+        return ("project_search",), filters
     if is_global_stats_intent(text):
-        return ("global_stats",)
-    return ()
+        return ("global_stats",), {}
+    return (), {}
 
 
 @dataclass(frozen=True)
@@ -761,10 +757,8 @@ def route_query(query: str) -> DomainRoute:
     filters: dict = {}
     anchored = pid is not None or bool(_PROJECT_ANCHOR_RE.search(text))
     if not ops and pid is None and not (project_ops and anchored):
-        discovery = _discovery_ops(text)
+        discovery, filters = _discovery_ops(text)
         ops = ops + discovery
-        if discovery == ("project_search",):
-            filters = _discovery_filters(text)
     if not ops and pid is not None:
         # Default only for non-procedural asks: "how do I ... project 42?"
         # stays KB; "who owns project 5?" defaults to summary. Procedural
