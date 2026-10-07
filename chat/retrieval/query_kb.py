@@ -58,9 +58,6 @@ class RetrievalResponse:
     timing_ms: Dict[str, float] = field(default_factory=dict)
     degraded: bool = False
     degraded_reason: Optional[str] = None
-    permission_denied: bool = False
-    permission_topic: str = ""
-    permission_required_roles: List[str] = field(default_factory=list)
 
 
 def _is_active(node: "TextNode") -> bool:
