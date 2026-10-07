@@ -29,6 +29,14 @@ _CHUNKS_BUILD_HINT = (
 )
 
 
+class RetrievalUnavailable(RuntimeError):
+    """Hybrid retrieval could not run; never serve partial results."""
+
+    def __init__(self, detail: str, kind: str = "unavailable") -> None:
+        super().__init__(detail)
+        self.kind = kind  # "too_large" | "unavailable"
+
+
 @dataclass
 class ScoredNode:
     node: "TextNode"
@@ -96,7 +104,9 @@ def load_nodes(path: Path) -> List["TextNode"]:
         metadata = entry.get("metadata") or {}
         if not metadata:
             # Fallback: entry itself may be metadata
-            metadata = {k: v for k, v in entry.items() if k not in {"id", "text", "content"}}
+            metadata = {
+                k: v for k, v in entry.items() if k not in {"id", "text", "content"}
+            }
         # Soft-delete is handled after load; preserve all metadata
         try:
             node = TextNode(text=text, id_=nid, metadata=metadata)
@@ -115,6 +125,7 @@ def load_nodes(path: Path) -> List["TextNode"]:
 @dataclass
 class RankedCandidates:
     """One retriever's ranked output: best-first node ids, scores, and nodes."""
+
     ids: List[str]
     scores: Dict[str, float]
     error: Optional[str] = None
@@ -232,7 +243,9 @@ class Retriever:
             except Exception as exc:
                 warnings.warn(f"BM25 init failed ({exc}); continuing without BM25")
                 detail = f"BM25 init failed: {exc}"
-                load_error = detail if load_error is None else load_error + f" | {detail}"
+                load_error = (
+                    detail if load_error is None else load_error + f" | {detail}"
+                )
 
         # Embedding model + vector store are optional (degrades to BM25-only).
         embed_model: Optional[Any] = None
@@ -249,12 +262,16 @@ class Retriever:
             vector_error = str(exc)
             warnings.warn(f"vector retrieval unavailable ({exc}); BM25-only")
 
-        return cls(nodes, node_map, bm25, embed_model, vector_store, load_error, vector_error)
+        return cls(
+            nodes, node_map, bm25, embed_model, vector_store, load_error, vector_error
+        )
 
     def vector_candidates(self, question: str) -> RankedCandidates:
         """Rank nodes by cosine similarity. Ids best-first, capped at CANDIDATE_K."""
         if self.vector_store is None or self.embed_model is None:
-            return RankedCandidates([], {}, self.vector_error or "vector store unavailable")
+            return RankedCandidates(
+                [], {}, self.vector_error or "vector store unavailable"
+            )
 
         try:
             q_emb = self.embed_model.get_query_embedding(question)
@@ -340,7 +357,11 @@ class Retriever:
             return RankedCandidates([], {}, str(exc))
 
     def retrieve(self, question: str, top_k: int = DEFAULT_TOP_K) -> RetrievalResponse:
-        """Run hybrid retrieval: BM25 + vector, fused, top_k by fused score."""
+        """Run hybrid retrieval: BM25 + vector, fused, top_k by fused score.
+
+        Strict: raises RetrievalUnavailable instead of serving partial results
+        when either arm fails or the index is empty.
+        """
         from llama_index.core.llms import MockLLM  # type: ignore
         from llama_index.core.retrievers import QueryFusionRetriever  # type: ignore
 
@@ -352,48 +373,34 @@ class Retriever:
 
         t0 = time.perf_counter()
 
-        # Run each arm once up front (memoized); the both-empty case returns early.
+        # Run each arm once up front (memoized); strict checks follow below.
         vec_r.retrieve(question)
         bm25_r.retrieve(question)
-        t_arms = time.perf_counter()
 
         vec = vec_cap.ranked
         bm25 = bm25_cap.ranked
 
-        degraded = False
-        degraded_reason: Optional[str] = None
         if self.load_error:
-            # chunks.json missing / BM25 init failed: vector-only retrieval, say so.
-            degraded = True
-            degraded_reason = (
-                f"index load error ({self.load_error}); degraded retrieval"
-            )
+            # chunks.json missing / BM25 init failed: hybrid retrieval cannot run.
+            raise RetrievalUnavailable(f"index load error: {self.load_error}")
         if vec.error:
-            vec_reason = f"vector degraded ({vec.error}); BM25-only fusion"
-            degraded = True
-            degraded_reason = (
-                f"{degraded_reason} | {vec_reason}" if degraded_reason else vec_reason
-            )
+            if "too large to process" in vec.error.lower():
+                # llama.cpp refused the input length: user-fixable, never retried.
+                raise RetrievalUnavailable(
+                    f"vector search failed: {vec.error}", kind="too_large"
+                )
+            # One transient retry: an embedding blip must not fail the turn.
+            # Rebuild the adapter so fusion consumes the retry's results.
+            vec_cap = _RankCapture()
+            vec_r = adapter_cls(self.vector_candidates, self.node_map, vec_cap)
+            vec_r.retrieve(question)
+            vec = vec_cap.ranked
+            if vec.error:
+                raise RetrievalUnavailable(f"vector search failed: {vec.error}")
         if bm25.error:
-            bm25_reason = f"BM25 degraded ({bm25.error}); vector-only fusion"
-            degraded = True
-            degraded_reason = (
-                f"{degraded_reason} | {bm25_reason}"
-                if degraded_reason
-                else bm25_reason
-            )
+            raise RetrievalUnavailable(f"BM25 search failed: {bm25.error}")
         if not vec.ids and not bm25.ids:
-            return RetrievalResponse(
-                results=[],
-                denied_count=0,
-                denied_reasons=[],
-                candidate_count=0,
-                mode="hybrid",
-                query=question,
-                timing_ms={"retrieval_ms": (t_arms - t0) * 1000},
-                degraded=True,
-                degraded_reason="no candidates from vector or BM25",
-            )
+            raise RetrievalUnavailable("no candidates from vector or BM25")
 
         candidate_count = len(set(vec.ids) | set(bm25.ids))
 
@@ -445,8 +452,6 @@ class Retriever:
             mode="hybrid",
             query=question,
             timing_ms=timing,
-            degraded=degraded,
-            degraded_reason=degraded_reason,
         )
 
 
@@ -501,9 +506,13 @@ def retrieve_standalone(question: str, top_k: int) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Hybrid retrieval (standalone, single TMBot voice)")
+    parser = argparse.ArgumentParser(
+        description="Hybrid retrieval (standalone, single TMBot voice)"
+    )
     parser.add_argument("question", nargs="?", help="Question to retrieve for")
-    parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K, help="Evidence passages to return")
+    parser.add_argument(
+        "--top-k", type=int, default=DEFAULT_TOP_K, help="Evidence passages to return"
+    )
     args = parser.parse_args()
 
     if not args.question:

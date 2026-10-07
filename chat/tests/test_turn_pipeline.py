@@ -19,6 +19,7 @@ from chat.retrieval.policy import (
     SMALLTALK_ANSWERS,
     third_party_user_answer,
 )
+from chat.retrieval.query_kb import RetrievalUnavailable
 from chat.turn.decide import (
     CannedTurn,
     GenerateTurn,
@@ -107,7 +108,7 @@ class TestDecideTurn:
         prepared = _prepared(
             scope_verdict="unsafe",
             guardrail_hint="safety:unsafe some reason",
-            resp=_resp(results=[_scored(0.5)], candidate_count=7, degraded=True),
+            resp=_resp(results=[_scored(0.5)], candidate_count=7),
         )
         decision = decide_turn(prepared)
         assert isinstance(decision, CannedTurn)
@@ -115,7 +116,7 @@ class TestDecideTurn:
         assert decision.guardrail == "safety:unsafe"
         assert decision.log_guardrail == "safety:unsafe some reason"
         assert decision.candidate_count == 7
-        assert decision.degraded is True
+        assert decision.degraded is False
         assert decision.persist_log == "refusal"
 
     def test_third_party_redirect(self):
@@ -537,3 +538,22 @@ class TestRagServiceChatWiring:
         canned.assert_awaited_once()
         gen_emit.assert_not_awaited()
         assert canned.await_args.kwargs["decision"] is decision
+
+    def test_retrieval_unavailable_propagates_from_chat(self):
+        with (
+            patch(
+                "chat.service._get_owned_session",
+                new=AsyncMock(return_value=self._session()),
+            ),
+            patch(
+                "chat.service.RagSession.get_messages",
+                new=AsyncMock(return_value=[]),
+            ),
+            patch("chat.service.decide_early_turn", return_value=None),
+            patch(
+                "chat.service.prepare_turn",
+                new=AsyncMock(side_effect=RetrievalUnavailable("vector down")),
+            ),
+        ):
+            with pytest.raises(RetrievalUnavailable):
+                _run(self._chat())

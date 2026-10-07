@@ -53,7 +53,17 @@ export const streamRagSessionChat = (token, locale, sessionId, payload, onDelta,
     .then(async (res) => {
       if (!res.ok || !res.body) {
         const errText = await res.text().catch(() => '');
-        throw new Error(errText || `Request failed (${res.status})`);
+        let message = errText || `Request failed (${res.status})`;
+        try {
+          // API errors carry a human-readable "Error" field (e.g. 422
+          // RAGQuestionTooLong / 503 RAGRetrievalFailed); surface it instead
+          // of the raw JSON body.
+          const parsed = JSON.parse(errText);
+          message = parsed.Error || parsed.detail || message;
+        } catch (e) {
+          // Non-JSON body: fall back to the raw text.
+        }
+        throw new Error(message);
       }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();

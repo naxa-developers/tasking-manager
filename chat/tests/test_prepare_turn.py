@@ -4,7 +4,9 @@ import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from chat.retrieval.query_kb import RetrievalResponse
+import pytest
+
+from chat.retrieval.query_kb import RetrievalResponse, RetrievalUnavailable
 from chat.turn.plan import prepare_turn
 
 
@@ -164,6 +166,13 @@ class TestPrepareTurnRouting:
         assert seen["q"] == "how do I validate a task?"
         assert persisted["q"] == original
         assert prepared.scope_verdict == "ok"
+
+    def test_retrieval_unavailable_propagates(self):
+        def boom(q, top_k=5):
+            raise RetrievalUnavailable("vector search failed: down")
+
+        with pytest.raises(RetrievalUnavailable):
+            _prepare("how do I validate a task?", retrieve=boom)
 
 
 class TestPrepareTurnThirdParty:

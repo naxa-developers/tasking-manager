@@ -17,7 +17,7 @@ from chat.dtos import (
     RagSessionDTO,
     RagSessionUpdateDTO,
 )
-from chat.retrieval.query_kb import DEFAULT_TOP_K
+from chat.retrieval.query_kb import DEFAULT_TOP_K, RetrievalUnavailable
 from chat.rate_limit import check_chat_rate_limit
 from chat.service import RagAnswerFailed, RagService
 
@@ -154,6 +154,22 @@ async def session_chat(
             content={
                 "Error": "Answer generation failed",
                 "SubCode": "RAGAnswerFailed",
+            },
+            status_code=503,
+        )
+    except RetrievalUnavailable as exc:
+        if exc.kind == "too_large":
+            return JSONResponse(
+                content={
+                    "Error": "This message is too long for search — please shorten it.",
+                    "SubCode": "RAGQuestionTooLong",
+                },
+                status_code=422,
+            )
+        return JSONResponse(
+            content={
+                "Error": "Knowledge base search is temporarily unavailable. Please try again.",
+                "SubCode": "RAGRetrievalFailed",
             },
             status_code=503,
         )
