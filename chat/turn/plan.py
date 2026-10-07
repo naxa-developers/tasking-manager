@@ -85,7 +85,6 @@ def empty_response(mode: str, query: str) -> RetrievalResponse:
     return RetrievalResponse(
         results=[],
         denied_count=0,
-        denied_reasons=[],
         candidate_count=0,
         mode=mode,
         query=query,

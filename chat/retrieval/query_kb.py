@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse
 import json
 import threading
 import time
@@ -51,7 +50,6 @@ class ScoredNode:
 class RetrievalResponse:
     results: List[ScoredNode]
     denied_count: int
-    denied_reasons: List[str]
     candidate_count: int
     mode: str
     query: str
@@ -444,7 +442,6 @@ class Retriever:
         return RetrievalResponse(
             results=results,
             denied_count=0,
-            denied_reasons=[],
             candidate_count=candidate_count,
             mode="hybrid",
             query=question,
@@ -474,49 +471,3 @@ def retrieve(
 ) -> RetrievalResponse:
     """Run hybrid RRF retrieval on the default instance (see _default)."""
     return _default().retrieve(question, top_k=top_k)
-
-
-def retrieve_standalone(question: str, top_k: int) -> int:
-    resp = retrieve(question, top_k=top_k)
-    print(f"Mode: hybrid  TopK: {top_k}")
-    print(f"Query: {resp.query!r}")
-    print(f"Candidates: {resp.candidate_count}  Returned: {len(resp.results)}")
-    if resp.degraded:
-        print(f"Degraded: {resp.degraded_reason}")
-    if resp.denied_reasons:
-        print("Denied reasons:", " | ".join(resp.denied_reasons))
-    print(f"Timing: {resp.timing_ms}")
-    for idx, scored in enumerate(resp.results, start=1):
-        meta = scored.node.metadata
-        snippet = scored.node.text[:220].replace("\n", " ")
-        print(
-            f"\n[{idx}] {scored.node.id_}  fused={scored.fused_score:.4f}"
-            f"  title={meta.get('title','')!r}"
-            f"  nv={meta.get('needs_verification', False)}"
-        )
-        print(f"     {snippet}...")
-        # Developer provenance
-        src = meta.get("source_refs") or meta.get("sources") or []
-        if src:
-            print(f"     sources: {src[:2]}")
-    return 0
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Hybrid retrieval (standalone, single TMBot voice)"
-    )
-    parser.add_argument("question", nargs="?", help="Question to retrieve for")
-    parser.add_argument(
-        "--top-k", type=int, default=DEFAULT_TOP_K, help="Evidence passages to return"
-    )
-    args = parser.parse_args()
-
-    if not args.question:
-        parser.print_help()
-        return 2
-    return retrieve_standalone(args.question, args.top_k)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

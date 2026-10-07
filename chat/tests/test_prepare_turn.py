@@ -18,7 +18,6 @@ def _empty_resp(q, top_k=5):
     return RetrievalResponse(
         results=[],
         denied_count=0,
-        denied_reasons=[],
         candidate_count=1,
         mode="hybrid",
         query=q,
