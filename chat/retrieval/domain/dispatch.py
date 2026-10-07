@@ -15,29 +15,6 @@ Fetcher = Callable[[int, Optional[int], Any], Awaitable[Any]]
 _DEFAULT_OP_TIMEOUT_SECONDS = 3.0
 _MAX_OP_TIMEOUT_SECONDS = 30.0
 
-# Closed op set the deterministic router and the semantic classifier may request.
-# Keep in sync with _default_fetchers(); TestOpRegistryCoverage pins parity.
-OP_NAMES = frozenset(
-    {
-        "stats",
-        "summary",
-        "teams",
-        "chat",
-        "mywork",
-        "user_profile",
-        "user_contributions",
-        "user_projects_created",
-        "user_org_projects",
-        "user_activity",
-        "user_teams",
-        "user_tasks",
-        "global_stats",
-        "project_search",
-        "trending_projects",
-        "user_recommendations",
-    }
-)
-
 
 def _op_timeout() -> float:
     """Per-op budget (``RAG_DOMAIN_TIMEOUT``) so one slow read can't stall chat."""
@@ -62,7 +39,7 @@ class DomainOutcome:
     route: Optional[str] = None
 
 
-def _default_fetchers() -> Dict[str, Fetcher]:
+def default_fetchers() -> Dict[str, Fetcher]:
     """Op registry: fixed read-only tools, each (user_id, project_id, db)."""
     # TODO(feature): fixed registry by design — the LLM can never invent an op.
     from chat.retrieval.domain.global_stats import get_global_stats_evidence
@@ -145,7 +122,7 @@ async def collect_evidence(
     if not ops:
         return DomainOutcome(project_id=route.project_id, route=route.route)
 
-    registry = fetchers if fetchers is not None else _default_fetchers()
+    registry = fetchers if fetchers is not None else default_fetchers()
     blocks: List[str] = []
     statuses: List[str] = []
     citations: List[Dict[str, Any]] = []

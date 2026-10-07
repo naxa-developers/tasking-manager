@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import httpx
 import json
 import os
@@ -39,25 +38,11 @@ try:
     from chat.turn.emit import emit_canned_turn, emit_generated_turn
     from chat.turn.persist import persist_user_turn
     from chat.turn.plan import prepare_turn
+    from chat.retrieval.domain.dispatch import default_fetchers
 
-    for _domain_module in (
-        "global_stats",
-        "mywork",
-        "project_chat",
-        "project_discovery",
-        "recommendations",
-        "stats",
-        "teams",
-        "trending",
-        "user_activity",
-        "user_contributions",
-        "user_profile",
-        "user_projects",
-        "user_orgs",
-        "user_tasks",
-        "user_teams",
-    ):
-        importlib.import_module(f"chat.retrieval.domain.{_domain_module}")
+    # Import every domain handler up front (building the registry) so a broken
+    # handler degrades health instead of failing one op at turn time.
+    default_fetchers()
 
     _RAG_AVAILABLE = True
     _RAG_IMPORT_ERROR: Optional[str] = None
