@@ -197,6 +197,50 @@ def _sentinel_in(content: str) -> Optional[str]:
     return _UNSAFE_SENTINEL if stripped.startswith(_UNSAFE_SENTINEL) else None
 
 
+class _RefusalBuffer:
+    """Buffer a stream opening until it cannot be refusal copy or the sentinel.
+
+    Special outputs are substituted with canned copy in place (single call per
+    turn, never retried). Feed every delta; yield whatever ``feed``/``flush``
+    return, in order.
+    """
+
+    def __init__(self) -> None:
+        self._pending = ""
+        self._decided = False
+
+    def feed(self, delta: str) -> List[str]:
+        if self._decided:
+            return [delta]
+        self._pending += delta
+        if _sentinel_in(self._pending):
+            return self._replace(REFUSAL_TEMPLATES["unsafe"])
+        if _refusal_in(self._pending):
+            return self._replace(LOW_CONFIDENCE_ANSWER)
+        if any(
+            text.startswith(self._pending.lstrip()) for text in _REFUSAL_TEXTS
+        ) or _UNSAFE_SENTINEL.startswith(self._pending.lstrip()):
+            return []
+        return self._replace(self._pending)
+
+    def flush(self) -> List[str]:
+        """Text still buffered when the stream ends (substituted if special)."""
+        if not self._pending:
+            return []
+        pending = self._pending
+        self._pending = ""
+        if _sentinel_in(pending):
+            pending = REFUSAL_TEMPLATES["unsafe"]
+        elif _refusal_in(pending):
+            pending = LOW_CONFIDENCE_ANSWER
+        return [pending] if pending else []
+
+    def _replace(self, text: str) -> List[str]:
+        self._decided = True
+        self._pending = ""
+        return [text]
+
+
 class LLMService:
     def __init__(self, model: Optional[str] = None) -> None:
         if model:
@@ -310,6 +354,34 @@ class LLMService:
         except Exception:
             return False
 
+    def _generation_kwargs(
+        self,
+        question: str,
+        results: List[ScoredNode],
+        history: Optional[List[Dict[str, str]]],
+        domain_evidence: Optional[str],
+    ) -> Optional[dict]:
+        """Chat-completion kwargs, or None when the turn must degrade.
+
+        None means no evidence, no configured key, or a prompt that does not
+        fit the token budget; callers serve the canned low-confidence copy.
+        """
+        if not results and not (domain_evidence and domain_evidence.strip()):
+            return None
+        if not self._require_key():
+            return None
+        system_prompt, user_prompt = self._build_messages(
+            question, results, history, domain_evidence
+        )
+        if user_prompt is None:
+            return None
+        kwargs = self._litellm_kwargs()
+        kwargs["messages"] = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        return kwargs
+
     def answer(
         self,
         question: str,
@@ -318,27 +390,12 @@ class LLMService:
         domain_evidence: Optional[str] = None,
     ) -> str:
         """One completion. Transport errors propagate; empty output degrades."""
-        if not results and not (domain_evidence and domain_evidence.strip()):
-            return LOW_CONFIDENCE_ANSWER
-        if not self._require_key():
-            return LOW_CONFIDENCE_ANSWER
-
-        system_prompt, user_prompt = self._build_messages(
-            question, results, history, domain_evidence
-        )
-        if user_prompt is None:
-            return LOW_CONFIDENCE_ANSWER
-
         # Transport failures propagate: callers retry / map to 503. Only an
         # empty completion degrades to the canned no-evidence answer.
-        kwargs = self._litellm_kwargs()
-        resp = litellm.completion(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            **kwargs,
-        )
+        kwargs = self._generation_kwargs(question, results, history, domain_evidence)
+        if kwargs is None:
+            return LOW_CONFIDENCE_ANSWER
+        resp = litellm.completion(**kwargs)
         try:
             content = (resp.choices[0].message.content or "").strip()  # type: ignore
         except Exception:
@@ -358,72 +415,25 @@ class LLMService:
         domain_evidence: Optional[str] = None,
     ):  # type: ignore[no-untyped-def]
         """Yield chunks via litellm.completion(stream=True). Falls back to one chunk."""
-        if not results and not (domain_evidence and domain_evidence.strip()):
-            yield LOW_CONFIDENCE_ANSWER
-            return
-        if not self._require_key():
-            yield LOW_CONFIDENCE_ANSWER
-            return
-
-        system_prompt, user_prompt = self._build_messages(
-            question, results, history, domain_evidence
-        )
-        if user_prompt is None:
-            yield LOW_CONFIDENCE_ANSWER
-            return
-
         # Transport failures propagate: the service retries once, then emits an
         # error event. Only a completion with no deltas degrades to canned copy.
-        kw = self._litellm_kwargs()
-        kw["stream"] = True  # type: ignore
-        stream = litellm.completion(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            **kw,
-        )
+        kwargs = self._generation_kwargs(question, results, history, domain_evidence)
+        if kwargs is None:
+            yield LOW_CONFIDENCE_ANSWER
+            return
+        kwargs["stream"] = True  # type: ignore
+        stream = litellm.completion(**kwargs)
+        buffer = _RefusalBuffer()
         yielded_any = False
-        decided = False
-        pending = ""
         for chunk in stream:  # type: ignore
             delta = _delta(chunk)
             if not delta:
                 continue
-            if decided:
+            for piece in buffer.feed(delta):
                 yielded_any = True
-                yield delta
-                continue
-            # Buffer the opening until it cannot be a refusal copy or the
-            # sentinel; special outputs are substituted with canned copy.
-            pending += delta
-            if _sentinel_in(pending):
-                decided = True
-                yielded_any = True
-                yield REFUSAL_TEMPLATES["unsafe"]
-                pending = ""
-                continue
-            if _refusal_in(pending):
-                decided = True
-                yielded_any = True
-                yield LOW_CONFIDENCE_ANSWER
-                pending = ""
-                continue
-            if any(
-                text.startswith(pending.lstrip()) for text in _REFUSAL_TEXTS
-            ) or _UNSAFE_SENTINEL.startswith(pending.lstrip()):
-                continue
-            decided = True
+                yield piece
+        for piece in buffer.flush():
             yielded_any = True
-            yield pending
-            pending = ""
-        if pending:
-            if _sentinel_in(pending):
-                pending = REFUSAL_TEMPLATES["unsafe"]
-            elif _refusal_in(pending):
-                pending = LOW_CONFIDENCE_ANSWER
-            if pending:
-                yielded_any = True
-                yield pending
+            yield piece
         if not yielded_any:
             yield LOW_CONFIDENCE_ANSWER
