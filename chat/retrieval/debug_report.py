@@ -21,28 +21,18 @@ from chat.retrieval.domain.routing import (
     route_query,
 )
 from chat.retrieval.guardrails import (
+    GuardrailDecision,
     classify_query,
     is_smalltalk_query,
-    refusal_for,
     smalltalk_kind,
 )
 from chat.retrieval.llm_answer import LLMService, _count_tokens, _prompt_token_budget
-from chat.retrieval.policy import (
-    DOMAIN_TEMPORARY_ANSWER,
-    DOMAIN_UNAVAILABLE_ANSWER,
-    GREETING_ANSWER,
-    LOW_CONFIDENCE_ANSWER,
-    NEEDS_PROJECT_ANSWER,
-    SMALLTALK_ANSWERS,
-    conf_threshold,
-    is_low_confidence,
-    third_party_user_answer,
-)
+from chat.retrieval.policy import conf_threshold, is_low_confidence
 from chat.retrieval.query_kb import RetrievalResponse, retrieve
+from chat.turn.decide import CannedTurn, decide_early_turn, decide_turn
+from chat.turn.plan import PreparedTurn, empty_response, initial_guardrail_hint
 
 SECTIONS: Tuple[str, ...] = ("decisions", "kb", "domain", "prompt", "answer")
-
-_DENY_STATUSES = ("UNAUTHORIZED", "NOT_FOUND", "TIMEOUT", "UNAVAILABLE")
 
 
 def resolve_sections(raw: str) -> Tuple[str, ...]:
@@ -174,30 +164,36 @@ def prompt_to_dict(
 
 
 def canned_answer(
-    decisions: Dict[str, Any], domain_ok: bool, low_confidence: bool
+    question: str,
+    guard: GuardrailDecision,
+    decisions: Dict[str, Any],
+    outcome: Any,
+    resp: Optional[RetrievalResponse],
 ) -> Optional[str]:
-    """The deterministic answer production would return, if any (no LLM)."""
-    verdict = decisions["guardrail"]["verdict"]
-    if verdict == "unsafe":
-        return refusal_for("unsafe")
-    if decisions["smalltalk"]:
-        kind = decisions["smalltalk_kind"] or "greeting"
-        return SMALLTALK_ANSWERS.get(kind, GREETING_ANSWER)
-    if decisions["third_party_user"]:
-        return third_party_user_answer(decisions["third_party_username"])
-    if decisions["needs_project_id"]:
-        return NEEDS_PROJECT_ANSWER
-    if decisions["route"] == "DOMAIN":
-        status = decisions.get("domain_status")
-        if status in _DENY_STATUSES:
-            if status in ("TIMEOUT", "UNAVAILABLE"):
-                return DOMAIN_TEMPORARY_ANSWER
-            return DOMAIN_UNAVAILABLE_ANSWER
-    if verdict == "out_of_scope" and not domain_ok and low_confidence:
-        return refusal_for("out_of_scope")
-    if verdict != "out_of_scope" and not domain_ok and low_confidence:
-        return LOW_CONFIDENCE_ANSWER
-    return None
+    """The deterministic answer production would return, if any (no LLM).
+
+    Delegates to the production turn decisions (``decide_early_turn`` /
+    ``decide_turn``) so a debugging run cannot drift from the service path.
+    """
+    early = decide_early_turn(guard, question)
+    if early is not None:
+        return early.answer
+    prepared = PreparedTurn(
+        history=[],
+        resp=resp if resp is not None else empty_response("debug-skip", question),
+        citations=[],
+        guardrail_hint=initial_guardrail_hint(guard),
+        scope_verdict=guard.verdict,
+        domain_block=outcome.block if outcome is not None else "",
+        domain_status=outcome.status if outcome is not None else None,
+        domain_project_id=outcome.project_id if outcome is not None else None,
+        domain_route_str=outcome.route if outcome is not None else None,
+        needs_project_id=bool(decisions["needs_project_id"]),
+        third_party_user=bool(decisions["third_party_user"]),
+        third_party_username=decisions["third_party_username"],
+    )
+    decision = decide_turn(prepared)
+    return decision.answer if isinstance(decision, CannedTurn) else None
 
 
 def _generation_meta(llm: LLMService) -> Dict[str, Any]:
@@ -240,9 +236,6 @@ async def gather_turn(
             resp = retrieve(question, top_k=top_k)
 
     domain_block = outcome.block if outcome is not None else ""
-    domain_ok = bool(
-        outcome is not None and outcome.status == "OK" and domain_block.strip()
-    )
     if outcome is not None:
         decisions["domain_status"] = outcome.status
     kb = kb_to_dict(resp, snippet_chars)
@@ -257,7 +250,8 @@ async def gather_turn(
         else {"ran": False}
     )
 
-    canned = canned_answer(decisions, domain_ok, bool(kb.get("low_confidence", True)))
+    guard = GuardrailDecision(**decisions["guardrail"])
+    canned = canned_answer(question, guard, decisions, outcome, resp)
 
     answer: Dict[str, Any] = {"ran": False}
     if canned is not None:

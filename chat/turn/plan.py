@@ -70,12 +70,17 @@ def _last_user_message(prior: List[Dict[str, Any]]) -> Optional[str]:
     return None
 
 
-def _guardrail_hint(guard: Any) -> str:
+def guardrail_hint(guard: Any) -> str:
     """``gate:verdict reason`` tag; reasons stay server-side."""
     return f"{guard.gate}:{guard.verdict} {guard.reason}"
 
 
-def _empty_response(mode: str, query: str) -> RetrievalResponse:
+def initial_guardrail_hint(guard: Any) -> Optional[str]:
+    """Hint for a fresh turn: only unsafe/out-of-scope verdicts carry one."""
+    return guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
+
+
+def empty_response(mode: str, query: str) -> RetrievalResponse:
     """RetrievalResponse with no KB hits (turns that never call retrieval)."""
     return RetrievalResponse(
         results=[],
@@ -145,7 +150,7 @@ def _expand_followup(
         reverse = classify_query(f"{q} {last_user_q}")
         if reverse.verdict == "unsafe":
             guard = reverse
-            guardrail_hint = _guardrail_hint(guard)
+            guardrail_hint = guardrail_hint(guard)
     return retrieval_q, guard, guardrail_hint
 
 
@@ -164,9 +169,7 @@ def _strip_smalltalk(
         guard = classify_query(retrieval_q)
     except Exception:
         pass
-    guardrail_hint = (
-        _guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
-    )
+    guardrail_hint = initial_guardrail_hint(guard)
     return retrieval_q, guard, guardrail_hint
 
 
@@ -220,10 +223,10 @@ async def _retrieve_for_turn(
     """Pick the retrieval arm: clarification, DOMAIN-only, or KB (off-loop)."""
     if needs_project_id:
         # No retrieval/embedding call for a clarification turn.
-        return _empty_response("clarify", retrieval_q)
+        return empty_response("clarify", retrieval_q)
     if dron is not None and dron.route == "DOMAIN":
         # DOMAIN-only turn: skip embedding + BM25 entirely.
-        return _empty_response("domain-only", retrieval_q)
+        return empty_response("domain-only", retrieval_q)
     # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
     return await run_in_threadpool(retrieve, retrieval_q, top_k=top_k)
 
@@ -257,9 +260,7 @@ async def prepare_turn(
 ) -> PreparedTurn:
     """Validate, persist the user turn, hydrate history, and run retrieval."""
     session_id = session["id"]
-    guardrail_hint = (
-        _guardrail_hint(guard) if guard.verdict in {"unsafe", "out_of_scope"} else None
-    )
+    guardrail_hint = initial_guardrail_hint(guard)
 
     top_k = max(TOP_K_MIN, min(TOP_K_MAX, top_k_raw or DEFAULT_TOP_K))
 
@@ -287,7 +288,7 @@ async def prepare_turn(
         # No domain dispatch, no retrieval, no generation for another user's data.
         return PreparedTurn(
             history=history_dicts,
-            resp=_empty_response("third-party", retrieval_q),
+            resp=empty_response("third-party", retrieval_q),
             citations=[],
             guardrail_hint=guardrail_hint,
             scope_verdict=guard.verdict,
