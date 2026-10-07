@@ -45,6 +45,10 @@ MODEL_PREFIXES: dict = {
         "Instruct: Given a question about the HOT Tasking Manager, retrieve relevant documentation passages that answer the question\nQuery: ",
         "",
     ),
+    "embeddinggemma-2": (
+        "task: search result | query: ",
+        "title: none | text: ",
+    ),
 }
 
 

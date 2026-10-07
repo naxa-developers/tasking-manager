@@ -33,7 +33,7 @@ services:
       - mlock
     restart: unless-stopped
     cpuset: "${LLM_CPUSET:-}"
-    memswap_limit: 4G
+    memswap_limit: 5G
     ulimits:
       memlock:
         soft: -1
@@ -42,10 +42,10 @@ services:
       resources:
         limits:
           cpus: "2"
-          memory: 4G
+          memory: 5G
         reservations:
           cpus: "1"
-          memory: 2G
+          memory: 2.5G
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
       interval: 10s
@@ -70,12 +70,17 @@ services:
       - --port
       - "8001"
       - -hf
-      - Qwen/Qwen3-Embedding-0.6B-GGUF:Q8_0
+      - unsloth/embeddinggemma-2-GGUF:Q8_0
       - --embedding
       - --pooling
-      - last
+      - mean
+      - --no-mmproj
       - -c
-      - "2048"
+      - "1024"
+      - --batch-size
+      - "1024"
+      - --ubatch-size
+      - "1024"
       - --parallel
       - "1"
       - --threads
