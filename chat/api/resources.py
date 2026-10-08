@@ -17,6 +17,7 @@ from chat.dtos import (
     RagSessionDTO,
     RagSessionUpdateDTO,
 )
+from chat.health import rag_health as build_health, rag_readiness as build_readiness
 from chat.retrieval.query_kb import RetrievalUnavailable
 from chat.rate_limit import check_chat_rate_limit
 from chat.service import RagAnswerFailed, RagService
@@ -60,14 +61,14 @@ def _rag_rate_limited(retry_after: int) -> JSONResponse:
 
 @router.get("/health")
 async def rag_health(db: Database = Depends(get_db)) -> Any:
-    payload = await RagService.health(db)
+    payload = await build_health(db)
     status_code = 200 if payload.get("status") in ("ok", "degraded") else 503
     return JSONResponse(content=payload, status_code=status_code)
 
 
 @router.get("/ready")
 async def rag_ready(db: Database = Depends(get_db)) -> Any:
-    payload = await RagService.readiness(db)
+    payload = await build_readiness(db)
     status_code = 200 if payload.get("status") == "ready" else 503
     return JSONResponse(content=payload, status_code=status_code)
 
