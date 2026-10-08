@@ -47,11 +47,10 @@ def _scored(score=0.5):
     return SimpleNamespace(fused_score=score)
 
 
-def _resp(results=None, candidate_count=0, degraded=False):
+def _resp(results=None, candidate_count=0):
     return SimpleNamespace(
         results=results if results is not None else [],
         candidate_count=candidate_count,
-        degraded=degraded,
         mode="hybrid",
     )
 
@@ -140,7 +139,7 @@ class TestDecideTurn:
         prepared = _prepared(
             domain_route_str="DOMAIN",
             domain_status="NOT_FOUND",
-            resp=_resp(candidate_count=2, degraded=False),
+            resp=_resp(candidate_count=2),
         )
         decision = decide_turn(prepared)
         assert decision.answer == DOMAIN_UNAVAILABLE_ANSWER

@@ -314,7 +314,6 @@ class TestChatCLI:
             fake_resp = MagicMock()
             fake_resp.results = [_fake_scored_node()]
             fake_resp.candidate_count = 1
-            fake_resp.degraded = False
             fake_resp.timing_ms = {}
             mock_retrieve.return_value = fake_resp
             mock_llm = MagicMock()
@@ -351,7 +350,6 @@ class TestChatCLI:
             fake_resp = MagicMock()
             fake_resp.results = [_fake_scored_node()]
             fake_resp.candidate_count = 1
-            fake_resp.degraded = False
             fake_resp.timing_ms = {}
             mock_retrieve.return_value = fake_resp
             mock_llm = MagicMock()

@@ -80,7 +80,6 @@ def empty_response(mode: str, query: str) -> RetrievalResponse:
     """RetrievalResponse with no KB hits (turns that never call retrieval)."""
     return RetrievalResponse(
         results=[],
-        denied_count=0,
         candidate_count=0,
         mode=mode,
         query=query,

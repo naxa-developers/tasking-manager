@@ -79,7 +79,6 @@ def decide_turn(prepared: PreparedTurn) -> Union[CannedTurn, GenerateTurn]:
     """
     resp = prepared.resp
     candidate_count = int(resp.candidate_count)
-    degraded = bool(resp.degraded)
     guardrail_hint = prepared.guardrail_hint
 
     # Inherited-unsafe: never fall through to the LLM on an unsafe verdict.
@@ -89,7 +88,6 @@ def decide_turn(prepared: PreparedTurn) -> Union[CannedTurn, GenerateTurn]:
             guardrail="safety:unsafe",
             log_guardrail=prepared.guardrail_hint or "safety:unsafe",
             candidate_count=candidate_count,
-            degraded=degraded,
             persist_log="refusal",
         )
 
@@ -134,7 +132,6 @@ def decide_turn(prepared: PreparedTurn) -> Union[CannedTurn, GenerateTurn]:
             answer=DOMAIN_TEMPORARY_ANSWER if temporary else DOMAIN_UNAVAILABLE_ANSWER,
             guardrail="domain:temporary" if temporary else "domain:no-evidence",
             candidate_count=candidate_count,
-            degraded=degraded,
             domain_status=prepared.domain_status,
             domain_project_id=prepared.domain_project_id,
             persist_log=(
@@ -150,7 +147,6 @@ def decide_turn(prepared: PreparedTurn) -> Union[CannedTurn, GenerateTurn]:
                 guardrail="scope:precision-prompt",
                 log_guardrail=guardrail_hint or "scope:out_of_scope",
                 candidate_count=candidate_count,
-                degraded=degraded,
                 persist_log="precision prompt",
             )
         guardrail_hint = "scope:answered-from-evidence"
@@ -167,7 +163,6 @@ def decide_turn(prepared: PreparedTurn) -> Union[CannedTurn, GenerateTurn]:
             guardrail="retrieval:low-confidence",
             log_guardrail=low_log,
             candidate_count=candidate_count,
-            degraded=degraded,
             persist_log="low-confidence assistant message",
         )
 

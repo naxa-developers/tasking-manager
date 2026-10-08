@@ -100,7 +100,7 @@ class TestStrictRetrievalRaises:
 
 
 class TestStrictRetrievalHappyPath:
-    def test_healthy_hybrid_returns_results_and_no_degraded(self):
+    def test_healthy_hybrid_returns_results(self):
         ret = _retriever(
             vector=lambda q: _ranked(["a"]),
             bm25=lambda q: _ranked(["b"]),
@@ -108,8 +108,6 @@ class TestStrictRetrievalHappyPath:
 
         resp = ret.retrieve("how do I lock a task?", top_k=5)
 
-        assert resp.degraded is False
-        assert resp.degraded_reason is None
         assert {r.node.id_ for r in resp.results} == {"a", "b"}
         assert resp.candidate_count == 2
 

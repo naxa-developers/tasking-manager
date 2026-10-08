@@ -170,14 +170,14 @@ async def emit_generated_turn(
             user_id,
             guardrail_hint,
             candidate_count,
-            bool(resp.degraded),
+            False,
             elapsed_ms(),
             prepared.domain_status,
             prepared.domain_project_id,
         )
         return RagChatResponseDTO(
             answer=answer,
-            degraded=bool(resp.degraded),
+            degraded=False,
             candidate_count=candidate_count,
             guardrail=public_guardrail(guardrail_hint),
             model=model,
@@ -186,7 +186,7 @@ async def emit_generated_turn(
 
     meta = {
         "session_id": str(session_id),
-        "degraded": bool(resp.degraded),
+        "degraded": False,
         "candidate_count": candidate_count,
         "guardrail": public_guardrail(guardrail_hint),
         "model": model,
@@ -237,7 +237,7 @@ async def emit_generated_turn(
             user_id,
             guardrail_hint,
             candidate_count,
-            bool(resp.degraded),
+            False,
             elapsed_ms(),
             prepared.domain_status,
             prepared.domain_project_id,

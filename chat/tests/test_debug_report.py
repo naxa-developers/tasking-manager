@@ -54,9 +54,6 @@ class _FakeOutcome:
 class _FakeResp:
     results: List[_FakeScored]
     candidate_count: int = 1
-    denied_count: int = 0
-    degraded: bool = False
-    degraded_reason: Optional[str] = None
     timing_ms: int = 12
     mode: str = "hybrid"
     query: str = "q"

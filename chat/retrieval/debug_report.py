@@ -115,9 +115,6 @@ def kb_to_dict(
         "mode": resp.mode,
         "query": resp.query,
         "candidate_count": resp.candidate_count,
-        "denied_count": resp.denied_count,
-        "degraded": resp.degraded,
-        "degraded_reason": resp.degraded_reason,
         "timing_ms": resp.timing_ms,
         "threshold": conf_threshold(),
         "top_score": round(float(top), 4) if top is not None else None,
@@ -330,7 +327,6 @@ def render_human(report: Dict[str, Any], sections: Tuple[str, ...] = SECTIONS) -
         else:
             lines.append(
                 f"mode={kb.get('mode')} candidates={kb.get('candidate_count')} "
-                f"denied={kb.get('denied_count')} degraded={kb.get('degraded')} "
                 f"timing_ms={kb.get('timing_ms')}"
             )
             lines.append(

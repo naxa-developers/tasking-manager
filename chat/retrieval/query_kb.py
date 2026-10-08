@@ -47,13 +47,10 @@ class ScoredNode:
 @dataclass
 class RetrievalResponse:
     results: List[ScoredNode]
-    denied_count: int
     candidate_count: int
     mode: str
     query: str
     timing_ms: Dict[str, float] = field(default_factory=dict)
-    degraded: bool = False
-    degraded_reason: Optional[str] = None
 
 
 def _is_active(node: "TextNode") -> bool:
@@ -399,7 +396,6 @@ class Retriever:
         }
         return RetrievalResponse(
             results=results,
-            denied_count=0,
             candidate_count=candidate_count,
             mode="hybrid",
             query=question,

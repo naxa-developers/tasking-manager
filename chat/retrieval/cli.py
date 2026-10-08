@@ -113,8 +113,6 @@ def run_single_question(
                 "for the Tasking Manager knowledge base."
             )
         print(f"TMBot  TopK: {top_k}  Provider: {_provider_label()}")
-        if resp.degraded:
-            print(f"Degraded: {resp.degraded_reason}")
         _print_answer(low_msg)
         print(f"(candidates={resp.candidate_count}  returned={len(resp.results)}  low_confidence top={top_score} thr={conf_threshold():.3f}  {resp.timing_ms})")
         return 0
@@ -130,8 +128,6 @@ def run_single_question(
         return 1
 
     print(f"TMBot  TopK: {top_k}  Provider: {_provider_label()}")
-    if resp.degraded:
-        print(f"Degraded: {resp.degraded_reason}")
     _print_answer(answer)
     if show_evidence:
         _print_evidence(resp)
