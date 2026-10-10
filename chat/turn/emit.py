@@ -59,6 +59,46 @@ def sse_stream(gen: AsyncIterator[str], meta: Dict[str, Any]) -> AsyncIterator[s
     return inner()
 
 
+def _sse_meta(
+    session_id: int,
+    degraded: bool,
+    candidate_count: int,
+    guardrail: Optional[str],
+    model: Optional[str],
+) -> Dict[str, Any]:
+    """SSE meta payload; key order is part of the wire contract."""
+    return {
+        "session_id": str(session_id),
+        "degraded": degraded,
+        "candidate_count": candidate_count,
+        "guardrail": guardrail,
+        "model": model,
+    }
+
+
+def _log_turn(
+    session_id: int,
+    user_id: int,
+    tag: Optional[str],
+    candidate_count: int,
+    degraded: bool,
+    elapsed: int,
+    domain_status: Optional[str],
+    domain_project_id: Optional[int],
+) -> None:
+    """Shared 8-arg turn log; log_turn stays patchable by module name."""
+    log_turn(
+        session_id,
+        user_id,
+        tag,
+        candidate_count,
+        degraded,
+        elapsed,
+        domain_status,
+        domain_project_id,
+    )
+
+
 async def emit_canned_turn(
     *,
     db: Database,
@@ -69,65 +109,90 @@ async def emit_canned_turn(
     elapsed_ms: Callable[[], int],
 ) -> Union[RagChatResponseDTO, AsyncIterator[str]]:
     """Persist + log a canned answer; return a DTO or SSE body iterator."""
-    answer = decision.answer
-    citations = decision.citations
-    candidate_count = decision.candidate_count
-    guardrail = decision.guardrail
-    model = decision.model
-    meta = {
-        "session_id": str(session_id),
-        "degraded": decision.degraded,
-        "candidate_count": candidate_count,
-        "guardrail": guardrail,
-        "model": model,
-    }
-    log_tag = (
-        decision.log_guardrail if decision.log_guardrail is not None else guardrail
+    if stream:
+        return _canned_stream_body(session_id, user_id, decision, elapsed_ms)
+    return await _canned_json_response(db, session_id, user_id, decision, elapsed_ms)
+
+
+async def _canned_json_response(
+    db: Database,
+    session_id: int,
+    user_id: int,
+    decision: CannedTurn,
+    elapsed_ms: Callable[[], int],
+) -> RagChatResponseDTO:
+    await persist_assistant_turn(
+        session_id,
+        decision.answer,
+        decision.citations,
+        decision.candidate_count,
+        db,
+        model=decision.model,
+    )
+    _canned_log(session_id, user_id, decision, elapsed_ms)
+    return RagChatResponseDTO(
+        answer=decision.answer,
+        degraded=decision.degraded,
+        candidate_count=decision.candidate_count,
+        guardrail=decision.guardrail,
+        model=decision.model,
+        session_id=str(session_id),
     )
 
-    if not stream:
-        await persist_assistant_turn(
-            session_id, answer, citations, candidate_count, db, model=model
-        )
-        log_turn(
-            session_id,
-            user_id,
-            log_tag,
-            candidate_count,
-            decision.degraded,
-            elapsed_ms(),
-            decision.domain_status,
-            decision.domain_project_id,
-        )
-        return RagChatResponseDTO(
-            answer=answer,
-            degraded=decision.degraded,
-            candidate_count=candidate_count,
-            guardrail=guardrail,
-            model=model,
-            session_id=str(session_id),
-        )
 
-    async def gen():
-        yield f"data: {json.dumps({'delta': answer})}\n\n"
+def _canned_stream_body(
+    session_id: int,
+    user_id: int,
+    decision: CannedTurn,
+    elapsed_ms: Callable[[], int],
+) -> AsyncIterator[str]:
+    async def gen() -> AsyncIterator[str]:
+        yield f"data: {json.dumps({'delta': decision.answer})}\n\n"
         try:
             await persist_assistant_turn_stream(
-                session_id, answer, citations, candidate_count, model=model
+                session_id,
+                decision.answer,
+                decision.citations,
+                decision.candidate_count,
+                model=decision.model,
             )
         except Exception:
             logger.exception(f"persist {decision.persist_log} failed")
-        log_turn(
-            session_id,
-            user_id,
-            log_tag,
-            candidate_count,
-            decision.degraded,
-            elapsed_ms(),
-            decision.domain_status,
-            decision.domain_project_id,
-        )
+        _canned_log(session_id, user_id, decision, elapsed_ms)
 
-    return sse_stream(gen(), meta)
+    return sse_stream(
+        gen(),
+        _sse_meta(
+            session_id,
+            decision.degraded,
+            decision.candidate_count,
+            decision.guardrail,
+            decision.model,
+        ),
+    )
+
+
+def _canned_log(
+    session_id: int,
+    user_id: int,
+    decision: CannedTurn,
+    elapsed_ms: Callable[[], int],
+) -> None:
+    tag = (
+        decision.log_guardrail
+        if decision.log_guardrail is not None
+        else decision.guardrail
+    )
+    _log_turn(
+        session_id,
+        user_id,
+        tag,
+        decision.candidate_count,
+        decision.degraded,
+        elapsed_ms(),
+        decision.domain_status,
+        decision.domain_project_id,
+    )
 
 
 async def emit_generated_turn(
@@ -143,56 +208,78 @@ async def emit_generated_turn(
     elapsed_ms: Callable[[], int],
 ) -> Union[RagChatResponseDTO, AsyncIterator[str]]:
     """Generate, persist and emit the LLM answer (DTO or SSE body)."""
+    if stream:
+        return _generated_stream_body(
+            session_id, user_id, question, prepared, decision, llm, elapsed_ms
+        )
+    return await _generated_json_response(
+        db, session_id, user_id, question, prepared, decision, llm, elapsed_ms
+    )
+
+
+async def _generated_json_response(
+    db: Database,
+    session_id: int,
+    user_id: int,
+    question: str,
+    prepared: PreparedTurn,
+    decision: GenerateTurn,
+    llm: LLMService,
+    elapsed_ms: Callable[[], int],
+) -> RagChatResponseDTO:
+    model = getattr(llm, "model", None)
+    candidate_count = int(prepared.resp.candidate_count)
+    try:
+        # Blocking generation runs in a worker thread, not the loop.
+        answer = await run_in_threadpool(
+            llm.answer,
+            question,
+            prepared.resp.results,
+            history=prepared.history,
+            domain_evidence=prepared.domain_block,
+        )
+    except Exception:
+        logger.exception("RAG answer failed")
+        raise RagAnswerFailed() from None
+    await persist_assistant_turn(
+        session_id, answer, prepared.citations, candidate_count, db, model=model
+    )
+    _log_turn(
+        session_id,
+        user_id,
+        decision.guardrail_hint,
+        candidate_count,
+        False,
+        elapsed_ms(),
+        prepared.domain_status,
+        prepared.domain_project_id,
+    )
+    return RagChatResponseDTO(
+        answer=answer,
+        degraded=False,
+        candidate_count=candidate_count,
+        guardrail=public_guardrail(decision.guardrail_hint),
+        model=model,
+        session_id=str(session_id),
+    )
+
+
+def _generated_stream_body(
+    session_id: int,
+    user_id: int,
+    question: str,
+    prepared: PreparedTurn,
+    decision: GenerateTurn,
+    llm: LLMService,
+    elapsed_ms: Callable[[], int],
+) -> AsyncIterator[str]:
     resp = prepared.resp
     citations = prepared.citations
     guardrail_hint = decision.guardrail_hint
     model = getattr(llm, "model", None)
     candidate_count = int(resp.candidate_count)
 
-    if not stream:
-        try:
-            # Blocking generation runs in a worker thread, not the loop.
-            answer = await run_in_threadpool(
-                llm.answer,
-                question,
-                resp.results,
-                history=prepared.history,
-                domain_evidence=prepared.domain_block,
-            )
-        except Exception:
-            logger.exception("RAG answer failed")
-            raise RagAnswerFailed() from None
-        await persist_assistant_turn(
-            session_id, answer, citations, candidate_count, db, model=model
-        )
-        log_turn(
-            session_id,
-            user_id,
-            guardrail_hint,
-            candidate_count,
-            False,
-            elapsed_ms(),
-            prepared.domain_status,
-            prepared.domain_project_id,
-        )
-        return RagChatResponseDTO(
-            answer=answer,
-            degraded=False,
-            candidate_count=candidate_count,
-            guardrail=public_guardrail(guardrail_hint),
-            model=model,
-            session_id=str(session_id),
-        )
-
-    meta = {
-        "session_id": str(session_id),
-        "degraded": False,
-        "candidate_count": candidate_count,
-        "guardrail": public_guardrail(guardrail_hint),
-        "model": model,
-    }
-
-    async def gen():
+    async def gen() -> AsyncIterator[str]:
         full: List[str] = []
         attempts = 0
         stream_failed = False
@@ -232,7 +319,7 @@ async def emit_generated_turn(
                 )
         except Exception:
             logger.exception("persist assistant message failed")
-        log_turn(
+        _log_turn(
             session_id,
             user_id,
             guardrail_hint,
@@ -243,4 +330,9 @@ async def emit_generated_turn(
             prepared.domain_project_id,
         )
 
-    return sse_stream(gen(), meta)
+    return sse_stream(
+        gen(),
+        _sse_meta(
+            session_id, False, candidate_count, public_guardrail(guardrail_hint), model
+        ),
+    )

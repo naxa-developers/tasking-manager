@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict, Optional
 
 from databases import Database
 from fastapi import APIRouter, Depends, HTTPException
@@ -35,26 +35,37 @@ _STREAM_HEADERS = {
 }
 
 
+def _error_response(
+    error: str,
+    sub_code: str,
+    status_code: int,
+    detail: Optional[str] = None,
+    headers: Optional[Dict[str, str]] = None,
+) -> JSONResponse:
+    """Canonical error body: Error, optional detail, SubCode (key order kept)."""
+    content: Dict[str, Any] = {"Error": error}
+    if detail is not None:
+        content["detail"] = detail
+    content["SubCode"] = sub_code
+    return JSONResponse(content=content, status_code=status_code, headers=headers)
+
+
 def _rag_unavailable() -> JSONResponse:
     logger.warning(f"RAG unavailable: {RagService.unavailable_reason()}")
-    return JSONResponse(
-        content={
-            "Error": "RAG not configured",
-            "detail": "RAG is not available on this deployment.",
-            "SubCode": "RAGUnavailable",
-        },
-        status_code=503,
+    return _error_response(
+        "RAG not configured",
+        "RAGUnavailable",
+        503,
+        detail="RAG is not available on this deployment.",
     )
 
 
 def _rag_rate_limited(retry_after: int) -> JSONResponse:
-    return JSONResponse(
-        content={
-            "Error": "Rate limit exceeded",
-            "detail": f"Too many chat messages. Try again in {retry_after} seconds.",
-            "SubCode": "RAGRateLimited",
-        },
-        status_code=429,
+    return _error_response(
+        "Rate limit exceeded",
+        "RAGRateLimited",
+        429,
+        detail=f"Too many chat messages. Try again in {retry_after} seconds.",
         headers={"Retry-After": str(retry_after)},
     )
 
@@ -149,28 +160,18 @@ async def session_chat(
             db,
         )
     except RagAnswerFailed:
-        return JSONResponse(
-            content={
-                "Error": "Answer generation failed",
-                "SubCode": "RAGAnswerFailed",
-            },
-            status_code=503,
-        )
+        return _error_response("Answer generation failed", "RAGAnswerFailed", 503)
     except RetrievalUnavailable as exc:
         if exc.kind == "too_large":
-            return JSONResponse(
-                content={
-                    "Error": "This message is too long for search — please shorten it.",
-                    "SubCode": "RAGQuestionTooLong",
-                },
-                status_code=422,
+            return _error_response(
+                "This message is too long for search — please shorten it.",
+                "RAGQuestionTooLong",
+                422,
             )
-        return JSONResponse(
-            content={
-                "Error": "Knowledge base search is temporarily unavailable. Please try again.",
-                "SubCode": "RAGRetrievalFailed",
-            },
-            status_code=503,
+        return _error_response(
+            "Knowledge base search is temporarily unavailable. Please try again.",
+            "RAGRetrievalFailed",
+            503,
         )
     if isinstance(result, RagChatResponseDTO):
         return result

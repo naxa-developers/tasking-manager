@@ -324,6 +324,34 @@ def _question_form(text: str, low: str) -> bool:
     )
 
 
+_QUESTION_WORDS: tuple[str, ...] = ("what", "how", "who", "can", "where", "when", "why")
+_TM_NOUNS: tuple[str, ...] = (
+    "task",
+    "project",
+    "user",
+    "team",
+    "org",
+    "mapping",
+    "validation",
+    "location",
+    "filter",
+    "badge",
+    "level",
+    "contribution",
+    "streak",
+    "hour",
+)
+
+
+def _is_question_tm_probe(text: str, low: str) -> bool:
+    """Question-form ask about a TM noun; single-weak hits lean on this."""
+    return (
+        _question_form(text, low)
+        and any(w in low for w in _QUESTION_WORDS)
+        and any(w in low for w in _TM_NOUNS)
+    )
+
+
 def classify_query(query: str) -> GuardrailDecision:
     """Classify a raw user query before retrieval."""
     text = (query or "").strip()
@@ -357,15 +385,13 @@ def classify_query(query: str) -> GuardrailDecision:
         return GuardrailDecision(verdict="ok", reason=f"Matched weak scope keywords {weak_hits[:2]!r}.", gate="scope")
     if len(weak_hits) == 1:
         # Single weak hit needs question form + TM noun ("How do I lock a task?").
-        if _question_form(text, low) and any(w in low for w in ("what", "how", "who", "can", "where", "when", "why")):
-            if any(w in low for w in ("task", "project", "user", "team", "org", "mapping", "validation", "location", "filter", "badge", "level", "contribution", "streak", "hour")):
-                return GuardrailDecision(verdict="ok", reason=f"Single weak '{weak_hits[0]}' + question-form TM probe.", gate="scope")
+        if _is_question_tm_probe(text, low):
+            return GuardrailDecision(verdict="ok", reason=f"Single weak '{weak_hits[0]}' + question-form TM probe.", gate="scope")
         # A weak single compound like "private project" already counts as 2 hits.
 
     # Fallback heuristic: question mark + interrogative + TM noun (catches cases with zero keyword hits but question-form)
-    if _question_form(text, low) and any(w in low for w in ("what", "how", "who", "can", "where", "when", "why")):
-        if any(w in low for w in ("task", "project", "user", "team", "org", "mapping", "validation", "location", "filter", "badge", "level", "contribution", "streak", "hour")):
-            return GuardrailDecision(verdict="ok", reason="Question-form TM probe.", gate="scope")
+    if _is_question_tm_probe(text, low):
+        return GuardrailDecision(verdict="ok", reason="Question-form TM probe.", gate="scope")
 
     return GuardrailDecision(
         verdict="out_of_scope",

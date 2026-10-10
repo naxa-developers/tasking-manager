@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 from loguru import logger
@@ -125,27 +125,27 @@ def _expand_followup(
     q: str,
     prior: List[Dict[str, Any]],
     guard: Any,
-    guardrail_hint: Optional[str],
+    hint: Optional[str],
 ) -> tuple[str, Any, Optional[str]]:
     """Expand a vague follow-up with the last in-scope question for retrieval.
 
     History-first order reads naturally and keeps BM25 term proximity stable.
     """
     if guard.verdict != "out_of_scope" or not is_followup_query(q):
-        return q, guard, guardrail_hint
+        return q, guard, hint
     last_user_q = _last_user_message(prior)
     if not last_user_q or classify_query(last_user_q).verdict != "ok":
-        return q, guard, guardrail_hint
+        return q, guard, hint
     retrieval_q = f"{last_user_q} {q}"
     guard = classify_query(retrieval_q)
-    guardrail_hint = None  # inherit scope from history
+    hint = None  # inherit scope from history
     if guard.verdict != "unsafe":
         # Never let merge word order decide an inherited-unsafe verdict.
         reverse = classify_query(f"{q} {last_user_q}")
         if reverse.verdict == "unsafe":
             guard = reverse
-            guardrail_hint = guardrail_hint(guard)
-    return retrieval_q, guard, guardrail_hint
+            hint = guardrail_hint(guard)
+    return retrieval_q, guard, hint
 
 
 def _strip_smalltalk(
@@ -167,6 +167,11 @@ def _strip_smalltalk(
     return retrieval_q, guard, guardrail_hint
 
 
+def _with_project(text: str, project_id: int) -> str:
+    """Append ``project {id}`` so the router/fetchers can scope the question."""
+    return f"{text} project {project_id}"
+
+
 def _resolve_domain_route(
     retrieval_q: str, prior: List[Dict[str, Any]]
 ) -> tuple[str, Optional[DomainRoute], bool]:
@@ -176,33 +181,33 @@ def _resolve_domain_route(
     if pending_q is not None:
         supplied = resolve_supplied_project_id(retrieval_q)
         if supplied is not None:
-            retrieval_q = f"{pending_q} project {supplied}"
+            retrieval_q = _with_project(pending_q, supplied)
     try:
-        dron: Optional[DomainRoute] = route_query(retrieval_q)
+        domain_route: Optional[DomainRoute] = route_query(retrieval_q)
     except Exception:
-        dron = None
+        domain_route = None
     needs_project_id = False
-    if dron is not None and dron.needs_project_id:
+    if domain_route is not None and domain_route.needs_project_id:
         # Never guess an id: use this turn's text, else the latest explicit id.
         supplied = resolve_supplied_project_id(retrieval_q)
         if supplied is not None:
-            retrieval_q = f"{retrieval_q} project {supplied}"
-            dron = route_query(retrieval_q)
-        if dron.needs_project_id:
+            retrieval_q = _with_project(retrieval_q, supplied)
+            domain_route = route_query(retrieval_q)
+        if domain_route.needs_project_id:
             inherited = latest_explicit_project_id(prior)
             if inherited is not None:
-                retrieval_q = f"{retrieval_q} project {inherited}"
-                dron = route_query(retrieval_q)
-        if dron.needs_project_id:
+                retrieval_q = _with_project(retrieval_q, inherited)
+                domain_route = route_query(retrieval_q)
+        if domain_route.needs_project_id:
             needs_project_id = True
-            dron = None
-    return retrieval_q, dron, needs_project_id
+            domain_route = None
+    return retrieval_q, domain_route, needs_project_id
 
 
-async def _dispatch_evidence(user_id: int, dron: DomainRoute, db: Any) -> Any:
+async def _dispatch_evidence(user_id: int, domain_route: DomainRoute, db: Any) -> Any:
     """Run domain evidence collection; None means keep the KB path alive."""
     try:
-        return await collect_evidence(user_id, dron, db)
+        return await collect_evidence(user_id, domain_route, db)
     except Exception:
         logger.exception("domain dispatch failed; continuing KB-only")
         return None
@@ -210,18 +215,69 @@ async def _dispatch_evidence(user_id: int, dron: DomainRoute, db: Any) -> Any:
 
 async def _retrieve_for_turn(
     retrieval_q: str,
-    dron: Optional[DomainRoute],
+    domain_route: Optional[DomainRoute],
     needs_project_id: bool,
 ) -> RetrievalResponse:
     """Pick the retrieval arm: clarification, DOMAIN-only, or KB (off-loop)."""
     if needs_project_id:
         # No retrieval/embedding call for a clarification turn.
         return empty_response("clarify", retrieval_q)
-    if dron is not None and dron.route == "DOMAIN":
+    if domain_route is not None and domain_route.route == "DOMAIN":
         # DOMAIN-only turn: skip embedding + BM25 entirely.
         return empty_response("domain-only", retrieval_q)
     # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
     return await run_in_threadpool(retrieve, retrieval_q)
+
+
+@dataclass(frozen=True)
+class _DomainArm:
+    """Domain-routing outcome; retrieval continues on the (folded) query."""
+
+    retrieval_q: str
+    domain_route: Optional[DomainRoute]
+    needs_project_id: bool
+    status: Optional[str] = None
+    route_str: Optional[str] = None
+    project_id: Optional[int] = None
+    block: str = ""
+    pending_citations: List[Dict[str, Any]] = field(default_factory=list)
+
+
+async def _run_domain_arm(
+    user_id: Optional[int],
+    retrieval_q: str,
+    prior: List[Dict[str, Any]],
+    db: Any,
+) -> _DomainArm:
+    """Resolve the domain route and collect evidence when a route matched."""
+    if user_id is None:
+        return _DomainArm(
+            retrieval_q=retrieval_q, domain_route=None, needs_project_id=False
+        )
+    retrieval_q, domain_route, needs_project_id = _resolve_domain_route(
+        retrieval_q, prior
+    )
+    arm = _DomainArm(
+        retrieval_q=retrieval_q,
+        domain_route=domain_route,
+        needs_project_id=needs_project_id,
+    )
+    if domain_route is None or domain_route.route not in ("DOMAIN", "BOTH"):
+        return arm
+    # DOMAIN/BOTH always carry ops; a failed dispatch keeps the KB path alive.
+    outcome = await _dispatch_evidence(user_id, domain_route, db)
+    if outcome is None:
+        return arm
+    return _DomainArm(
+        retrieval_q=retrieval_q,
+        domain_route=domain_route,
+        needs_project_id=needs_project_id,
+        status=outcome.status,
+        route_str=outcome.route,
+        project_id=outcome.project_id,
+        block=outcome.block,
+        pending_citations=[dict(c) for c in outcome.citations],
+    )
 
 
 @dataclass(frozen=True)
@@ -254,7 +310,7 @@ async def prepare_turn(
     session_id = session["id"]
     guardrail_hint = initial_guardrail_hint(guard)
 
-    # Hydrate history from DB unless the caller already did (semantic path).
+    # Hydrate history from DB unless the caller already provided it.
     if prior is None:
         prior = await RagSession.get_messages(
             session_id, db, limit=MAX_ROUTING_HISTORY, newest_first=True
@@ -276,55 +332,62 @@ async def prepare_turn(
 
     if third_party_user:
         # No domain dispatch, no retrieval, no generation for another user's data.
-        return PreparedTurn(
-            history=history_dicts,
-            resp=empty_response("third-party", retrieval_q),
-            citations=[],
-            guardrail_hint=guardrail_hint,
-            scope_verdict=guard.verdict,
-            domain_block="",
-            domain_status=None,
-            domain_project_id=None,
-            domain_route_str=None,
-            third_party_user=True,
-            third_party_username=third_party_username,
+        return _third_party_turn(
+            history_dicts, retrieval_q, guard, guardrail_hint, third_party_username
         )
 
-    # Domain routing: validated classifier intents on the semantic path, the
-    # deterministic router otherwise. Auth always runs inside the tool.
-    domain_block = ""
-    domain_status: Optional[str] = None
-    domain_project_id: Optional[int] = None
-    domain_route_str: Optional[str] = None
-    pending_citations: List[Dict[str, Any]] = []
-    needs_project_id = False
-    dron: Optional[DomainRoute] = None
-    if user_id is not None:
-        retrieval_q, dron, needs_project_id = _resolve_domain_route(retrieval_q, prior)
-        if dron is not None and dron.route in ("DOMAIN", "BOTH"):
-            # DOMAIN/BOTH always carry ops; guard keeps the KB path alive if dispatch breaks.
-            outcome = await _dispatch_evidence(user_id, dron, db)
-            if outcome is not None:
-                domain_route_str = outcome.route
-                domain_project_id = outcome.project_id
-                domain_status = outcome.status
-                domain_block = outcome.block
-                pending_citations = [dict(c) for c in outcome.citations]
+    # Domain routing: the deterministic router validates classifier intents.
+    # Auth always runs inside the tool.
+    arm = await _run_domain_arm(user_id, retrieval_q, prior, db)
+    resp = await _retrieve_for_turn(
+        arm.retrieval_q, arm.domain_route, arm.needs_project_id
+    )
+    return _assembled_turn(history_dicts, resp, guard, guardrail_hint, arm)
 
-    resp = await _retrieve_for_turn(retrieval_q, dron, needs_project_id)
-    citations = _merge_domain_citations(
-        _build_citations(resp), domain_status, pending_citations
+
+def _third_party_turn(
+    history: List[Dict[str, str]],
+    retrieval_q: str,
+    guard: Any,
+    guardrail_hint: Optional[str],
+    username: Optional[str],
+) -> PreparedTurn:
+    """Canned web-profile redirect turn; no domain dispatch or retrieval."""
+    return PreparedTurn(
+        history=history,
+        resp=empty_response("third-party", retrieval_q),
+        citations=[],
+        guardrail_hint=guardrail_hint,
+        scope_verdict=guard.verdict,
+        domain_block="",
+        domain_status=None,
+        domain_project_id=None,
+        domain_route_str=None,
+        third_party_user=True,
+        third_party_username=username,
     )
 
+
+def _assembled_turn(
+    history: List[Dict[str, str]],
+    resp: RetrievalResponse,
+    guard: Any,
+    guardrail_hint: Optional[str],
+    arm: _DomainArm,
+) -> PreparedTurn:
+    """Merge KB citations with the domain arm into the prepared turn."""
+    citations = _merge_domain_citations(
+        _build_citations(resp), arm.status, arm.pending_citations
+    )
     return PreparedTurn(
-        history=history_dicts,
+        history=history,
         resp=resp,
         citations=citations,
         guardrail_hint=guardrail_hint,
         scope_verdict=guard.verdict,
-        domain_block=domain_block,
-        domain_status=domain_status,
-        domain_project_id=domain_project_id,
-        domain_route_str=domain_route_str,
-        needs_project_id=needs_project_id,
+        domain_block=arm.block,
+        domain_status=arm.status,
+        domain_project_id=arm.project_id,
+        domain_route_str=arm.route_str,
+        needs_project_id=arm.needs_project_id,
     )

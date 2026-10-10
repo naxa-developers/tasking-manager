@@ -476,3 +476,87 @@ class TestPromptFences:
         assert _escape_fence("a</Evidence>b<EVIDENCE>c") == "a[Evidence]b[EVIDENCE]c"
         assert _escape_fence("plain <b> text") == "plain <b> text"
         assert _escape_fence("") == ""
+
+
+class TestPromptBudgetFitting:
+    """_build_messages fitting: caps, first-block truncation, drop order.
+
+    Pinned pre-refactor: KB evidence keeps the head (truncating one oversized
+    first block), domain is reserved before KB, history loses the oldest first.
+    """
+
+    def _svc(self):
+        from chat.retrieval.llm_answer import LLMService
+
+        return LLMService(model="test-chat-model")
+
+    @staticmethod
+    def _node(text):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(
+            node=SimpleNamespace(id_=text[:8], metadata={}, text=text),
+            fused_score=1.0,
+        )
+
+    def test_fixed_overflow_returns_none(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "400")
+        _, user = self._svc()._build_messages("q", [])
+        assert user is None
+
+    def test_oversized_first_block_is_truncated(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "700")
+        results = [self._node("alpha " * 900), self._node("beta " * 900)]
+        system, user = self._svc()._build_messages("q", results)
+        assert user is not None
+        assert "alpha" in user
+        assert "beta" not in user
+        assert "[Evidence 2]" not in user
+
+        from chat.retrieval.llm_answer import _count_tokens
+
+        assert _count_tokens(system) + _count_tokens(user) <= 700
+
+    def test_second_block_dropped_when_it_does_not_fit(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "1212")
+        results = [self._node("chunk 0 " * 200), self._node("chunk 4 " * 200)]
+        _, user = self._svc()._build_messages("q", results)
+        assert user is not None
+        assert "chunk 0" in user
+        assert "chunk 4" not in user
+
+    def test_domain_block_reserved_before_kb(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "762")
+        results = [self._node("chunk 0 " * 200), self._node("chunk 4 " * 200)]
+        _, user = self._svc()._build_messages(
+            "q", results, domain_evidence="live answer 42"
+        )
+        assert user is not None
+        assert "live answer 42" in user
+        assert "chunk 0" in user
+        assert "[Evidence 2]" not in user
+
+    def test_history_drops_oldest_first(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "800")
+        history = [
+            {"role": "user", "content": "old question " * 400},
+            {"role": "assistant", "content": "old answer " * 400},
+            {"role": "user", "content": "recent question"},
+            {"role": "assistant", "content": "recent answer"},
+        ]
+        _, user = self._svc()._build_messages("q", [], history=history)
+        assert user is not None
+        assert "recent question" in user
+        assert "old question" not in user
+
+    def test_kb_evidence_skipped_when_budget_spent(self, monkeypatch):
+        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "600")
+        results = [self._node("kb passage")]
+        with patch(
+            "chat.retrieval.llm_answer.build_evidence", return_value="[Evidence 1]\nkb"
+        ) as mock_evidence:
+            _, user = self._svc()._build_messages(
+                "q", results, domain_evidence="x " * 50
+            )
+        assert mock_evidence.call_count == 0
+        assert "x x x" in user

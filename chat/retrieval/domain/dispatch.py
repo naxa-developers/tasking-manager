@@ -41,7 +41,7 @@ class DomainOutcome:
 
 def default_fetchers() -> Dict[str, Fetcher]:
     """Op registry: fixed read-only tools, each (user_id, project_id, db)."""
-    # TODO(feature): fixed registry by design — the LLM can never invent an op.
+    # Fixed registry by design: the LLM can never invent an op.
     from chat.retrieval.domain.global_stats import get_global_stats_evidence
     from chat.retrieval.domain.mywork import get_mywork_evidence
     from chat.retrieval.domain.project_chat import get_project_chat_evidence
@@ -111,6 +111,54 @@ def default_fetchers() -> Dict[str, Fetcher]:
 _FILTER_OPS = frozenset({"project_search"})
 
 
+def _record(statuses: List[str], op_statuses: List[str], op: str, status: str) -> None:
+    """Append one op outcome to the merged and per-op status trails."""
+    statuses.append(status)
+    op_statuses.append(f"{op}:{status}")
+
+
+def _merge_status(statuses: List[str]) -> Optional[str]:
+    """Worst-case precedence across ops: OK > UNAUTHORIZED > TIMEOUT > ..."""
+    if any(s == "OK" for s in statuses):
+        return "OK"
+    for status in ("UNAUTHORIZED", "TIMEOUT", "UNAVAILABLE"):
+        if status in statuses:
+            return status
+    if statuses:
+        return "NOT_FOUND"
+    return None
+
+
+async def _run_op(
+    user_id: int,
+    route: DomainRoute,
+    op: str,
+    fetcher: Fetcher,
+    db: Any,
+) -> tuple[str, str, Optional[Dict[str, Any]]]:
+    """One op inside its timeout + render boundary; never raises."""
+    try:
+        if op in _FILTER_OPS:
+            evidence = await asyncio.wait_for(
+                fetcher(user_id, route.project_id, db, dict(route.filters or {})),
+                timeout=_op_timeout(),
+            )
+        else:
+            evidence = await asyncio.wait_for(
+                fetcher(user_id, route.project_id, db), timeout=_op_timeout()
+            )
+        if evidence.authorized:
+            # Rendering stays inside the per-op boundary: a broken renderer fails one op only.
+            return evidence.status, evidence.to_prompt_block(), evidence.to_citation()
+        return evidence.status, "", None
+    except asyncio.TimeoutError:
+        logger.warning(f"domain {op} fetch timed out after {_op_timeout():.1f}s")
+        return "TIMEOUT", "", None
+    except Exception:
+        logger.exception(f"domain {op} fetch failed")
+        return "UNAVAILABLE", "", None
+
+
 async def collect_evidence(
     user_id: int,
     route: DomainRoute,
@@ -132,58 +180,20 @@ async def collect_evidence(
         if fetcher is None:
             # Router/registry drift: never silent — status keeps the turn deterministic.
             logger.warning(f"domain op {op!r} is not registered; skipping")
-            statuses.append("UNAVAILABLE")
-            op_statuses.append(f"{op}:UNAVAILABLE")
+            _record(statuses, op_statuses, op, "UNAVAILABLE")
             continue
-        try:
-            if op in _FILTER_OPS:
-                evidence = await asyncio.wait_for(
-                    fetcher(user_id, route.project_id, db, dict(route.filters or {})),
-                    timeout=_op_timeout(),
-                )
-            else:
-                evidence = await asyncio.wait_for(
-                    fetcher(user_id, route.project_id, db), timeout=_op_timeout()
-                )
-            if evidence.authorized:
-                # Rendering stays inside the per-op boundary: a broken renderer fails one op only.
-                block = evidence.to_prompt_block()
-                citation = evidence.to_citation()
-            else:
-                block, citation = "", None
-        except asyncio.TimeoutError:
-            logger.warning(f"domain {op} fetch timed out after {_op_timeout():.1f}s")
-            statuses.append("TIMEOUT")
-            op_statuses.append(f"{op}:TIMEOUT")
-            continue
-        except Exception:
-            logger.exception(f"domain {op} fetch failed")
-            statuses.append("UNAVAILABLE")
-            op_statuses.append(f"{op}:UNAVAILABLE")
-            continue
-        statuses.append(evidence.status)
-        op_statuses.append(f"{op}:{evidence.status}")
+        status, block, citation = await _run_op(user_id, route, op, fetcher, db)
+        _record(statuses, op_statuses, op, status)
         if block:
             blocks.append(block)
         if citation is not None:
             citations.append(citation)
 
-    if any(s == "OK" for s in statuses):
-        status: Optional[str] = "OK"
-    elif "UNAUTHORIZED" in statuses:
-        status = "UNAUTHORIZED"
-    elif "TIMEOUT" in statuses:
-        status = "TIMEOUT"
-    elif "UNAVAILABLE" in statuses:
-        status = "UNAVAILABLE"
-    elif statuses:
-        status = "NOT_FOUND"
-    else:
-        status = None
+    merged = _merge_status(statuses)
     if op_statuses:
-        logger.info(f"rag_domain ops={','.join(op_statuses)} status={status}")
+        logger.info(f"rag_domain ops={','.join(op_statuses)} status={merged}")
     return DomainOutcome(
-        status=status,
+        status=merged,
         block="\n\n".join(b for b in blocks if b),
         citations=tuple(citations),
         project_id=route.project_id,

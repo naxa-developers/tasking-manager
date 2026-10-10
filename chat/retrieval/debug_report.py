@@ -296,10 +296,8 @@ def _indent(text: str, prefix: str = "    ") -> str:
     )
 
 
-def render_human(report: Dict[str, Any], sections: Tuple[str, ...] = SECTIONS) -> str:
-    """Sectioned human-readable rendering for terminals and review notes."""
-    meta = report.get("meta", {})
-    lines: List[str] = [
+def _render_header(meta: Dict[str, Any]) -> List[str]:
+    return [
         "=" * 78,
         "TMBot turn debug",
         "=" * 78,
@@ -308,82 +306,102 @@ def render_human(report: Dict[str, Any], sections: Tuple[str, ...] = SECTIONS) -
         f"model    : {meta.get('model')}   temperature={meta.get('temperature')}   max_tokens={meta.get('max_tokens')}",
     ]
 
-    if "decisions" in sections:
-        decisions = report.get("decisions", {})
-        guard = decisions.get("guardrail", {})
-        lines += [
-            "",
-            "-- decisions " + "-" * 65,
-            f"guardrail : {guard.get('verdict')} ({guard.get('gate')}) — {guard.get('reason')}",
-            f"flags     : smalltalk={decisions.get('smalltalk')} third_party={decisions.get('third_party_user')} needs_project_id={decisions.get('needs_project_id')}",
-            f"route     : {decisions.get('route')}   ops={decisions.get('ops')}   project_id={decisions.get('project_id')}   filters={decisions.get('filters')}",
-        ]
 
-    if "kb" in sections:
-        kb = report.get("kb", {})
-        lines += ["", "-- kb retrieval " + "-" * 62]
-        if not kb.get("ran"):
-            lines.append("skipped (no KB retrieval on this route)")
-        else:
-            lines.append(
-                f"mode={kb.get('mode')} candidates={kb.get('candidate_count')} "
-                f"timing_ms={kb.get('timing_ms')}"
-            )
-            lines.append(
-                f"top_score={kb.get('top_score')} threshold={kb.get('threshold')} "
-                f"low_confidence={kb.get('low_confidence')}"
-            )
-            for idx, item in enumerate(kb.get("results", []), start=1):
-                lines.append(
-                    f"[{idx}] {item.get('node_id')}  fused={item.get('fused_score')} "
-                    f"vector_rank={item.get('vector_rank')} bm25_rank={item.get('bm25_rank')}"
-                )
-                lines.append(
-                    f"    title={item.get('title')!r}  doc={item.get('doc_id')!r}"
-                )
-                if item.get("source_refs"):
-                    lines.append(f"    source={item.get('source_refs')}")
-                lines.append(f"    {item.get('snippet')}")
+def _render_decisions(decisions: Dict[str, Any]) -> List[str]:
+    guard = decisions.get("guardrail", {})
+    return [
+        "",
+        "-- decisions " + "-" * 65,
+        f"guardrail : {guard.get('verdict')} ({guard.get('gate')}) — {guard.get('reason')}",
+        f"flags     : smalltalk={decisions.get('smalltalk')} third_party={decisions.get('third_party_user')} needs_project_id={decisions.get('needs_project_id')}",
+        f"route     : {decisions.get('route')}   ops={decisions.get('ops')}   project_id={decisions.get('project_id')}   filters={decisions.get('filters')}",
+    ]
 
-    if "domain" in sections:
-        domain = report.get("domain", {})
-        lines += ["", "-- domain evidence " + "-" * 60]
-        if not domain.get("ran"):
-            lines.append(
-                f"skipped: {domain.get('skipped') or 'no domain ops on this route'}"
-            )
-        else:
-            lines.append(f"status={domain.get('status')} ops={domain.get('ops')}")
-            lines.append(_indent(domain.get("block") or "(empty block)"))
 
-    if "prompt" in sections:
-        prompt = report.get("prompt", {})
-        lines += ["", "-- exact LLM prompt " + "-" * 58]
-        if not prompt.get("ran"):
-            lines.append("no prompt built (no evidence)")
-        else:
-            lines.append(
-                f"budget={prompt.get('budget')} tokens system={prompt.get('system_tokens')} "
-                f"user={prompt.get('user_tokens')}"
-            )
-            lines.append("[system]")
-            lines.append(_indent(prompt.get("system") or ""))
-            lines.append("[user]")
-            lines.append(_indent(prompt.get("user") or ""))
+def _render_kb(kb: Dict[str, Any]) -> List[str]:
+    lines = ["", "-- kb retrieval " + "-" * 62]
+    if not kb.get("ran"):
+        lines.append("skipped (no KB retrieval on this route)")
+        return lines
+    lines.append(
+        f"mode={kb.get('mode')} candidates={kb.get('candidate_count')} "
+        f"timing_ms={kb.get('timing_ms')}"
+    )
+    lines.append(
+        f"top_score={kb.get('top_score')} threshold={kb.get('threshold')} "
+        f"low_confidence={kb.get('low_confidence')}"
+    )
+    for idx, item in enumerate(kb.get("results", []), start=1):
+        lines.append(
+            f"[{idx}] {item.get('node_id')}  fused={item.get('fused_score')} "
+            f"vector_rank={item.get('vector_rank')} bm25_rank={item.get('bm25_rank')}"
+        )
+        lines.append(f"    title={item.get('title')!r}  doc={item.get('doc_id')!r}")
+        if item.get("source_refs"):
+            lines.append(f"    source={item.get('source_refs')}")
+        lines.append(f"    {item.get('snippet')}")
+    return lines
 
-    if "answer" in sections:
-        answer = report.get("answer", {})
-        lines += ["", "-- answer " + "-" * 68]
-        if answer.get("canned"):
-            lines.append("deterministic (no LLM call):")
-            lines.append(_indent(answer.get("canned") or ""))
-        elif answer.get("ran"):
-            lines.append(
-                f"model={answer.get('model')} elapsed_ms={answer.get('elapsed_ms')}"
-            )
-            lines.append(_indent(answer.get("text") or ""))
-        else:
-            lines.append(f"not generated ({answer.get('reason')})")
 
+def _render_domain(domain: Dict[str, Any]) -> List[str]:
+    lines = ["", "-- domain evidence " + "-" * 60]
+    if not domain.get("ran"):
+        lines.append(
+            f"skipped: {domain.get('skipped') or 'no domain ops on this route'}"
+        )
+        return lines
+    lines.append(f"status={domain.get('status')} ops={domain.get('ops')}")
+    lines.append(_indent(domain.get("block") or "(empty block)"))
+    return lines
+
+
+def _render_prompt(prompt: Dict[str, Any]) -> List[str]:
+    lines = ["", "-- exact LLM prompt " + "-" * 58]
+    if not prompt.get("ran"):
+        lines.append("no prompt built (no evidence)")
+        return lines
+    lines.append(
+        f"budget={prompt.get('budget')} tokens system={prompt.get('system_tokens')} "
+        f"user={prompt.get('user_tokens')}"
+    )
+    lines.append("[system]")
+    lines.append(_indent(prompt.get("system") or ""))
+    lines.append("[user]")
+    lines.append(_indent(prompt.get("user") or ""))
+    return lines
+
+
+def _render_answer(answer: Dict[str, Any]) -> List[str]:
+    lines = ["", "-- answer " + "-" * 68]
+    if answer.get("canned"):
+        lines.append("deterministic (no LLM call):")
+        lines.append(_indent(answer.get("canned") or ""))
+        return lines
+    if answer.get("ran"):
+        lines.append(
+            f"model={answer.get('model')} elapsed_ms={answer.get('elapsed_ms')}"
+        )
+        lines.append(_indent(answer.get("text") or ""))
+        return lines
+    lines.append(f"not generated ({answer.get('reason')})")
+    return lines
+
+
+_SECTION_RENDERERS: Dict[str, Any] = {
+    "decisions": _render_decisions,
+    "kb": _render_kb,
+    "domain": _render_domain,
+    "prompt": _render_prompt,
+    "answer": _render_answer,
+}
+
+
+def render_human(report: Dict[str, Any], sections: Tuple[str, ...] = SECTIONS) -> str:
+    """Sectioned human-readable rendering for terminals and review notes."""
+    lines = _render_header(report.get("meta", {}))
+    for name in sections:
+        renderer = _SECTION_RENDERERS.get(name)
+        if renderer is not None:
+            lines += renderer(report.get(name, {}))
     lines.append("")
     return "\n".join(lines)

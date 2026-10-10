@@ -6,7 +6,7 @@ These pin the branch ladder that used to live inline in ``RagService.chat``
 
 import asyncio
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -231,6 +231,54 @@ class TestEmitCannedTurn:
         persist.assert_awaited_once_with(1, "hi", [], 0, None, model=None)
         log.assert_called_once()
 
+    def test_nonstream_logs_decision_fields(self):
+        decision = CannedTurn(
+            answer="hi",
+            guardrail="greeting",
+            citations=[],
+            candidate_count=4,
+            log_guardrail="greeting Logged reason",
+            degraded=True,
+            domain_status="OK",
+            domain_project_id=5,
+            persist_log="small-talk",
+        )
+        with (
+            patch("chat.turn.emit.persist_assistant_turn", new=AsyncMock()),
+            patch("chat.turn.emit.log_turn") as log,
+        ):
+            _run(
+                emit_canned_turn(
+                    db=None,
+                    session_id=1,
+                    user_id=2,
+                    stream=False,
+                    decision=decision,
+                    elapsed_ms=lambda: 9,
+                )
+            )
+        log.assert_called_once_with(1, 2, "greeting Logged reason", 4, True, 9, "OK", 5)
+
+    def test_nonstream_log_tag_falls_back_to_guardrail(self):
+        decision = CannedTurn(
+            answer="hi", guardrail="retrieval:low-confidence", citations=[]
+        )
+        with (
+            patch("chat.turn.emit.persist_assistant_turn", new=AsyncMock()),
+            patch("chat.turn.emit.log_turn") as log,
+        ):
+            _run(
+                emit_canned_turn(
+                    db=None,
+                    session_id=1,
+                    user_id=2,
+                    stream=False,
+                    decision=decision,
+                    elapsed_ms=lambda: 0,
+                )
+            )
+        assert log.call_args.args[2] == "retrieval:low-confidence"
+
     def test_stream_emits_delta_meta_done_and_persists(self):
         decision = CannedTurn(answer="hi", guardrail="greeting", citations=[])
         with (
@@ -254,6 +302,37 @@ class TestEmitCannedTurn:
         assert any(chunk.startswith("event: meta") for chunk in chunks)
         assert chunks[-1] == "event: done\ndata: {}\n\n"
         persist.assert_awaited_once_with(1, "hi", [], 0, model=None)
+
+    def test_stream_meta_payload_carries_raw_guardrail(self):
+        # Canned meta passes decision.guardrail through verbatim.
+        decision = CannedTurn(
+            answer="hi",
+            guardrail="greeting welcome",
+            citations=[],
+            candidate_count=4,
+            degraded=True,
+            model="m1",
+        )
+        with (
+            patch("chat.turn.emit.persist_assistant_turn_stream", new=AsyncMock()),
+            patch("chat.turn.emit.log_turn") as log,
+        ):
+            body = _run(
+                emit_canned_turn(
+                    db=None,
+                    session_id=1,
+                    user_id=2,
+                    stream=True,
+                    decision=decision,
+                    elapsed_ms=lambda: 9,
+                )
+            )
+            chunks = _run(_collect(body))
+        assert chunks[-2] == (
+            'event: meta\ndata: {"session_id": "1", "degraded": true, '
+            '"candidate_count": 4, "guardrail": "greeting welcome", "model": "m1"}\n\n'
+        )
+        log.assert_called_once_with(1, 2, "greeting welcome", 4, True, 9, None, None)
 
 
 def _passthrough_threadpool():
@@ -321,6 +400,43 @@ class TestEmitGeneratedTurn:
         assert result.candidate_count == 3
         persist.assert_awaited_once_with(1, "answer text", [], 3, None, model="m1")
 
+    def test_nonstream_logs_raw_hint_and_domain_fields(self):
+        with (
+            patch("chat.turn.emit.persist_assistant_turn", new=AsyncMock()),
+            patch("chat.turn.emit.log_turn") as log,
+            patch(
+                "chat.turn.emit.run_in_threadpool",
+                new=_passthrough_threadpool(),
+            ),
+        ):
+            result = _run(
+                emit_generated_turn(
+                    db=None,
+                    session_id=1,
+                    user_id=2,
+                    stream=False,
+                    question="q",
+                    prepared=_prepared(domain_status="OK", domain_project_id=5),
+                    decision=GenerateTurn(
+                        guardrail_hint="scope:answered-from-evidence reason text"
+                    ),
+                    llm=_FakeLLM(answer="answer text"),
+                    elapsed_ms=lambda: 9,
+                )
+            )
+        # DTO carries the public tag; the log keeps the full hint.
+        assert result.guardrail == "scope:answered-from-evidence"
+        log.assert_called_once_with(
+            1,
+            2,
+            "scope:answered-from-evidence reason text",
+            3,
+            False,
+            9,
+            "OK",
+            5,
+        )
+
     def test_nonstream_failure_raises_rag_answer_failed(self):
         with (
             patch("chat.turn.emit.persist_assistant_turn", new=AsyncMock()) as persist,
@@ -373,6 +489,36 @@ class TestEmitGeneratedTurn:
         assert any(chunk.startswith("event: meta") for chunk in chunks)
         assert chunks[-1] == "event: done\ndata: {}\n\n"
         persist.assert_awaited_once_with(1, "ab", [], 3, model="m1")
+
+    def test_stream_meta_payload_has_public_guardrail(self):
+        with (
+            patch("chat.turn.emit.persist_assistant_turn_stream", new=AsyncMock()),
+            patch("chat.turn.emit.log_turn") as log,
+            patch("chat.turn.emit.iterate_in_threadpool", new=_passthrough_iter()),
+        ):
+            body = _run(
+                emit_generated_turn(
+                    db=None,
+                    session_id=1,
+                    user_id=2,
+                    stream=True,
+                    question="q",
+                    prepared=_prepared(domain_status="OK", domain_project_id=5),
+                    decision=GenerateTurn(
+                        guardrail_hint="scope:answered-from-evidence reason text"
+                    ),
+                    llm=_FakeLLM(stream=["a"]),
+                    elapsed_ms=lambda: 9,
+                )
+            )
+            chunks = _run(_collect(body))
+        assert chunks[-2] == (
+            'event: meta\ndata: {"session_id": "1", "degraded": false, '
+            '"candidate_count": 3, "guardrail": "scope:answered-from-evidence", "model": "m1"}\n\n'
+        )
+        log.assert_called_once_with(
+            1, 2, "scope:answered-from-evidence reason text", 3, False, 9, "OK", 5
+        )
 
     def test_stream_retries_once_on_transient_then_recovers(self):
         transient = RuntimeError("try again")

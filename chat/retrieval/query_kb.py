@@ -62,10 +62,37 @@ def _is_active(node: "TextNode") -> bool:
         return True
 
 
-def load_nodes(path: Path) -> List["TextNode"]:
-    """Read chunks.json and rebuild TextNodes. Pure: no cache, no state."""
+def _node_from_entry(index: int, entry: Any) -> Optional["TextNode"]:
+    """Rebuild one chunks.json entry; warn and skip on malformed input."""
     from llama_index.core.schema import TextNode  # type: ignore
 
+    if not isinstance(entry, dict):
+        warnings.warn(f"chunks.json entry #{index} is not an object; skipping")
+        return None
+    nid = entry.get("id") or entry.get("node_id") or entry.get("chunk_id") or ""
+    text = entry.get("text") or entry.get("content") or ""
+    metadata = entry.get("metadata") or {}
+    if not metadata:
+        # Fallback: entry itself may be metadata
+        metadata = {
+            k: v for k, v in entry.items() if k not in {"id", "text", "content"}
+        }
+    # Soft-delete is handled after load; preserve all metadata
+    try:
+        node = TextNode(text=text, id_=nid, metadata=metadata)
+        # Preserve embedding if present in payload (optional, not required for BM25)
+        if entry.get("embedding"):
+            node.embedding = entry["embedding"]
+        return node
+    except Exception as exc:
+        warnings.warn(
+            f"chunks.json entry #{index} could not be rebuilt ({exc}); skipping"
+        )
+        return None
+
+
+def load_nodes(path: Path) -> List["TextNode"]:
+    """Read chunks.json and rebuild TextNodes. Pure: no cache, no state."""
     try:
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -84,31 +111,11 @@ def load_nodes(path: Path) -> List["TextNode"]:
     if not isinstance(raw_chunks, list):
         raise ValueError(f'chunks.json "chunks" at {path} must be a list')
 
-    nodes: List[TextNode] = []
+    nodes: List["TextNode"] = []
     for index, entry in enumerate(raw_chunks):
-        if not isinstance(entry, dict):
-            warnings.warn(f"chunks.json entry #{index} is not an object; skipping")
-            continue
-        nid = entry.get("id") or entry.get("node_id") or entry.get("chunk_id") or ""
-        text = entry.get("text") or entry.get("content") or ""
-        metadata = entry.get("metadata") or {}
-        if not metadata:
-            # Fallback: entry itself may be metadata
-            metadata = {
-                k: v for k, v in entry.items() if k not in {"id", "text", "content"}
-            }
-        # Soft-delete is handled after load; preserve all metadata
-        try:
-            node = TextNode(text=text, id_=nid, metadata=metadata)
-            # Preserve embedding if present in payload (optional, not required for BM25)
-            if entry.get("embedding"):
-                node.embedding = entry["embedding"]
+        node = _node_from_entry(index, entry)
+        if node is not None:
             nodes.append(node)
-        except Exception as exc:
-            warnings.warn(
-                f"chunks.json entry #{index} could not be rebuilt ({exc}); skipping"
-            )
-            continue
     return nodes
 
 
@@ -180,6 +187,54 @@ def _reciprocal_rank_fusion(
             )
         )
     return results
+
+
+def _ids_from_store_result(
+    res: Any,
+) -> tuple[List[str], Dict[str, float], Dict[str, "TextNode"]]:
+    """Ids, scores, and store nodes from either supported result shape."""
+    ids: List[str] = []
+    sims: Dict[str, float] = {}
+    store_nodes: Dict[str, "TextNode"] = {}
+    res_nodes = list(getattr(res, "nodes", None) or [])
+    if getattr(res, "ids", None):
+        ids = list(res.ids)
+        for nid, sim in zip(ids, res.similarities or []):
+            if sim is not None:
+                sims[nid] = float(sim)
+        # pgvector returns node text + metadata per query; keep aligned with res.ids.
+        for nid, item in zip(ids, res_nodes):
+            node = getattr(item, "node", item)
+            if node is not None:
+                store_nodes[nid] = node
+    elif res_nodes:
+        for item in res_nodes:
+            node = getattr(item, "node", item)
+            nid = getattr(node, "id_", None) or getattr(item, "id_", None)
+            if nid:
+                ids.append(nid)
+                store_nodes[nid] = node
+                score = getattr(item, "score", None)
+                if score is not None:
+                    sims[nid] = float(score)
+    return ids, sims, store_nodes
+
+
+def _active_candidates(
+    ids: List[str],
+    store_nodes: Dict[str, "TextNode"],
+    node_map: Dict[str, "TextNode"],
+) -> tuple[List[str], Dict[str, "TextNode"]]:
+    """Keep active nodes in ranked order; store nodes shadow the loaded map."""
+    nodes: Dict[str, "TextNode"] = {}
+    kept: List[str] = []
+    for nid in ids:
+        node = store_nodes.get(nid) or node_map.get(nid)
+        if node is None or not _is_active(node):
+            continue
+        nodes[nid] = node
+        kept.append(nid)
+    return kept[:CANDIDATE_K], nodes
 
 
 class Retriever:
@@ -279,31 +334,7 @@ class Retriever:
                 )
             )
 
-            ids: List[str] = []
-            sims: Dict[str, float] = {}
-            store_nodes: Dict[str, "TextNode"] = {}
-            res_nodes = list(getattr(res, "nodes", None) or [])
-            if getattr(res, "ids", None):
-                ids = list(res.ids)
-                for nid, sim in zip(ids, res.similarities or []):
-                    if sim is not None:
-                        sims[nid] = float(sim)
-                # pgvector returns node text + metadata per query; keep aligned with res.ids.
-                for nid, item in zip(ids, res_nodes):
-                    node = getattr(item, "node", item)
-                    if node is not None:
-                        store_nodes[nid] = node
-            elif res_nodes:
-                for item in res_nodes:
-                    node = getattr(item, "node", item)
-                    nid = getattr(node, "id_", None) or getattr(item, "id_", None)
-                    if nid:
-                        ids.append(nid)
-                        store_nodes[nid] = node
-                        score = getattr(item, "score", None)
-                        if score is not None:
-                            sims[nid] = float(score)
-
+            ids, sims, store_nodes = _ids_from_store_result(res)
             if not ids:
                 # A configured store querying a loaded index always returns
                 # rows (no filter is applied): zero rows with zero error means
@@ -316,15 +347,8 @@ class Retriever:
                 return RankedCandidates([], {}, None)
 
             # Soft-delete: apply _is_active to the vector store's own nodes.
-            nodes: Dict[str, "TextNode"] = {}
-            kept: List[str] = []
-            for nid in ids:
-                node = store_nodes.get(nid) or self.node_map.get(nid)
-                if node is None or not _is_active(node):
-                    continue
-                nodes[nid] = node
-                kept.append(nid)
-            return RankedCandidates(kept[:CANDIDATE_K], sims, None, nodes)
+            kept, nodes = _active_candidates(ids, store_nodes, self.node_map)
+            return RankedCandidates(kept, sims, None, nodes)
 
         except Exception as exc:
             return RankedCandidates([], {}, str(exc))

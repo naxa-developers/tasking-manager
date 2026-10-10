@@ -22,7 +22,9 @@ from chat.dtos import (
     RagSessionDTO,
 )
 from chat.models import MAX_SESSION_MESSAGES, RagSession
-from chat.turn.errors import RagAnswerFailed
+
+# RagAnswerFailed is re-exported for chat/api/resources.py.
+from chat.turn.errors import RagAnswerFailed  # noqa: F401
 
 try:
     from chat.retrieval.guardrails import classify_query
