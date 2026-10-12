@@ -20,7 +20,6 @@ import chat.service as service
 
 assert service._RAG_AVAILABLE is False, "retrieval guard should trip"
 assert service.RagAnswerFailed
-assert service.MAX_ROUTING_HISTORY == 10
 print("guard-ok")
 """
 

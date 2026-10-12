@@ -27,7 +27,9 @@ def _print_answer(answer: str, width: int = 88) -> None:
             print()
             continue
         bullet = line.startswith("- ")
-        print(textwrap.fill(line, width=width, subsequent_indent="  " if bullet else ""))
+        print(
+            textwrap.fill(line, width=width, subsequent_indent="  " if bullet else "")
+        )
     print()
 
 
@@ -65,7 +67,11 @@ def _print_evidence(resp, show_scores: bool = True) -> None:
                 else:
                     refs.append(str(s)[:60])
             src_line = f"  source: {' | '.join(r for r in refs if r)}"
-        commit = (meta.get("provenance") or {}).get("commit") or meta.get("frozen_commit") or ""
+        commit = (
+            (meta.get("provenance") or {}).get("commit")
+            or meta.get("frozen_commit")
+            or ""
+        )
         commit_line = f"  commit:{str(commit)[:12]}" if commit else ""
         print(f"[{idx}] {scored.node.id_}{score_part}")
         print(f"    title={title!r}{nv}")
@@ -80,7 +86,7 @@ def _print_evidence(resp, show_scores: bool = True) -> None:
 
 def run_single_question(
     question: str,
-    top_k: int,
+    top_k: Optional[int],
     show_evidence: bool,
     history: Optional[List[dict]] = None,
 ) -> int:
@@ -88,7 +94,7 @@ def run_single_question(
     decision = classify_query(question)
     if decision.verdict != "ok":
         refusal = refusal_for(decision.verdict)
-        print(f"TMBot  TopK: {top_k}  Provider: {_provider_label()}")
+        print(f"TMBot  TopK: {top_k or 'all'}  Provider: {_provider_label()}")
         print(f"Guardrail: {decision.verdict} ({decision.gate}) — {decision.reason}")
         _print_answer(refusal)
         return 0
@@ -96,7 +102,9 @@ def run_single_question(
     route = route_query(question)
     if route.route in ("DOMAIN", "BOTH"):
         # Offline CLI has no authenticated DB; live domain ops need /api/v2/rag chat.
-        print("(Live project stats unavailable in offline CLI — use authenticated /api/v2/rag chat.)")
+        print(
+            "(Live project stats unavailable in offline CLI — use authenticated /api/v2/rag chat.)"
+        )
 
     resp = retrieve(question, top_k=top_k)
 
@@ -112,9 +120,11 @@ def run_single_question(
                 "I couldn't find relevant evidence for that question. It may be out of scope "
                 "for the Tasking Manager knowledge base."
             )
-        print(f"TMBot  TopK: {top_k}  Provider: {_provider_label()}")
+        print(f"TMBot  TopK: {top_k or 'all'}  Provider: {_provider_label()}")
         _print_answer(low_msg)
-        print(f"(candidates={resp.candidate_count}  returned={len(resp.results)}  low_confidence top={top_score} thr={conf_threshold():.3f}  {resp.timing_ms})")
+        print(
+            f"(candidates={resp.candidate_count}  returned={len(resp.results)}  low_confidence top={top_score} thr={conf_threshold():.3f}  {resp.timing_ms})"
+        )
         return 0
 
     llm = LLMService()
@@ -123,7 +133,7 @@ def run_single_question(
     try:
         answer = llm.answer(question, resp.results, history=history)
     except Exception as e:
-        print(f"TMBot  TopK: {top_k}  Provider: {_provider_label()}")
+        print(f"TMBot  TopK: {top_k or 'all'}  Provider: {_provider_label()}")
         print(f"Generation failed: {type(e).__name__}: {e}")
         return 1
 
@@ -131,20 +141,31 @@ def run_single_question(
     _print_answer(answer)
     if show_evidence:
         _print_evidence(resp)
-    print(f"(candidates={resp.candidate_count}  returned={len(resp.results)}  {resp.timing_ms})")
+    print(
+        f"(candidates={resp.candidate_count}  returned={len(resp.results)}  {resp.timing_ms})"
+    )
     return 0
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Tasking Manager Knowledge Assistant — single-voice TMBot CLI (one-shot + conversation, no REPL)")
+    parser = argparse.ArgumentParser(
+        description="Tasking Manager Knowledge Assistant — single-voice TMBot CLI (one-shot + conversation, no REPL)"
+    )
     parser.add_argument("--question", required=True, help="Question to ask (one-shot)")
-    parser.add_argument("--top-k", type=int, default=5, help="Evidence passages to retrieve")
+    parser.add_argument(
+        "--top-k",
+        type=int,
+        default=None,
+        help="Evidence passages to retrieve (default: all)",
+    )
     parser.add_argument(
         "--history",
         default=None,
         help="Optional JSON array of prior {role,content} turns for conversational context (no extra embedding/LLM call — just context for the single answer).",
     )
-    parser.add_argument("--no-evidence", action="store_true", help="Hide evidence citations")
+    parser.add_argument(
+        "--no-evidence", action="store_true", help="Hide evidence citations"
+    )
     args = parser.parse_args()
 
     history = None
@@ -158,7 +179,9 @@ def main() -> int:
         except Exception as e:
             parser.error(f"Invalid --history JSON: {e}")
 
-    return run_single_question(args.question, args.top_k, show_evidence=not args.no_evidence, history=history)
+    return run_single_question(
+        args.question, args.top_k, show_evidence=not args.no_evidence, history=history
+    )
 
 
 if __name__ == "__main__":

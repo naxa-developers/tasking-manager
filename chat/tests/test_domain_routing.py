@@ -394,9 +394,12 @@ class TestGenericHowToStaysKb:
 
 
 class TestThirdPartyWorkingOnFallsThrough:
-    def test_who_is_working_on_routes_project_summary(self):
+    def test_who_is_working_on_routes_project_contributions(self):
+        # Used to fall through to the summary default; the contributors op now
+        # answers who has been working on the project.
         r = route_query("Who is working on project 5?")
-        assert r.route == "DOMAIN" and r.project_id == 5 and r.ops == ("summary",)
+        assert r.route == "DOMAIN" and r.project_id == 5
+        assert r.ops == ("project_contributions",)
 
     def test_teams_about_the_project_asks_which(self):
         r = route_query("Which teams are working on the project?")
@@ -480,3 +483,200 @@ class TestThirdPartyUserRouting:
     def test_third_party_asks_never_route_to_asker_ops(self, q):
         r = route_query(q)
         assert r.route == "KB" and r.ops == (), q
+
+
+class TestProjectActivityRouting:
+    def test_activity_routes_domain_project_activity(self):
+        r = route_query("What is the latest activity on project 123?")
+        assert r.route == "DOMAIN" and r.project_id == 123
+        assert r.ops == ("project_activity",)
+
+    def test_activity_without_project_id_asks(self):
+        r = route_query("Show me the latest activity on the project")
+        assert r.route == "KB" and r.needs_project_id is True
+        assert r.ops == ("project_activity",)
+
+    def test_activity_plus_howto_routes_both(self):
+        r = route_query("What happened in project 5 and how do I map a task?")
+        assert r.route == "BOTH" and r.project_id == 5
+        assert r.ops == ("project_activity",)
+
+    def test_streak_is_not_project_activity(self):
+        r = route_query("What is my streak?")
+        assert "project_activity" not in r.ops
+
+
+class TestProjectContributionsRouting:
+    def test_who_contributed_routes_contributions(self):
+        r = route_query("Who contributed to project 123?")
+        assert r.route == "DOMAIN" and r.project_id == 123
+        assert r.ops == ("project_contributions",)
+
+    def test_worked_on_phrasing_routes_contributions(self):
+        r = route_query("who has worked on project 5?")
+        assert r.ops == ("project_contributions",)
+
+    def test_teams_phrasing_stays_teams(self):
+        r = route_query("which teams are working on project 123?")
+        assert r.route == "DOMAIN" and r.ops == ("teams",)
+
+    def test_contributions_without_project_id_asks(self):
+        r = route_query("Who contributed to the project?")
+        assert r.route == "KB" and r.needs_project_id is True
+        assert r.ops == ("project_contributions",)
+
+    def test_own_contributions_are_not_project_contributions(self):
+        r = route_query("What are my total contributions?")
+        assert "project_contributions" not in r.ops
+
+
+class TestProjectTasksRouting:
+    def test_invalidated_tasks_route_project_tasks(self):
+        r = route_query("Which tasks are invalidated in project 5?")
+        assert r.route == "DOMAIN" and r.project_id == 5
+        assert r.ops == ("project_tasks",)
+
+    def test_mapped_tasks_route_project_tasks(self):
+        r = route_query("Show me mapped tasks in project 7")
+        assert r.project_id == 7 and "project_tasks" in r.ops
+
+    def test_invalidated_tasks_without_project_asks(self):
+        r = route_query("Are there invalidated tasks in the project?")
+        assert r.route == "KB" and r.needs_project_id is True
+        assert r.ops == ("project_tasks",)
+
+    def test_my_invalidated_tasks_are_not_project_tasks(self):
+        r = route_query("were my tasks invalidated?")
+        assert "project_tasks" not in r.ops
+
+
+class TestProjectAnnotationsRouting:
+    def test_annotations_route_project_annotations(self):
+        r = route_query("Show me the annotations on project 123")
+        assert r.route == "DOMAIN" and r.project_id == 123
+        assert r.ops == ("project_annotations",)
+
+    def test_annotations_without_project_asks(self):
+        r = route_query("Does the project have any annotations?")
+        assert r.route == "KB" and r.needs_project_id is True
+        assert r.ops == ("project_annotations",)
+
+    def test_howto_annotations_stays_kb(self):
+        r = route_query("How do task annotations work?")
+        assert r.route == "KB" and r.ops == ()
+
+
+class TestFavoritesRouting:
+    def test_favorites_list_routes_favorites(self):
+        r = route_query("Which projects have I favorited?")
+        assert r.route == "DOMAIN" and r.ops == ("favorites",)
+
+    def test_project_favorite_status_keeps_project_id(self):
+        r = route_query("Is project 5 in my favorites?")
+        assert r.route == "DOMAIN" and r.project_id == 5
+        assert r.ops == ("favorites",)
+
+    def test_howto_favorites_stays_kb(self):
+        r = route_query("How do favorites work?")
+        assert r.route == "KB" and r.ops == ()
+
+
+class TestSimilarProjectsRouting:
+    def test_similar_routes_similar_projects(self):
+        r = route_query("What projects are similar to project 123?")
+        assert r.route == "DOMAIN" and r.project_id == 123
+        assert r.ops == ("similar_projects",)
+
+    def test_similar_without_project_asks(self):
+        r = route_query("Show me projects similar to the project")
+        assert r.route == "KB" and r.needs_project_id is True
+        assert r.ops == ("similar_projects",)
+
+    def test_similar_without_project_reference_stays_kb(self):
+        r = route_query("How do I find similar projects?")
+        assert r.route == "KB" and r.ops == ()
+
+
+class TestCampaignsRouting:
+    def test_campaigns_of_project(self):
+        r = route_query("Which campaigns is project 5 part of?")
+        assert r.route == "DOMAIN" and r.project_id == 5
+        assert r.ops == ("campaigns",)
+
+    def test_list_campaigns_global(self):
+        r = route_query("What campaigns exist on Tasking Manager?")
+        assert r.route == "DOMAIN" and r.project_id is None
+        assert r.ops == ("campaigns",)
+
+    def test_projects_in_campaign_stay_project_search(self):
+        r = route_query("Which projects are in the Test campaign?")
+        assert r.ops == ("project_search",)
+        assert r.filters.get("campaign") == "Test"
+
+
+class TestOrganisationInfoRouting:
+    def test_org_info_by_trailing_name(self):
+        r = route_query("Tell me about the HOT organisation")
+        assert r.route == "DOMAIN" and r.ops == ("organisation_info",)
+        assert r.filters.get("organisation") == "HOT"
+
+    def test_org_info_by_front_name(self):
+        r = route_query("What is organisation HOT?")
+        assert r.ops == ("organisation_info",)
+        assert r.filters.get("organisation") == "HOT"
+
+    def test_projects_run_by_stays_project_search(self):
+        r = route_query("Which projects are run by HOT?")
+        assert r.ops == ("project_search",)
+        assert r.filters.get("organisation") == "HOT"
+
+    def test_my_organisation_stays_user_org_projects(self):
+        r = route_query("What projects is my organization currently running?")
+        assert r.ops == ("user_org_projects",)
+
+
+class TestTeamDetailRouting:
+    def test_team_detail_by_id(self):
+        r = route_query("Tell me about team 12")
+        assert r.route == "DOMAIN" and r.ops == ("team_detail",)
+        assert r.filters.get("team_id") == "12"
+
+    def test_team_members_ask_routes_team_detail(self):
+        r = route_query("Who is in team 5?")
+        assert r.ops == ("team_detail",)
+        assert r.filters.get("team_id") == "5"
+
+    def test_teams_on_project_stays_teams(self):
+        r = route_query("Which teams are working on project 123?")
+        assert r.ops == ("teams",)
+
+
+class TestFinalOpsRouting:
+    def test_user_interests(self):
+        r = route_query("What are my interests?")
+        assert r.route == "DOMAIN" and r.ops == ("user_interests",)
+
+    def test_user_osm_stats(self):
+        r = route_query("How many changesets have I made on OSM?")
+        assert r.ops == ("user_osm_stats",)
+
+    def test_notifications(self):
+        r = route_query("Do I have any unread notifications?")
+        assert r.ops == ("notifications",)
+
+    def test_project_partners(self):
+        r = route_query("Who are the partners on project 5?")
+        assert r.route == "DOMAIN" and r.project_id == 5
+        assert r.ops == ("project_partners",)
+
+    def test_featured_projects(self):
+        r = route_query("Show me the featured projects")
+        assert r.ops == ("featured_projects",)
+
+    def test_active_projects(self):
+        r = route_query("Which projects are active right now?")
+        assert r.ops == ("active_projects",)
+
+    def test_most_active_stays_trending(self):
+        r = route_query("What are the most active projects?")
+        assert r.ops == ("trending_projects",)

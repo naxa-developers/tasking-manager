@@ -89,3 +89,37 @@ def test_created_evidence_missing_user_is_not_found(monkeypatch):
 
     assert evidence.status == "NOT_FOUND"
     assert evidence.to_prompt_block() == ""
+
+
+def test_created_evidence_discloses_partial_list(monkeypatch):
+    monkeypatch.setenv("RAG_MAX_USER_PROJECTS", "1")
+    _patch_user(monkeypatch, _FakeUser(id=7))
+    db = _FakeDB(
+        count=65,
+        rows=[{"id": 134, "name": "adfasf", "status": 2, "created": None}],
+    )
+    evidence = asyncio.run(get_user_projects_created_evidence(7, db))
+
+    block = evidence.to_prompt_block()
+    assert "projects_created_by_you: 65" in block
+    assert "recent_created_projects (showing 1 of 65):" in block
+    assert all("LIMIT" in q for q in db.queries if "project_info" in q)
+
+
+def test_created_evidence_default_renders_every_project(monkeypatch):
+    monkeypatch.delenv("RAG_MAX_USER_PROJECTS", raising=False)
+    _patch_user(monkeypatch, _FakeUser(id=7))
+    rows = [
+        {"id": 200 - i, "name": f"P{i}", "status": 1, "created": None}
+        for i in range(40)
+    ]
+    db = _FakeDB(count=40, rows=rows)
+    evidence = asyncio.run(get_user_projects_created_evidence(7, db))
+
+    block = evidence.to_prompt_block()
+    assert "projects_created_by_you: 40" in block
+    assert "recent_created_projects (complete list, 40 items):" in block
+    for i in range(40):
+        assert f"P{i} " in block
+    # No cap configured: the query must not LIMIT the fetch.
+    assert all("LIMIT" not in q for q in db.queries if "project_info" in q)

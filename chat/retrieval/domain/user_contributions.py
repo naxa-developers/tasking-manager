@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import datetime
+from collections import Counter
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from loguru import logger
 
+from chat.env import env_int
 from chat.retrieval.domain._rows import _attr, _int_or_zero
 from chat.retrieval.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
@@ -13,7 +15,32 @@ CONTRIBUTION_OPERATION = "get_user_contributions"
 CONTRIBUTION_PROVENANCE = "UserService.get_detailed_stats"
 
 _MAX_MONTHS = 6
-_MAX_PROJECTS = 10
+# The contributed-projects list renders completely by default; set
+# RAG_MAX_USER_PROJECTS=N (N > 0) to cap it for very long answers. The stated
+# total and status breakdown always cover every project the backend records;
+# the list is disclosed as partial when it exceeds the cap.
+_PREFERRED_LOCALE = "en"
+_STATUS_ORDER = ("PUBLISHED", "ARCHIVED", "DRAFT")
+
+
+def _max_projects() -> Optional[int]:
+    """Optional render cap for the contributed-projects list.
+
+    ``RAG_MAX_USER_PROJECTS`` unset, 0, or invalid means no cap: render every
+    contributed project.
+    """
+    cap = env_int("RAG_MAX_USER_PROJECTS", 0)
+    return cap if cap > 0 else None
+
+
+def _status_label(value: Any) -> Optional[str]:
+    """Project status name (PUBLISHED/DRAFT/ARCHIVED), None when unknown."""
+    try:
+        from backend.models.postgis.statuses import ProjectStatus
+
+        return ProjectStatus(int(value)).name
+    except Exception:
+        return None
 
 
 def _hours(seconds: Any) -> Optional[float]:
@@ -49,8 +76,9 @@ def _monthly_totals(rows: Any) -> Tuple[Tuple[str, int], ...]:
 class ContributionProject:
     project_id: Optional[int]
     name: Optional[str] = None
-    tasks_mapped: int = 0
-    tasks_validated: int = 0
+    status: Optional[str] = None
+    tasks_mapped: Optional[int] = None
+    tasks_validated: Optional[int] = None
 
 
 @dataclass(frozen=True)
@@ -66,7 +94,9 @@ class UserContributionEvidence(EvidenceBase):
     tasks_mapped: Optional[int] = None
     tasks_validated: Optional[int] = None
     tasks_invalidated: Optional[int] = None
-    distinct_projects_mapped: Optional[int] = None
+    # Every contributed project the backend records (users.projects_mapped).
+    contributed_projects_total: Optional[int] = None
+    projects_by_status: Tuple[Tuple[str, int], ...] = ()
     countries_contributed: Optional[int] = None
     months: Tuple[Tuple[str, int], ...] = ()
     this_month: Optional[Tuple[str, int]] = None
@@ -87,6 +117,19 @@ class UserContributionEvidence(EvidenceBase):
     def _scope_id(self) -> Any:
         return self.user_id
 
+    @staticmethod
+    def _project_line(project: ContributionProject) -> str:
+        name = safe_value(project.name, 80) if project.name else ""
+        parts = [f"#{project.project_id}" + (f" {name}" if name else "")]
+        if project.status and project.status != "PUBLISHED":
+            parts.append(f"status: {project.status}")
+        if project.tasks_mapped is None and project.tasks_validated is None:
+            parts.append("no current tasks")
+        else:
+            parts.append(f"mapped: {project.tasks_mapped or 0}")
+            parts.append(f"validated: {project.tasks_validated or 0}")
+        return " | ".join(parts)
+
     def _body_lines(self) -> List[str]:
         lines: List[str] = []
         if self.total_hours is not None:
@@ -101,8 +144,15 @@ class UserContributionEvidence(EvidenceBase):
             lines.append(f"tasks_validated_all_time: {self.tasks_validated}")
         if self.tasks_invalidated is not None:
             lines.append(f"tasks_invalidated_all_time: {self.tasks_invalidated}")
-        if self.distinct_projects_mapped is not None:
-            lines.append(f"distinct_projects_mapped: {self.distinct_projects_mapped}")
+        if self.contributed_projects_total is not None:
+            lines.append(
+                f"contributed_projects_total: {self.contributed_projects_total}"
+            )
+        if self.projects_by_status:
+            breakdown = ", ".join(
+                f"{count} {label.lower()}" for label, count in self.projects_by_status
+            )
+            lines.append(f"contributed_projects_by_status: {breakdown}")
         if self.countries_contributed is not None:
             lines.append(f"countries_contributed_to: {self.countries_contributed}")
         if self.months:
@@ -115,24 +165,38 @@ class UserContributionEvidence(EvidenceBase):
             month, count = self.last_month
             lines.append(f"contributions_last_month ({month}): {count}")
         if self.projects:
-            parts = []
-            for project in self.projects[:_MAX_PROJECTS]:
-                name = safe_value(project.name, 80) if project.name else ""
-                label = f"#{project.project_id}" + (f" {name}" if name else "")
-                parts.append(
-                    f"{label} (mapped {project.tasks_mapped}, "
-                    f"validated {project.tasks_validated})"
-                )
-            lines.append("recent_projects: " + "; ".join(parts))
-        elif self.distinct_projects_mapped == 0:
-            lines.append("recent_projects: none — no contributed projects yet")
+            cap = _max_projects()
+            shown = self.projects if cap is None else self.projects[:cap]
+            label = "contributed_projects"
+            if (
+                self.contributed_projects_total is not None
+                and self.contributed_projects_total > len(shown)
+            ):
+                label += f" (showing {len(shown)} of {self.contributed_projects_total})"
+            else:
+                # A numbered, complete list: small models enumerate it reliably.
+                label += f" (complete list, {len(shown)} items)"
+            lines.append(label + ":")
+            lines.extend(
+                f"{position}. {self._project_line(project)}"
+                for position, project in enumerate(shown, start=1)
+            )
+        elif self.contributed_projects_total == 0:
+            lines.append("contributed_projects: none — no contributed projects yet")
         return lines
 
 
 async def get_user_contribution_evidence(
     user_id: int, db: Any
 ) -> UserContributionEvidence:
-    """Read-only lifetime + monthly contribution summary for the asker."""
+    """Read-only lifetime + monthly contribution summary for the asker.
+
+    The contributed-projects list comes from the backend's canonical
+    ``users.projects_mapped`` array — the append-only record the backend writes
+    when a user maps a project — not from current task state, so history stays
+    visible after tasks are reset. Per-project mapped/validated counts merge in
+    from the tasks query where the tasks still exist.
+    """
     try:
         from backend.models.postgis.user import User as UserModel
         from backend.services.users.user_service import UserService
@@ -163,20 +227,81 @@ async def get_user_contribution_evidence(
         this_month = (current_key, totals.get(current_key, 0))
         last_month = (previous_key, totals.get(previous_key, 0))
 
-        projects: List[ContributionProject] = []
+        # Canonical contributed projects: the append-only array the backend
+        # maintains (UserService.get_projects_mapped == users.projects_mapped).
+        project_ids: List[int] = []
+        array_ok = True
         try:
-            dto = await UserModel.get_mapped_projects(user_id, "en", db)
-            for row in (_attr(dto, "mapped_projects") or [])[:_MAX_PROJECTS]:
-                projects.append(
-                    ContributionProject(
-                        project_id=_attr(row, "project_id"),
-                        name=_attr(row, "name"),
-                        tasks_mapped=_int_or_zero(_attr(row, "tasks_mapped")),
-                        tasks_validated=_int_or_zero(_attr(row, "tasks_validated")),
-                    )
-                )
+            project_ids = [
+                int(pid)
+                for pid in (await UserService.get_projects_mapped(user_id, db) or [])
+                if pid is not None
+            ]
         except Exception:
-            logger.exception(f"user {user_id} project list fetch failed")
+            array_ok = False
+            logger.exception(f"user {user_id} mapped-projects array fetch failed")
+
+        # Per-project counts from current tasks, keyed by project id.
+        counts: Dict[int, Tuple[int, int]] = {}
+        try:
+            dto = await UserModel.get_mapped_projects(user_id, _PREFERRED_LOCALE, db)
+            for row in _attr(dto, "mapped_projects") or []:
+                pid = _attr(row, "project_id")
+                if pid is not None:
+                    counts[int(pid)] = (
+                        _int_or_zero(_attr(row, "tasks_mapped")),
+                        _int_or_zero(_attr(row, "tasks_validated")),
+                    )
+        except Exception:
+            logger.exception(f"user {user_id} project count fetch failed")
+
+        projects: List[ContributionProject] = []
+        status_counts: Counter = Counter()
+        projects_total: Optional[int] = None
+        if not array_ok:
+            projects_total = None
+        elif not project_ids:
+            projects_total = 0
+        else:
+            try:
+                rows = await db.fetch_all(
+                    query="""
+                        SELECT p.id, p.status,
+                               COALESCE(pi_locale.name, pi_default.name) AS name
+                        FROM projects p
+                        LEFT JOIN project_info pi_locale
+                            ON pi_locale.project_id = p.id
+                            AND pi_locale.locale = :locale
+                        LEFT JOIN project_info pi_default
+                            ON pi_default.project_id = p.id
+                            AND pi_default.locale = p.default_locale
+                        WHERE p.id = ANY(:project_ids)
+                        ORDER BY p.id DESC
+                    """,
+                    values={"project_ids": project_ids, "locale": _PREFERRED_LOCALE},
+                )
+                for row in rows or []:
+                    pid = _attr(row, "id")
+                    if pid is None:
+                        continue
+                    mapped, validated = counts.get(int(pid), (None, None))
+                    status = _status_label(_attr(row, "status"))
+                    if status:
+                        status_counts[status] += 1
+                    projects.append(
+                        ContributionProject(
+                            project_id=int(pid),
+                            name=_attr(row, "name"),
+                            status=status,
+                            tasks_mapped=mapped,
+                            tasks_validated=validated,
+                        )
+                    )
+                projects_total = len(projects)
+            except Exception:
+                logger.exception(
+                    f"user {user_id} contributed-project list fetch failed"
+                )
 
         countries = _attr(stats, "countries_contributed")
 
@@ -189,7 +314,12 @@ async def get_user_contribution_evidence(
             tasks_mapped=_attr(stats, "tasks_mapped"),
             tasks_validated=_attr(stats, "tasks_validated"),
             tasks_invalidated=_attr(stats, "tasks_invalidated"),
-            distinct_projects_mapped=_attr(stats, "projects_mapped"),
+            contributed_projects_total=projects_total,
+            projects_by_status=tuple(
+                (label, status_counts[label])
+                for label in _STATUS_ORDER
+                if status_counts.get(label)
+            ),
             countries_contributed=_attr(countries, "total"),
             months=months,
             this_month=this_month,

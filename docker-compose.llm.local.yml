@@ -22,7 +22,7 @@ services:
       - --hf-file
       - Qwen3-1.7B-Q4_K_M.gguf
       - -c
-      - "4096"
+      - "8192"
       - --parallel
       - "1"
       - --threads

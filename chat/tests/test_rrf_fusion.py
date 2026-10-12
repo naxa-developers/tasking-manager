@@ -82,6 +82,22 @@ def test_fusion_respects_top_k():
     ]
 
 
+def test_fusion_uncapped_by_default():
+    ids = [f"n{i}" for i in range(12)]
+    nodes = _node_map(*ids)
+    vec = RankedCandidates(
+        list(ids),
+        {nid: 1.0 for nid in ids},
+        None,
+        {nid: nodes[nid] for nid in ids},
+    )
+    bm25 = RankedCandidates([], {}, None, {})
+
+    resp = _retriever(nodes, vec, bm25).retrieve("q")
+
+    assert len(resp.results) == 12
+
+
 def test_fusion_collapses_duplicate_content_by_hash():
     nodes = _node_map("x1", "x2", "y1")
     nodes["x2"].text = nodes["x1"].text  # same content + metadata -> same node hash

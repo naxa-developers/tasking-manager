@@ -15,7 +15,6 @@ from databases import Database
 from fastapi import HTTPException
 from loguru import logger
 
-from chat.constants import MAX_ROUTING_HISTORY
 from chat.dtos import (
     RagChatResponseDTO,
     RagMessageDTO,
@@ -171,9 +170,7 @@ class RagService:
             )
 
         # Prior turns: routing history for follow-up and project-id inheritance.
-        prior = await RagSession.get_messages(
-            session_id, db, limit=MAX_ROUTING_HISTORY, newest_first=True
-        )
+        prior = await RagSession.get_messages(session_id, db, newest_first=True)
 
         prepared = await prepare_turn(q, session, db, guard, user_id, prior=prior)
         decision = decide_turn(prepared)

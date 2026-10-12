@@ -117,7 +117,7 @@ class TestLLMServiceHistory:
             assert "hi there" in user_msg
             assert answer == "Answer with history"
 
-    def test_history_truncated_to_4(self, scored_nodes):
+    def test_history_is_never_truncated(self, scored_nodes):
         from chat.retrieval.llm_answer import LLMService
 
         history = [{"role": "user", "content": f"msg {i}"} for i in range(10)]
@@ -148,11 +148,9 @@ class TestLLMServiceHistory:
             ):
                 svc.answer("q", scored_nodes, history=history)
             user_content = mock_completion.call_args.kwargs["messages"][1]["content"]
-            # msg 0..5 should be truncated (only last 4 kept: 6..9)
-            assert "msg 0" not in user_content
-            assert "msg 5" not in user_content
-            assert "msg 6" in user_content
-            assert "msg 9" in user_content
+            # No count cap and no budget trimming: every turn reaches the prompt.
+            for i in range(10):
+                assert f"msg {i}" in user_content
 
     def test_history_empty_lines_filtered(self, scored_nodes):
         from chat.retrieval.llm_answer import LLMService
@@ -482,7 +480,7 @@ class TestPromptBudgetFitting:
     """_build_messages fitting: caps, first-block truncation, drop order.
 
     Pinned pre-refactor: KB evidence keeps the head (truncating one oversized
-    first block), domain is reserved before KB, history loses the oldest first.
+    first block), domain is reserved before KB, history is never trimmed.
     """
 
     def _svc(self):
@@ -536,7 +534,7 @@ class TestPromptBudgetFitting:
         assert "chunk 0" in user
         assert "[Evidence 2]" not in user
 
-    def test_history_drops_oldest_first(self, monkeypatch):
+    def test_history_is_never_trimmed(self, monkeypatch):
         monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "800")
         history = [
             {"role": "user", "content": "old question " * 400},
@@ -547,16 +545,23 @@ class TestPromptBudgetFitting:
         _, user = self._svc()._build_messages("q", [], history=history)
         assert user is not None
         assert "recent question" in user
-        assert "old question" not in user
+        assert "old question" in user  # no count cap, no budget trimming
 
     def test_kb_evidence_skipped_when_budget_spent(self, monkeypatch):
-        monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "600")
         results = [self._node("kb passage")]
+        domain = "x " * 50
+        from chat.retrieval.llm_answer import _count_tokens, _prompt_preamble
+
+        svc = self._svc()
+        # Budget covers the fixed prompt preamble + domain block, nothing left
+        # for KB; derived dynamically so prompt growth can't invalidate it.
+        fixed = _prompt_preamble("q", svc._build_system_prompt())[2]
+        monkeypatch.setenv(
+            "RAG_PROMPT_TOKEN_BUDGET", str(fixed + _count_tokens(domain.strip()))
+        )
         with patch(
             "chat.retrieval.llm_answer.build_evidence", return_value="[Evidence 1]\nkb"
         ) as mock_evidence:
-            _, user = self._svc()._build_messages(
-                "q", results, domain_evidence="x " * 50
-            )
+            _, user = svc._build_messages("q", results, domain_evidence=domain)
         assert mock_evidence.call_count == 0
         assert "x x x" in user

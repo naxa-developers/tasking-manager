@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Optional
 from loguru import logger
 from starlette.concurrency import run_in_threadpool
 
-from chat.constants import MAX_ROUTING_HISTORY
 from chat.dtos import RagCitationDTO
 from chat.models import RagSession
 from chat.retrieval.domain.dispatch import collect_evidence
@@ -312,9 +311,7 @@ async def prepare_turn(
 
     # Hydrate history from DB unless the caller already provided it.
     if prior is None:
-        prior = await RagSession.get_messages(
-            session_id, db, limit=MAX_ROUTING_HISTORY, newest_first=True
-        )
+        prior = await RagSession.get_messages(session_id, db, newest_first=True)
     history_dicts = _history_dicts(prior)
 
     # Follow-up expansion and small-talk stripping adjust the retrieval query.

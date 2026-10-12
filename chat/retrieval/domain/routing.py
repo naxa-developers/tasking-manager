@@ -109,6 +109,82 @@ _CHAT_RE = re.compile(
     re.I,
 )
 
+# Project-activity intent — recent task-history events and the per-task status
+# rollup for one project. Anchored project reference only (see
+# _PROJECT_ANCHOR); the asker's streak/split phrasing is _USER_ACTIVITY_RE.
+_ACTIVITY_WORDS = (
+    r"activit(?:y|ies)|events?|recent\s+changes|latest\s+actions?"
+    r"|what\s+happened|what(?:['’]s| is)\s+(?:been\s+)?(?:happening|going\s+on)"
+)
+_PROJECT_ACTIVITY_RE = re.compile(
+    rf"\b(?:{_ACTIVITY_WORDS})\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\b(?:{_ACTIVITY_WORDS})\b",
+    re.I,
+)
+
+# Project-contributions intent — who worked on one project and the per-day
+# increments. "who"-gated for the mapping/validation verbs so team phrasings
+# ("which teams are working on ...") stay with the teams op; the contribut*
+# noun form anchors on the project alone ("contributions to project 5").
+_PROJECT_CONTRIBUTIONS_RE = re.compile(
+    rf"\bwho\b.{{0,40}}\b(?:contribut\w*|worked\s+on|working\s+on|mapped|validated)\b"
+    rf".{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bwho\b.{{0,40}}"
+    rf"\b(?:contribut\w*|worked\s+on|working\s+on|mapped|validated)\b"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bcontribut\w*\b"
+    rf"|\bcontribut\w*\b.{{0,60}}(?:{_PROJECT_ANCHOR})",
+    re.I,
+)
+
+# Project-tasks intent — task-level status: invalidated tasks and mapped
+# tasks grouped by user. Anchored project reference only (see
+# _PROJECT_ANCHOR); first-person invalidated asks without a project
+# ("were my tasks invalidated?") stay with user_tasks.
+_INVALIDATED_TASKS_RE = re.compile(
+    rf"\binvalidat\w*\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\binvalidat\w*\b.{{0,30}}\btasks?\b",
+    re.I,
+)
+_MAPPED_TASKS_RE = re.compile(
+    rf"\bmapped\s+tasks?\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bmapped\s+tasks?\b"
+    rf"|\btasks?\b.{{0,30}}\bmapped\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\btasks?\b.{{0,30}}\bmapped\b",
+    re.I,
+)
+# Which-style task-list asks keep the op even when a count word is present
+# ("which tasks are mapped in project 5").
+_TASK_LIST_RE = re.compile(
+    r"\b(?:which|list|show|see|view|who|by\s+user|per\s+user)\b", re.I
+)
+
+# Project-annotations intent — task annotations ("issues") flagged on one
+# project. Anchored project reference only (see _PROJECT_ANCHOR).
+_ANNOTATIONS_RE = re.compile(
+    rf"\bannotat(?:e|ed|es|ing|ion|ions)\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bannotat(?:e|ed|es|ing|ion|ions)\b",
+    re.I,
+)
+
+# Similar-projects intent — recommendations shaped like one named project.
+# Anchored project reference only (see _PROJECT_ANCHOR).
+_SIMILAR_RE = re.compile(
+    rf"\bsimilar\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bsimilar\b"
+    rf"|\bprojects?\s+like\b.{{0,40}}(?:{_PROJECT_ANCHOR})",
+    re.I,
+)
+
+# Campaigns intent — the campaigns on one project or the site-wide list.
+# "which projects are in <X> campaign" stays project_search: the campaign
+# word must follow the question word directly ("which campaigns …").
+_CAMPAIGNS_RE = re.compile(
+    r"\b(?:what|which|list|show|any|all)\s+(?:\w+\s+){0,2}campaigns?\b"
+    rf"|\bcampaigns?\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bcampaigns?\b",
+    re.I,
+)
+
 # My-work intent — the asker's own locked/current tasks; no project id needed.
 # "working on" only counts in the first person so third-party questions
 # ("who is working on project 5?") fall through to the project fallback.
@@ -213,6 +289,18 @@ _USER_TEAMS_RE = re.compile(
     re.I,
 )
 
+# The asker's own favorite/saved projects, or whether one project is among
+# them. Needs first person or a project reference to fire ("how do favorites
+# work?" stays KB).
+_FAVORITES_RE = re.compile(
+    r"\bfavou?rit\w*\b"
+    r"|\bbookmark\w*\b"
+    r"|\bstarred\b"
+    r"|\bsaved\s+projects?\b"
+    r"|\b(?:am\s+i|i['’]?m)\s+following\s+(?:project|it)\b",
+    re.I,
+)
+
 # Submitted/validated/invalidated status of the asker's own tasks.
 _USER_TASKS_RE = re.compile(
     r"\b(?:submitted|validated\s+yet|invalidated|invalidation|"
@@ -242,6 +330,14 @@ def _user_ops(text: str) -> tuple:
     task_state = bool(_FIRST_PERSON_RE.search(text) and _USER_TASKS_RE.search(text))
     if task_state:
         ops.append("user_tasks")
+    if is_favorites_intent(text):
+        ops.append("favorites")
+    if is_user_interests_intent(text):
+        ops.append("user_interests")
+    if is_user_osm_stats_intent(text):
+        ops.append("user_osm_stats")
+    if is_notifications_intent(text):
+        ops.append("notifications")
     # Locked/current-task questions prefer mywork; status-only questions do not.
     if is_mywork_intent(text) and not (task_state and not _LOCKED_RE.search(text)):
         ops.append("mywork")
@@ -300,6 +396,43 @@ def is_teams_intent(query: str) -> bool:
 def is_chat_intent(query: str) -> bool:
     """True when the question asks for recent project discussion."""
     return bool(_CHAT_RE.search(query or ""))
+
+
+def is_project_activity_intent(query: str) -> bool:
+    """True when the question asks for recent task activity in a project."""
+    return bool(_PROJECT_ACTIVITY_RE.search(query or ""))
+
+
+def is_project_contributions_intent(query: str) -> bool:
+    """True when the question asks who contributed to a project."""
+    return bool(_PROJECT_CONTRIBUTIONS_RE.search(query or ""))
+
+
+def is_project_tasks_intent(query: str) -> bool:
+    """True when the question asks for task-level status in a project."""
+    text = query or ""
+    if _INVALIDATED_TASKS_RE.search(text):
+        return True
+    if not _MAPPED_TASKS_RE.search(text):
+        return False
+    # Plain count questions ("how many tasks have been mapped…") belong to
+    # stats; task-list phrasing ("which tasks are mapped…") stays here.
+    return not (is_stats_intent(text) and not _TASK_LIST_RE.search(text))
+
+
+def is_project_annotations_intent(query: str) -> bool:
+    """True when the question asks for a project's task annotations."""
+    return bool(_ANNOTATIONS_RE.search(query or ""))
+
+
+def is_similar_projects_intent(query: str) -> bool:
+    """True when the question asks for projects similar to a named project."""
+    return bool(_SIMILAR_RE.search(query or ""))
+
+
+def is_campaigns_intent(query: str) -> bool:
+    """True when the question asks about campaigns (one project or site-wide)."""
+    return bool(_CAMPAIGNS_RE.search(query or ""))
 
 
 def is_mywork_intent(query: str) -> bool:
@@ -361,6 +494,14 @@ def is_user_tasks_intent(query: str) -> bool:
     """True when the question asks for the status of the asker's own tasks."""
     text = query or ""
     return bool(_FIRST_PERSON_RE.search(text) and _USER_TASKS_RE.search(text))
+
+
+def is_favorites_intent(query: str) -> bool:
+    """True when the asker asks about their own favorite projects."""
+    text = query or ""
+    if not _FAVORITES_RE.search(text):
+        return False
+    return bool(_FIRST_PERSON_RE.search(text) or _PROJECT_ANCHOR_RE.search(text))
 
 
 # Third-party user queries ----------------------------------------------------
@@ -612,6 +753,146 @@ _ORG_NAME_STOPWORDS_RE = re.compile(
 )
 _EXPIRING_DAYS_RE = re.compile(r"\b(?:within|next|in)\s+(\d{1,2})\s+days?\b", re.I)
 
+# Organisation-info asks: "tell me about the HOT organisation", "what is
+# organisation HOT?". An explicit info marker plus an org noun plus an
+# extractable name; the asker's own org phrasing (my/our organisation) stays
+# with user_org_projects, and "which projects are run by HOT" stays
+# project_search.
+_ORG_INFO_MARKERS_RE = re.compile(
+    r"\b(?:about|info|information|details?|overview|profile|describe)\b"
+    r"|\btell\s+me\b|\bwhat(?:['’]s| is)\b|\bwho(?:['’]s| is)\b|\bhow\s+many\b",
+    re.I,
+)
+_SELF_ORG_RE = re.compile(
+    r"\b(?:my|our)\s+(?:\w+\s+){0,2}(?:organi[sz]ations?|orgs?)\b", re.I
+)
+_TRAILING_ORG_TEXT_RE = re.compile(
+    r"([A-Za-z0-9][\w&'\-]*(?:\s+[A-Za-z0-9][\w&'\-]*){0,2})\s+"
+    r"(?:organi[sz]ations?|orgs?)\b",
+    re.I,
+)
+_ORG_NAME_EXTRA_RE = re.compile(
+    r"^(?:info|information|details?|about|overview|profile|describe|on|of|for|"
+    r"many|much|few|several|more|most|some|any|number|total|count|there|"
+    r"how|what|which|who|whose|when|where|why)\b",
+    re.I,
+)
+
+# Team reference: "team 12", "team #12" — the id drives the team_detail op.
+_TEAM_ID_RE = re.compile(r"\bteams?\s*#?\s*(\d{1,7})(?!\d)", re.I)
+
+
+def _organisation_info_name(text: str) -> Optional[str]:
+    """Organisation name for an org-info ask, else None."""
+    if not re.search(r"\b(?:organi[sz]ations?|orgs?)\b", text, re.I):
+        return None
+    if _SELF_ORG_RE.search(text):
+        return None
+    if not _ORG_INFO_MARKERS_RE.search(text):
+        return None
+    front = _ORGANISATION_TEXT_RE.search(text)
+    name = _clean_phrase(front.group(1)) if front else None
+    if name and not _ORG_NAME_STOPWORDS_RE.match(name):
+        return name
+    trailing = list(_TRAILING_ORG_TEXT_RE.finditer(text))
+    if trailing:
+        # Same lead-word stripping the campaign captures use.
+        candidate = _LEADING_CAMPAIGN_STOPWORDS_RE.sub("", trailing[-1].group(1))
+        candidate = _clean_phrase(candidate)
+        if (
+            candidate
+            and not _ORG_NAME_STOPWORDS_RE.match(candidate)
+            and not _ORG_NAME_EXTRA_RE.match(candidate)
+        ):
+            return candidate
+    return None
+
+
+def _detect_team_id(text: str) -> Optional[int]:
+    """Positive team id referenced as "team <n>", else None."""
+    match = _TEAM_ID_RE.search(text)
+    if not match:
+        return None
+    try:
+        team_id = int(match.group(1))
+    except (TypeError, ValueError):
+        return None
+    return team_id if team_id > 0 else None
+
+
+def is_organisation_info_intent(query: str) -> bool:
+    """True when the question asks about a named organisation."""
+    return _organisation_info_name(query or "") is not None
+
+
+def is_team_detail_intent(query: str) -> bool:
+    """True when the question references one team by number."""
+    return _detect_team_id(query or "") is not None
+
+
+# The asker's own interests (the mix of their contributed projects) and their
+# OSM account stats; notifications are the asker's own messages.
+_USER_INTERESTS_RE = re.compile(r"\binterests?\b", re.I)
+_USER_OSM_RE = re.compile(
+    r"\b(?:osm|openstreetmap)\b|\bchangesets?\b|\baccount\s+created\b", re.I
+)
+_NOTIFICATIONS_RE = re.compile(r"\bnotifications?\b|\bunread\b|\bmessages?\b", re.I)
+
+# Project partnerships — anchored project reference only (see _PROJECT_ANCHOR).
+_PROJECT_PARTNERS_RE = re.compile(
+    rf"\bpartnerships?\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bpartnerships?\b"
+    rf"|\bpartners?\b.{{0,60}}(?:{_PROJECT_ANCHOR})"
+    rf"|(?:{_PROJECT_ANCHOR}).{{0,60}}\bpartners?\b",
+    re.I,
+)
+
+# Featured projects and recently-active projects (site-wide lists). "Most
+# active" stays trending: trending is checked first in _discovery_ops.
+_FEATURED_RE = re.compile(r"\bfeatured\b", re.I)
+_ACTIVE_PROJECTS_RE = re.compile(
+    r"\b(?:recently|currently|right\s+now)?\s*active\s+projects?\b"
+    r"|\bprojects?\s+(?:(?:that|which)\s+are\s+|are\s+|is\s+)?"
+    r"(?:recently\s+|currently\s+|still\s+)?active\b",
+    re.I,
+)
+
+
+def is_user_interests_intent(query: str) -> bool:
+    """True when the asker asks about their own interests."""
+    text = query or ""
+    return bool(_FIRST_PERSON_RE.search(text) and _USER_INTERESTS_RE.search(text))
+
+
+def is_user_osm_stats_intent(query: str) -> bool:
+    """True when the asker asks about their own OSM account stats."""
+    text = query or ""
+    return bool(_FIRST_PERSON_RE.search(text) and _USER_OSM_RE.search(text))
+
+
+def is_notifications_intent(query: str) -> bool:
+    """True when the asker asks about their own notifications/messages."""
+    text = query or ""
+    if not _NOTIFICATIONS_RE.search(text):
+        return False
+    return bool(_FIRST_PERSON_RE.search(text) or re.search(r"\bunread\b", text, re.I))
+
+
+def is_project_partners_intent(query: str) -> bool:
+    """True when the question asks about a project's partners."""
+    return bool(_PROJECT_PARTNERS_RE.search(query or ""))
+
+
+def is_featured_projects_intent(query: str) -> bool:
+    """True when the question asks for featured projects."""
+    text = query or ""
+    return bool(_FEATURED_RE.search(text) and re.search(r"\bprojects?\b", text, re.I))
+
+
+def is_active_projects_intent(query: str) -> bool:
+    """True when the question asks for recently active projects."""
+    return bool(_ACTIVE_PROJECTS_RE.search(query or ""))
+
 
 def _clean_phrase(value: Optional[str]) -> Optional[str]:
     """Trim a free-text filter capture down to its meaningful phrase."""
@@ -709,6 +990,18 @@ def _discovery_ops(text: str) -> tuple:
         return ("global_stats",), {}
     if is_trending_intent(text):
         return ("trending_projects",), {}
+    org_name = _organisation_info_name(text)
+    if org_name:
+        return ("organisation_info",), {"organisation": org_name}
+    team_id = _detect_team_id(text)
+    if team_id is not None:
+        return ("team_detail",), {"team_id": str(team_id)}
+    if is_campaigns_intent(text) and not _PROJECT_ANCHOR_RE.search(text):
+        return ("campaigns",), {}
+    if is_featured_projects_intent(text):
+        return ("featured_projects",), {}
+    if is_active_projects_intent(text):
+        return ("active_projects",), {}
     filters = _discovery_filters(text)
     if filters:
         return ("project_search",), filters
@@ -743,6 +1036,13 @@ def route_query(query: str) -> DomainRoute:
             ("summary", is_summary_intent(text)),
             ("teams", is_teams_intent(text)),
             ("chat", is_chat_intent(text)),
+            ("project_activity", is_project_activity_intent(text)),
+            ("project_contributions", is_project_contributions_intent(text)),
+            ("project_tasks", is_project_tasks_intent(text)),
+            ("project_annotations", is_project_annotations_intent(text)),
+            ("similar_projects", is_similar_projects_intent(text)),
+            ("campaigns", is_campaigns_intent(text)),
+            ("project_partners", is_project_partners_intent(text)),
         )
         if want
     )
@@ -779,7 +1079,22 @@ def route_query(query: str) -> DomainRoute:
         return DomainRoute(route="KB", project_id=None)
     # Personal capabilities only need KB when the user explicitly asks how:
     # bare "mapping"/"validation" nouns must not force a KB lookup.
-    personal_only = all(op not in ("stats", "summary", "teams", "chat") for op in ops)
+    personal_only = all(
+        op
+        not in (
+            "stats",
+            "summary",
+            "teams",
+            "chat",
+            "project_activity",
+            "project_contributions",
+            "project_tasks",
+            "project_annotations",
+            "similar_projects",
+            "project_partners",
+        )
+        for op in ops
+    )
     howto = _HOWTO_STRICT_RE.search(text) if personal_only else _HOWTO_RE.search(text)
     if not howto and (_EXPLANATION_RE.search(text) or _SKILL_MATCH_RE.search(text)):
         howto = True

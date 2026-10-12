@@ -17,8 +17,6 @@ RETRIEVAL_DIR = Path(__file__).resolve().parent
 
 # Constants (align with eval/harness recipe)
 
-CANDIDATE_K = 50  # maximum candidates per retriever (never backfilled)
-DEFAULT_TOP_K = 5
 CHUNKS_PATH = RETRIEVAL_DIR / "data" / "chunks.json"
 _CHUNKS_BUILD_HINT = (
     f"chunks.json not found at {CHUNKS_PATH} — run python chat/retrieval/chunk.py "
@@ -136,7 +134,6 @@ def _reciprocal_rank_fusion(
     vec: RankedCandidates,
     bm25: RankedCandidates,
     node_map: Dict[str, "TextNode"],
-    top_k: int,
 ) -> List[ScoredNode]:
     """Fuse the two ranked arms by reciprocal rank, best-first.
 
@@ -168,7 +165,7 @@ def _reciprocal_rank_fusion(
     seen_ids: set = set()
     for node_hash, fused_score in sorted(
         fused_scores.items(), key=lambda item: item[1], reverse=True
-    )[:top_k]:
+    ):
         nid, ranked_node = hash_to_ranked[node_hash]
         if nid in seen_ids:
             # Fused by content hash; keep one logical result per node_id.
@@ -234,7 +231,7 @@ def _active_candidates(
             continue
         nodes[nid] = node
         kept.append(nid)
-    return kept[:CANDIDATE_K], nodes
+    return kept, nodes
 
 
 class Retriever:
@@ -286,7 +283,7 @@ class Retriever:
 
                 bm25 = BM25Retriever.from_defaults(
                     nodes=list(node_map.values()),
-                    similarity_top_k=min(CANDIDATE_K, len(node_map)),
+                    similarity_top_k=len(node_map),
                     language="en",
                     verbose=False,
                 )
@@ -317,7 +314,7 @@ class Retriever:
         )
 
     def vector_candidates(self, question: str) -> RankedCandidates:
-        """Rank nodes by cosine similarity. Ids best-first, capped at CANDIDATE_K."""
+        """Rank nodes by cosine similarity. Ids best-first, uncapped."""
         if self.vector_store is None or self.embed_model is None:
             return RankedCandidates(
                 [], {}, self.vector_error or "vector store unavailable"
@@ -330,7 +327,9 @@ class Retriever:
 
             res = self.vector_store.query(
                 VectorStoreQuery(
-                    query_embedding=q_emb, similarity_top_k=CANDIDATE_K, mode="default"
+                    query_embedding=q_emb,
+                    similarity_top_k=max(1, len(self.node_map)),
+                    mode="default",
                 )
             )
 
@@ -354,7 +353,7 @@ class Retriever:
             return RankedCandidates([], {}, str(exc))
 
     def bm25_candidates(self, question: str) -> RankedCandidates:
-        """Rank active nodes with BM25. Ids best-first, capped at CANDIDATE_K."""
+        """Rank active nodes with BM25. Ids best-first, uncapped."""
         if self.bm25 is None:
             return RankedCandidates([], {}, None)
 
@@ -362,7 +361,7 @@ class Retriever:
             hits = self.bm25.retrieve(question)
             ids: List[str] = []
             scores: Dict[str, float] = {}
-            for item in hits[:CANDIDATE_K]:
+            for item in hits:
                 node = getattr(item, "node", item)
                 nid = getattr(node, "id_", None)
                 score = getattr(item, "score", None)
@@ -375,9 +374,10 @@ class Retriever:
             warnings.warn(f"BM25 retrieval failed ({exc})")
             return RankedCandidates([], {}, str(exc))
 
-    def retrieve(self, question: str, top_k: int = DEFAULT_TOP_K) -> RetrievalResponse:
-        """Run hybrid retrieval: BM25 + vector, fused, top_k by fused score.
+    def retrieve(self, question: str, top_k: Optional[int] = None) -> RetrievalResponse:
+        """Run hybrid retrieval: BM25 + vector, fused by fused score.
 
+        ``top_k`` slices the fused list when given; the default is uncapped.
         Strict: raises RetrievalUnavailable instead of serving partial results
         when either arm fails or the index is empty.
         """
@@ -411,7 +411,9 @@ class Retriever:
             raise RetrievalUnavailable("no candidates from vector or BM25")
 
         candidate_count = len(set(vec.ids) | set(bm25.ids))
-        results = _reciprocal_rank_fusion(vec, bm25, self.node_map, top_k)
+        results = _reciprocal_rank_fusion(vec, bm25, self.node_map)
+        if top_k:
+            results = results[:top_k]
 
         t_done = time.perf_counter()
         timing: Dict[str, float] = {
@@ -445,7 +447,10 @@ def _default() -> "Retriever":
 
 def retrieve(
     question: str,
-    top_k: int = DEFAULT_TOP_K,
+    top_k: Optional[int] = None,
 ) -> RetrievalResponse:
-    """Run hybrid RRF retrieval on the default instance (see _default)."""
+    """Run hybrid RRF retrieval on the default instance (see _default).
+
+    ``top_k`` slices the fused results when given; the default is uncapped.
+    """
     return _default().retrieve(question, top_k=top_k)

@@ -201,23 +201,24 @@ class RagSession(Base):
     async def get_messages(
         session_id: int,
         db: Database,
-        limit: int = MAX_SESSION_MESSAGES,
+        limit: Optional[int] = None,
         offset: int = 0,
         newest_first: bool = False,
     ) -> List[Dict[str, Any]]:
-        """Return messages in chronological order."""
+        """Return messages in chronological order; all of them by default."""
         order = "DESC" if newest_first else "ASC"
         query = f"""
             SELECT id, session_id, role, content, citations, model, candidate_count, created_at
             FROM rag_messages
             WHERE session_id = :session_id
             ORDER BY created_at {order}, id {order}
-            LIMIT :limit OFFSET :offset
         """
-        rows = await db.fetch_all(
-            query=query,
-            values={"session_id": session_id, "limit": limit, "offset": offset},
-        )
+        values: Dict[str, Any] = {"session_id": session_id}
+        if limit is not None:
+            query += " LIMIT :limit OFFSET :offset"
+            values["limit"] = limit
+            values["offset"] = offset
+        rows = await db.fetch_all(query=query, values=values)
         if newest_first:
             rows.reverse()
         return [

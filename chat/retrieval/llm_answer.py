@@ -16,9 +16,7 @@ from chat.retrieval.tokenizer import (
     truncate_to_tokens as _qwen_truncate,
 )
 
-
-# Prompt cap: the LLM sees only the most recent N prior messages (all callers).
-_MAX_HISTORY_MESSAGES = 4
+# Prompt cap: none — the full prior conversation is always sent (all callers).
 
 # Single call per turn: the LLM is called exactly once. The generation prompt
 # never quotes user-visible refusal copy (a 1.7B model echoed it verbatim on
@@ -45,6 +43,7 @@ _SYSTEM_PROMPT = textwrap.dedent(
     For questions about projects the user created or authored, answer only from the projects_created_by_you evidence; never infer authorship from mapped, validated, or contributed project data. If that evidence is absent, say the available data does not cover it.
     If the evidence contains the requested value — including an explicit "none", "0", or "no activity" — state it directly.
     When a Domain evidence block states matching_projects_total, give that total explicitly (for example "There are 24 matching projects") before listing any examples; never list examples without stating the total.
+    When a Domain evidence block states a contributed-projects or created-projects total (for example contributed_projects_total or projects_created_by_you), state that total explicitly before listing any projects, and list every project the evidence provides — do not omit any; when a list is marked as partial (for example "showing 10 of 65"), say that more projects exist beyond those listed.
     Cover every value the evidence provides for the question asked — every editor, every listed task, every figure; do not stop after the first item.
     If the evidence does not contain a specific detail the question asks for (for example a contact name), say the available data does not include it and suggest a practical next step, such as the project's comments thread or the support channels.
     /no_think"""
@@ -126,8 +125,8 @@ def _split_evidence(evidence: str) -> List[str]:
     return [block for block in (evidence or "").split("\n\n") if block.strip()]
 
 
-# Prompt budget: the llama.cpp stack runs with a 4096-token context and
-# LITELLM_MAX_TOKENS=512, so the prompt must leave room for the answer.
+# Prompt budget: the llama.cpp stack runs with an 8192-token context and
+# LITELLM_MAX_TOKENS=2048, so the prompt must leave room for the answer.
 # Override the cap with RAG_PROMPT_TOKEN_BUDGET.
 _DEFAULT_PROMPT_TOKEN_BUDGET = 3200
 # Reserve for the separators/joins added after section fitting.
@@ -153,20 +152,16 @@ def _truncate_to_tokens(text: str, max_tokens: int) -> str:
     return _qwen_truncate(text, max_tokens)
 
 
-def _fit_history(history: Optional[List[Dict[str, str]]], budget: int) -> str:
-    """Newest history that fits ``budget``; oldest exchanges drop first."""
+def _history_block(history: Optional[List[Dict[str, str]]]) -> str:
+    """Full prior conversation, oldest first — never trimmed."""
     if not history:
         return ""
     lines: List[str] = []
-    for turn in history[-_MAX_HISTORY_MESSAGES:]:
+    for turn in history:
         role = str(turn.get("role", "user")).strip() or "user"
         content = str(turn.get("content", "")).strip()
         if content:
             lines.append(f"{role}: {content}")
-    while lines and _count_tokens("\n".join(lines)) > budget:
-        # Drop the oldest exchange as a unit when it has a reply alongside.
-        drop = 2 if len(lines) >= 2 and lines[0].startswith("user:") else 1
-        del lines[:drop]
     return "\n".join(lines)
 
 
@@ -346,7 +341,7 @@ class LLMService:
         if domain_block:
             remaining -= _count_tokens(domain_block)
 
-        history_block = _fit_history(history, remaining)
+        history_block = _history_block(history)
         if history_block:
             remaining -= _count_tokens(history_block)
 

@@ -211,7 +211,7 @@ async def gather_turn(
     db: Any,
     question: str,
     user_id: Optional[int] = None,
-    top_k: int = 5,
+    top_k: Optional[int] = None,
     history: Optional[List[Dict[str, str]]] = None,
     snippet_chars: int = 360,
     generate: bool = True,
@@ -302,7 +302,7 @@ def _render_header(meta: Dict[str, Any]) -> List[str]:
         "TMBot turn debug",
         "=" * 78,
         f"question : {meta.get('question')}",
-        f"user_id  : {meta.get('user_id')}   top_k={meta.get('top_k')}   history_turns={meta.get('history_turns')}",
+        f"user_id  : {meta.get('user_id')}   top_k={meta.get('top_k') or 'all'}   history_turns={meta.get('history_turns')}",
         f"model    : {meta.get('model')}   temperature={meta.get('temperature')}   max_tokens={meta.get('max_tokens')}",
     ]
 

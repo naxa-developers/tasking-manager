@@ -81,10 +81,11 @@ class EvidenceBase:
         source_line = (
             "source: tasking_manager | " f"operation: {safe_value(self.operation, 64)}"
         )
-        if self._CONTEXT_FIELD != "user_id":
+        context_value = getattr(self, self._CONTEXT_FIELD, None)
+        if self._CONTEXT_FIELD != "user_id" and context_value is not None:
             context = (
                 f"{safe_value(self._CONTEXT_FIELD, 64)}: "
-                f"{safe_value(getattr(self, self._CONTEXT_FIELD), 64)}"
+                f"{safe_value(context_value, 64)}"
             )
             source_line += f" | {context}"
         lines = [_HEADER, source_line]

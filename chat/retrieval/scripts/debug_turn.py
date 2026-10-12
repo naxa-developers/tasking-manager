@@ -86,7 +86,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Authenticated user id (required for live domain ops)",
     )
     parser.add_argument(
-        "--top-k", type=int, default=5, help="KB passages to retrieve (default 5)"
+        "--top-k", type=int, default=None, help="KB passages to retrieve (default: all)"
     )
     parser.add_argument(
         "--history-json",
@@ -113,7 +113,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         args.sections = resolve_sections(args.show)
     except ValueError as exc:
         parser.error(str(exc))
-    if args.top_k < 1:
+    if args.top_k is not None and args.top_k < 1:
         parser.error("--top-k must be >= 1")
     if args.snippets_chars < 0:
         parser.error("--snippets-chars must be >= 0")
