@@ -12,7 +12,14 @@ FROM postgis/postgis:${POSTGIS_TAG}
 # POSTGIS_TAG without hardcoding the major version here.
 # Some postgis/postgis builds ship /tmp as 0775, which makes apt's _apt sandbox
 # user unable to create temp files. Restore standard perms before running apt.
-RUN chmod 1777 /tmp \
+# Debian bullseye is EOL and PGDG no longer serves bullseye-pgdg from the live
+# host there, so apt-get update dies on a 404 Release file. Point bullseye-based
+# images at the PGDG archive, which still hosts the suite (and the matching
+# pgdg11 pgvector build); newer POSTGIS_TAGs keep using the live repository.
+RUN if grep -q 'bullseye-pgdg' /etc/apt/sources.list.d/pgdg.list; then \
+        sed -i 's|apt\.postgresql\.org/pub/repos/apt|apt-archive.postgresql.org/pub/repos/apt|g' /etc/apt/sources.list.d/pgdg.list; \
+    fi \
+    && chmod 1777 /tmp \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends "postgresql-${PG_MAJOR}-pgvector" \
