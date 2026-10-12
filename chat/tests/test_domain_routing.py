@@ -452,6 +452,8 @@ class TestThirdPartyUserRouting:
             "how many users are registered on Tasking Manager?",
             "my task is locked, how do I unlock it?",
             "which tasks are locked by me?",
+            "which tasks were invalidated in project 19?",
+            "which of my tasks were invalidated?",
         ],
     )
     def test_asker_and_project_asks_not_third_party(self, q):
