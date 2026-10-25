@@ -423,6 +423,8 @@ def _validate_output(
             ops=tuple(ops),
             needs_project_id=True,
         )
+    if ambiguous:
+        project_id = None
 
     # Public/personal operations do not need a project scope.
     if not set(ops) & (set(PROJECT_OPS) | set(OPTIONAL_PROJECT_OPS)):
