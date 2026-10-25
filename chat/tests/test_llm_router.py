@@ -195,6 +195,18 @@ def test_filters_are_normalized_and_allowlisted():
     assert route.filters == {"difficulty": "EASY", "country": "Nepal"}
 
 
+def test_filters_are_ignored_for_non_filter_operations():
+    route, _ = _route(
+        "What is the status of project 42?",
+        _payload(
+            ops=["summary"],
+            project_id=42,
+            filters={"country": "Nepal"},
+        ),
+    )
+    assert route.filters == {}
+
+
 def test_invalid_filter_values_are_dropped():
     route, _ = _route(
         "Show me projects",

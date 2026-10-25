@@ -385,6 +385,8 @@ def _validate_output(
     ops = _validate_ops(output.ops)
     filters = _validate_filters(output.filters)
     ops = [op for op in ops if _has_required_filters(op, filters)]
+    if not set(ops) & set(FILTER_OPS):
+        filters = {}
     if not ops:
         return DomainRoute(route="KB")
 
