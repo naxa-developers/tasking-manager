@@ -188,9 +188,11 @@ def get_router_config() -> RouterConfig:
     return RouterConfig(
         model=model,
         api_key=env_optional("RAG_ROUTER_API_KEY")
-        or (generation.api_key if generation is not None else None),
+        or (generation.api_key if generation is not None else None)
+        or env_optional("LLM_API_KEY", "LITELLM_API_KEY"),
         api_base=env_optional("RAG_ROUTER_API_BASE")
-        or (generation.api_base if generation is not None else None),
+        or (generation.api_base if generation is not None else None)
+        or env_optional("LLM_API_BASE", "LITELLM_API_BASE"),
         temperature=0.0,
         max_tokens=env_int("RAG_ROUTER_MAX_TOKENS", 512),
         timeout=env_float(

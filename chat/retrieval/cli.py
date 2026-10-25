@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import textwrap
 from typing import List, Optional
 
 from chat.retrieval.config import get_embedding_config
-from chat.retrieval.domain.routing import route_query
+from chat.retrieval.domain.llm_router import route_question
 from chat.retrieval.guardrails import classify_query, refusal_for
 from chat.retrieval.llm_answer import LLMService
 from chat.retrieval.policy import conf_threshold, is_low_confidence
@@ -99,7 +100,7 @@ def run_single_question(
         _print_answer(refusal)
         return 0
 
-    route = route_query(question)
+    route = asyncio.run(route_question(question))
     if route.route in ("DOMAIN", "BOTH"):
         # Offline CLI has no authenticated DB; live domain ops need /api/v2/rag chat.
         print(

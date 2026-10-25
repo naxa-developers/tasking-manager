@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from chat.retrieval.domain.llm_router import DomainRoute
 from chat.retrieval.guardrails import classify_query
 from chat.retrieval.project_context import clarification_citation
 from chat.retrieval.query_kb import RetrievalResponse, RetrievalUnavailable
@@ -46,10 +47,23 @@ def _prepare(
     prior=None,
     guard=None,
     persist=None,
+    route=None,
+    router=None,
+    seen=None,
 ):
     guards = guard or MagicMock(verdict="ok", gate="scope", reason="")
-    patches = [patch("chat.turn.plan.persist_user_turn", new=persist or AsyncMock())]
-    patches.append(patch("chat.turn.plan.retrieve", new=retrieve))
+
+    async def fake_route(question, *, history=None):
+        if seen is not None:
+            seen["question"] = question
+            seen["history"] = history
+        return route or DomainRoute(route="KB")
+
+    patches = [
+        patch("chat.turn.plan.persist_user_turn", new=persist or AsyncMock()),
+        patch("chat.turn.plan.retrieve", new=retrieve),
+        patch("chat.turn.plan.route_question", new=router or fake_route),
+    ]
     if collect is not None:
         patches.append(patch("chat.turn.plan.collect_evidence", new=collect))
     for started in patches:
@@ -79,6 +93,7 @@ class TestPrepareTurnRouting:
             "how many tasks are in project 123?",
             retrieve=boom,
             collect=_collect_ok(),
+            route=DomainRoute(route="DOMAIN", project_id=123, ops=("stats",)),
         )
         assert prepared.resp.mode == "domain-only"
         assert prepared.resp.results == []
@@ -105,7 +120,12 @@ class TestPrepareTurnRouting:
             )
 
         q = "how many tasks are in project 123 and how do I validate them?"
-        prepared = _prepare(q, retrieve=capture_retrieve, collect=capture_collect)
+        prepared = _prepare(
+            q,
+            retrieve=capture_retrieve,
+            collect=capture_collect,
+            route=DomainRoute(route="BOTH", project_id=123, ops=("stats",)),
+        )
         assert seen["q"] == q
         assert seen["route"].route == "BOTH"
         assert seen["route"].project_id == 123
@@ -116,34 +136,27 @@ class TestPrepareTurnRouting:
         def boom(*args, **kwargs):
             raise AssertionError("retrieve must not run for clarify")
 
-        prepared = _prepare("how many tasks are left in the project?", retrieve=boom)
+        prepared = _prepare(
+            "how many tasks are left in the project?",
+            retrieve=boom,
+            route=DomainRoute(route="KB", ops=("stats",), needs_project_id=True),
+        )
         assert prepared.needs_project_id is True
         assert prepared.resp.mode == "clarify"
 
-    def test_followup_merges_history_and_inherits_project_id(self):
+    def test_router_receives_prior_history(self):
         seen = {}
-
-        async def capture_collect(user_id, route, db):
-            seen["route"] = route
-            return SimpleNamespace(
-                status="OK",
-                route=route.route,
-                project_id=route.project_id,
-                block="domain block",
-                citations=(),
-            )
-
-        prior = [{"role": "user", "content": "how many tasks are in project 123?"}]
+        prior = [{"role": "user", "content": "tell me about project 123"}]
         prepared = _prepare(
-            "and what about it?",
-            collect=capture_collect,
+            "what are the stats?",
             prior=prior,
-            guard=MagicMock(verdict="out_of_scope", gate="scope", reason=""),
+            collect=_collect_ok(),
+            route=DomainRoute(route="DOMAIN", project_id=123, ops=("stats",)),
+            seen=seen,
         )
-        assert seen["route"].ops == ("stats",)
-        assert prepared.domain_project_id == 123
+        assert seen["history"] is prior
         assert prepared.domain_route_str == "DOMAIN"
-        assert prepared.scope_verdict == "ok"
+        assert prepared.domain_project_id == 123
 
     def test_followup_reverse_unsafe_gets_safety_hint(self):
         # "reveal ... prompt" is order-sensitive: only the reversed merge is unsafe.
@@ -187,7 +200,6 @@ class TestPrepareTurnRouting:
         seen = {}
 
         async def capture_collect(user_id, route, db):
-            seen["route"] = route
             return SimpleNamespace(
                 status="OK",
                 route=route.route,
@@ -204,34 +216,27 @@ class TestPrepareTurnRouting:
                 "citations": [clarification_citation()],
             },
         ]
-        prepared = _prepare("12", collect=capture_collect, prior=prior)
-        assert seen["route"].ops == ("stats",)
-        assert seen["route"].project_id == 12
+        prepared = _prepare(
+            "12",
+            collect=capture_collect,
+            prior=prior,
+            route=DomainRoute(route="DOMAIN", project_id=12, ops=("stats",)),
+            seen=seen,
+        )
+        assert seen["question"] == "how many tasks are left in the project? project 12"
         assert prepared.domain_route_str == "DOMAIN"
         assert prepared.domain_project_id == 12
-
-    def test_inherited_project_id_folds_latest_explicit_id(self):
-        seen = {}
-
-        async def capture_collect(user_id, route, db):
-            seen["route"] = route
-            return SimpleNamespace(
-                status="OK",
-                route=route.route,
-                project_id=route.project_id,
-                block="domain block",
-                citations=(),
-            )
-
-        prior = [{"role": "user", "content": "tell me about project 123"}]
-        prepared = _prepare("what are the stats?", collect=capture_collect, prior=prior)
-        assert seen["route"].ops == ("stats",)
-        assert seen["route"].project_id == 123
-        assert prepared.domain_route_str == "DOMAIN"
 
 
 class TestPrepareTurnThirdParty:
     """Another user's profile ask short-circuits before domain/KB/LLM work."""
+
+    @staticmethod
+    def _boom_router():
+        async def boom(*args, **kwargs):
+            raise AssertionError("router must not run for third-party asks")
+
+        return boom
 
     def test_third_party_user_short_circuits(self):
         def boom_retrieve(*args, **kwargs):
@@ -246,6 +251,7 @@ class TestPrepareTurnThirdParty:
             retrieve=boom_retrieve,
             collect=boom_collect,
             persist=persisted,
+            router=self._boom_router(),
         )
         assert prepared.third_party_user is True
         assert prepared.third_party_username == "alice"
@@ -262,6 +268,7 @@ class TestPrepareTurnThirdParty:
         prepared = _prepare(
             "how do I see another user's contributions?",
             retrieve=boom_retrieve,
+            router=self._boom_router(),
         )
         assert prepared.third_party_user is True
         assert prepared.third_party_username is None
@@ -270,6 +277,7 @@ class TestPrepareTurnThirdParty:
         prepared = _prepare(
             "what badges have I earned?",
             collect=_collect_ok(),
+            route=DomainRoute(route="DOMAIN", ops=("user_profile",)),
         )
         assert prepared.third_party_user is False
         assert prepared.third_party_username is None

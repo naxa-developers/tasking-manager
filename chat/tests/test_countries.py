@@ -1,7 +1,6 @@
 """Country matcher: case-insensitive, multiword, allowlist-only."""
 
 from chat.retrieval.domain.countries import find_country
-from chat.retrieval.domain.routing import route_query
 
 
 def test_lowercase_and_multiword_countries():
@@ -13,13 +12,6 @@ def test_lowercase_and_multiword_countries():
 def test_benign_phrases_are_not_countries():
     assert find_country("projects in my opinion") is None
     assert find_country("a project near the border") is None
-
-
-def test_country_filter_routes_project_search():
-    route = route_query("show me projects in nepal")
-    assert route.route == "DOMAIN"
-    assert route.ops == ("project_search",)
-    assert route.filters == {"country": "Nepal"}
 
 
 def test_definite_article_and_common_aliases():

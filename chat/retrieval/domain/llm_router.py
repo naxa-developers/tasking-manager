@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Literal, Optional, Tuple
 
 import litellm  # type: ignore
 from pydantic import BaseModel, ConfigDict, Field
@@ -25,7 +25,7 @@ from chat.retrieval.project_context import latest_explicit_project_id
 
 logger = logging.getLogger(__name__)
 
-Route = str  # "KB" | "DOMAIN" | "BOTH"
+Route = Literal["KB", "DOMAIN", "BOTH"]
 
 MAX_OPERATIONS = 4
 MAX_HISTORY_TURNS = 4

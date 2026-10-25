@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from chat.retrieval.domain.dispatch import _merge_status, collect_evidence
-from chat.retrieval.domain.routing import DomainRoute
+from chat.retrieval.domain.llm_router import DomainRoute
 
 
 def _run(coro):

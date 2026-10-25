@@ -8,7 +8,7 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from loguru import logger
 
-from chat.retrieval.domain.routing import DomainRoute
+from chat.retrieval.domain.llm_router import DomainRoute
 
 Fetcher = Callable[[int, Optional[int], Any], Awaitable[Any]]
 

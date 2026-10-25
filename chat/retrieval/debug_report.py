@@ -14,11 +14,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from chat.retrieval.config import get_generation_config
 from chat.retrieval.domain.dispatch import collect_evidence
-from chat.retrieval.domain.routing import (
-    DomainRoute,
+from chat.retrieval.domain.llm_router import DomainRoute, route_question
+from chat.retrieval.domain.references import (
     extract_third_party_username,
     is_third_party_user_query,
-    route_query,
 )
 from chat.retrieval.guardrails import (
     GuardrailDecision,
@@ -217,7 +216,7 @@ async def gather_turn(
     generate: bool = True,
 ) -> Dict[str, Any]:
     """Run one turn through the production decision path, capturing every layer."""
-    route = route_query(question)
+    route = await route_question(question, history=history)
     decisions = build_decisions(question, route)
 
     resp: Optional[RetrievalResponse] = None

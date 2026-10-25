@@ -9,11 +9,10 @@ from starlette.concurrency import run_in_threadpool
 from chat.dtos import RagCitationDTO
 from chat.models import RagSession
 from chat.retrieval.domain.dispatch import collect_evidence
-from chat.retrieval.domain.routing import (
-    DomainRoute,
+from chat.retrieval.domain.llm_router import DomainRoute, route_question
+from chat.retrieval.domain.references import (
     extract_third_party_username,
     is_third_party_user_query,
-    route_query,
 )
 from chat.retrieval.guardrails import (
     classify_query,
@@ -21,7 +20,6 @@ from chat.retrieval.guardrails import (
     strip_smalltalk_prefix,
 )
 from chat.retrieval.project_context import (
-    latest_explicit_project_id,
     pending_clarification_question,
     resolve_supplied_project_id,
 )
@@ -171,35 +169,25 @@ def _with_project(text: str, project_id: int) -> str:
     return f"{text} project {project_id}"
 
 
-def _resolve_domain_route(
+async def _resolve_domain_route(
     retrieval_q: str, prior: List[Dict[str, Any]]
 ) -> tuple[str, Optional[DomainRoute], bool]:
-    """Route the question, folding pending clarifications and inherited ids."""
-    # Pending clarification: fold the pending question with the supplied id.
+    """Route the question, folding a pending clarification reply into it.
+
+    The router grounds project ids from the current question and prior user
+    turns, so a fold is not re-routed through the model.
+    """
     pending_q = pending_clarification_question(prior)
     if pending_q is not None:
         supplied = resolve_supplied_project_id(retrieval_q)
         if supplied is not None:
             retrieval_q = _with_project(pending_q, supplied)
-    try:
-        domain_route: Optional[DomainRoute] = route_query(retrieval_q)
-    except Exception:
+    domain_route: Optional[DomainRoute] = await route_question(
+        retrieval_q, history=prior
+    )
+    needs_project_id = bool(domain_route is not None and domain_route.needs_project_id)
+    if needs_project_id:
         domain_route = None
-    needs_project_id = False
-    if domain_route is not None and domain_route.needs_project_id:
-        # Never guess an id: use this turn's text, else the latest explicit id.
-        supplied = resolve_supplied_project_id(retrieval_q)
-        if supplied is not None:
-            retrieval_q = _with_project(retrieval_q, supplied)
-            domain_route = route_query(retrieval_q)
-        if domain_route.needs_project_id:
-            inherited = latest_explicit_project_id(prior)
-            if inherited is not None:
-                retrieval_q = _with_project(retrieval_q, inherited)
-                domain_route = route_query(retrieval_q)
-        if domain_route.needs_project_id:
-            needs_project_id = True
-            domain_route = None
     return retrieval_q, domain_route, needs_project_id
 
 
@@ -253,7 +241,7 @@ async def _run_domain_arm(
         return _DomainArm(
             retrieval_q=retrieval_q, domain_route=None, needs_project_id=False
         )
-    retrieval_q, domain_route, needs_project_id = _resolve_domain_route(
+    retrieval_q, domain_route, needs_project_id = await _resolve_domain_route(
         retrieval_q, prior
     )
     arm = _DomainArm(
@@ -333,7 +321,7 @@ async def prepare_turn(
             history_dicts, retrieval_q, guard, guardrail_hint, third_party_username
         )
 
-    # Domain routing: the deterministic router validates classifier intents.
+    # Domain routing: one LLM call returns a validated DomainRoute.
     # Auth always runs inside the tool.
     arm = await _run_domain_arm(user_id, retrieval_q, prior, db)
     resp = await _retrieve_for_turn(

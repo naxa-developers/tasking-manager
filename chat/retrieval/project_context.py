@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, Mapping, Optional, Sequence
 
-from chat.retrieval.domain.routing import extract_bare_project_id, extract_project_ids
+from chat.retrieval.domain.references import (
+    extract_bare_project_id,
+    extract_project_ids,
+)
 
 CLARIFY_CITATION_ID = "tm:clarify:project_id"
 
