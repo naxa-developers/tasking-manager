@@ -7,6 +7,7 @@ from loguru import logger
 from starlette.concurrency import run_in_threadpool
 
 from chat.dtos import RagCitationDTO
+from chat.env import env_int
 from chat.models import RagSession
 from chat.retrieval.domain.dispatch import collect_evidence
 from chat.retrieval.domain.llm_router import DomainRoute, route_question
@@ -200,6 +201,12 @@ async def _dispatch_evidence(user_id: int, domain_route: DomainRoute, db: Any) -
         return None
 
 
+def _retrieval_top_k() -> Optional[int]:
+    """Cap fused results before prompt fitting (0 = uncapped)."""
+    value = env_int("RAG_RETRIEVAL_TOP_K", 10)
+    return value if value > 0 else None
+
+
 async def _retrieve_for_turn(
     retrieval_q: str,
     domain_route: Optional[DomainRoute],
@@ -213,7 +220,7 @@ async def _retrieve_for_turn(
         # DOMAIN-only turn: skip embedding + BM25 entirely.
         return empty_response("domain-only", retrieval_q)
     # Sync retrieval (embedding HTTP + BM25) runs off the event loop.
-    return await run_in_threadpool(retrieve, retrieval_q)
+    return await run_in_threadpool(retrieve, retrieval_q, _retrieval_top_k())
 
 
 @dataclass(frozen=True)

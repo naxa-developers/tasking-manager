@@ -189,6 +189,17 @@ class TestPrepareTurnRouting:
         assert persisted["q"] == original
         assert prepared.scope_verdict == "ok"
 
+    def test_retrieval_defaults_to_top_k_cap(self, monkeypatch):
+        seen = {}
+
+        def capture(q, top_k=None):
+            seen["top_k"] = top_k
+            return _empty_resp(q)
+
+        monkeypatch.delenv("RAG_RETRIEVAL_TOP_K", raising=False)
+        _prepare("how do I validate a task?", retrieve=capture)
+        assert seen["top_k"] == 10
+
     def test_retrieval_unavailable_propagates(self):
         def boom(q, top_k=5):
             raise RetrievalUnavailable("vector search failed: down")
