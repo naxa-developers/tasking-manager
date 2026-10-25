@@ -8,7 +8,6 @@ There is no regex intent router behind this.
 from __future__ import annotations
 
 import json
-import logging
 import re
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -16,14 +15,13 @@ from pathlib import Path
 from typing import Any, Dict, Literal, Optional, Tuple
 
 import litellm  # type: ignore
+from loguru import logger
 from pydantic import BaseModel, ConfigDict, Field
 
 from chat.retrieval.config import RouterConfig, get_router_config
 from chat.retrieval.domain.countries import find_country
 from chat.retrieval.domain.references import extract_project_ids
 from chat.retrieval.project_context import latest_explicit_project_id
-
-logger = logging.getLogger(__name__)
 
 Route = Literal["KB", "DOMAIN", "BOTH"]
 
@@ -543,5 +541,5 @@ async def route_question(
         return _validate_output(output, text, history or [])
     except Exception as error:
         # Never log the question or prompt text: only the failure class.
-        logger.warning("router fallback: %s", type(error).__name__)
+        logger.warning("router fallback: {}", type(error).__name__)
         return DomainRoute(route="KB")
