@@ -307,11 +307,14 @@ def test_request_shape_and_prompt_catalogue():
 def test_router_config_defaults_to_generation_model(monkeypatch):
     monkeypatch.setenv("LITELLM_MODEL", "openai/test-generation")
     monkeypatch.setenv("LLM_API_KEY", "test-key")
+    monkeypatch.setenv("GENERATION_API_BASE", "http://local/v1")
     monkeypatch.delenv("RAG_ROUTER_MODEL", raising=False)
     monkeypatch.delenv("RAG_ROUTER_API_KEY", raising=False)
+    monkeypatch.delenv("RAG_ROUTER_API_BASE", raising=False)
     config = get_router_config()
     assert config.model == "openai/test-generation"
     assert config.api_key == "test-key"
+    assert config.api_base == "http://local/v1"
     assert config.temperature == 0.0
 
 
@@ -319,6 +322,25 @@ def test_router_config_model_override(monkeypatch):
     monkeypatch.setenv("LITELLM_MODEL", "openai/test-generation")
     monkeypatch.setenv("RAG_ROUTER_MODEL", "openai/test-router")
     monkeypatch.setenv("RAG_ROUTER_API_KEY", "router-key")
+    monkeypatch.delenv("RAG_ROUTER_API_BASE", raising=False)
     config = get_router_config()
     assert config.model == "openai/test-router"
     assert config.api_key == "router-key"
+
+
+def test_router_config_override_does_not_inherit_generation_base(monkeypatch):
+    monkeypatch.setenv("LITELLM_MODEL", "openai/test-generation")
+    monkeypatch.setenv("GENERATION_API_BASE", "http://local/v1")
+    monkeypatch.setenv("RAG_ROUTER_MODEL", "openai/gpt-4o-mini")
+    monkeypatch.setenv("RAG_ROUTER_API_KEY", "router-key")
+    monkeypatch.delenv("RAG_ROUTER_API_BASE", raising=False)
+    config = get_router_config()
+    assert config.api_base is None
+
+
+def test_router_config_explicit_base_override(monkeypatch):
+    monkeypatch.setenv("RAG_ROUTER_MODEL", "openai/gpt-4o-mini")
+    monkeypatch.setenv("RAG_ROUTER_API_BASE", "https://api.openai.com/v1")
+    monkeypatch.delenv("LITELLM_MODEL", raising=False)
+    config = get_router_config()
+    assert config.api_base == "https://api.openai.com/v1"

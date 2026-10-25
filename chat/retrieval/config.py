@@ -176,28 +176,30 @@ def get_router_config() -> RouterConfig:
         generation = get_generation_config()
     except RuntimeError:
         generation = None
+    override_model = env_optional("RAG_ROUTER_MODEL")
     model = (
-        env_optional("RAG_ROUTER_MODEL")
-        or (generation.model if generation is not None else "")
+        override_model or (generation.model if generation is not None else "")
     ).strip()
     if not model:
         raise RuntimeError(
             "Router model is not configured — set RAG_ROUTER_MODEL or "
             "LITELLM_MODEL in tasking-manager.env (see example.env TMBot section)."
         )
+    # Inherit the generation endpoint/key only when routing uses that same
+    # model. A model override must not inherit a local generation base URL.
+    same_as_generation = generation is not None and model == generation.model
     return RouterConfig(
         model=model,
         api_key=env_optional("RAG_ROUTER_API_KEY")
-        or (generation.api_key if generation is not None else None)
+        or (generation.api_key if same_as_generation else None)
         or env_optional("LLM_API_KEY", "LITELLM_API_KEY"),
         api_base=env_optional("RAG_ROUTER_API_BASE")
-        or (generation.api_base if generation is not None else None)
-        or env_optional("LLM_API_BASE", "LITELLM_API_BASE"),
+        or (generation.api_base if same_as_generation else None),
         temperature=0.0,
         max_tokens=env_int("RAG_ROUTER_MAX_TOKENS", 512),
         timeout=env_float(
             "RAG_ROUTER_TIMEOUT",
-            generation.timeout if generation is not None else 30.0,
+            generation.timeout if same_as_generation else 30.0,
         ),
         extra_body=_router_extra_body(),
     )
