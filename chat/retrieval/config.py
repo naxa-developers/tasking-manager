@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 from dotenv import load_dotenv  # type: ignore
@@ -136,6 +137,67 @@ def get_generation_config() -> GenerationConfig:
         max_tokens=max_tokens,
         timeout=timeout,
         num_retries=num_retries,
+    )
+
+
+@dataclass(frozen=True)
+class RouterConfig:
+    """Routing model settings; generation settings are the defaults."""
+
+    model: str
+    api_key: Optional[str] = None
+    api_base: Optional[str] = None
+    temperature: float = 0.0
+    max_tokens: int = 512
+    timeout: float = 30.0
+    extra_body: Dict[str, object] = field(default_factory=dict)
+
+
+def _router_extra_body() -> Dict[str, object]:
+    """Optional provider body merged into the routing request."""
+    raw = (os.getenv("RAG_ROUTER_EXTRA_BODY") or "").strip()
+    if not raw:
+        return {}
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def get_router_config() -> RouterConfig:
+    """Routing settings defaulting to the generation model and endpoint.
+
+    Set ``RAG_ROUTER_MODEL`` only when routing should use a different model;
+    ``RAG_ROUTER_API_BASE`` / ``RAG_ROUTER_API_KEY`` are needed only when that
+    model lives on another provider.
+    """
+    try:
+        generation = get_generation_config()
+    except RuntimeError:
+        generation = None
+    model = (
+        env_optional("RAG_ROUTER_MODEL")
+        or (generation.model if generation is not None else "")
+    ).strip()
+    if not model:
+        raise RuntimeError(
+            "Router model is not configured — set RAG_ROUTER_MODEL or "
+            "LITELLM_MODEL in tasking-manager.env (see example.env TMBot section)."
+        )
+    return RouterConfig(
+        model=model,
+        api_key=env_optional("RAG_ROUTER_API_KEY")
+        or (generation.api_key if generation is not None else None),
+        api_base=env_optional("RAG_ROUTER_API_BASE")
+        or (generation.api_base if generation is not None else None),
+        temperature=0.0,
+        max_tokens=env_int("RAG_ROUTER_MAX_TOKENS", 512),
+        timeout=env_float(
+            "RAG_ROUTER_TIMEOUT",
+            generation.timeout if generation is not None else 30.0,
+        ),
+        extra_body=_router_extra_body(),
     )
 
 
