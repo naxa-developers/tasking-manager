@@ -26,8 +26,8 @@ from chat.retrieval.project_context import latest_explicit_project_id
 Route = Literal["KB", "DOMAIN", "BOTH"]
 
 MAX_OPERATIONS = 4
-MAX_HISTORY_TURNS = 4
-MAX_HISTORY_TURN_CHARS = 280
+# Prior turns (one user + one assistant message each) sent to the router.
+MAX_HISTORY_TURNS = 2
 MAX_QUESTION_CHARS = 2000
 
 OP_NAMES: Tuple[str, ...] = (
@@ -65,95 +65,37 @@ OP_NAMES: Tuple[str, ...] = (
 )
 
 OP_INSTRUCTIONS: Dict[str, str] = {
-    "stats": (
-        "The question asks how many tasks are mapped or validated in one "
-        "specific project."
-    ),
-    "summary": (
-        "The asker wants live details about one specific project: its status, "
-        "privacy, priority, difficulty, organisation, author, progress, or dates."
-    ),
-    "teams": "The question asks which teams or members work on one specific project.",
-    "chat": "The asker wants recent discussion or comments on one specific project.",
-    "project_activity": (
-        "The asker wants the latest task activity on one specific project: "
-        "recent history events or what has been happening."
-    ),
-    "project_contributions": (
-        "The asker wants to know who contributed to one specific project, or "
-        "the project's contribution activity by day."
-    ),
-    "project_tasks": (
-        "The asker wants task-level status on one specific project: which "
-        "tasks were invalidated, or which tasks were mapped by whom."
-    ),
-    "project_annotations": (
-        "The asker wants the task annotations (flagged issues such as bad "
-        "imagery) recorded on one specific project."
-    ),
-    "similar_projects": "The asker wants projects similar to one specific project.",
-    "campaigns": (
-        "The asker asks about campaigns: the campaigns on one specific "
-        "project, or which campaigns exist on the site."
-    ),
-    "organisation_info": (
-        "The asker wants the profile of one named organisation: its "
-        "description, projects, or campaigns."
-    ),
-    "team_detail": "The asker references one team by number and wants its details or members.",
-    "user_interests": (
-        "The asker wants their own interest mix — which mapping interests "
-        "their contributed projects fall under."
-    ),
-    "user_osm_stats": (
-        "The asker wants their own OpenStreetMap account stats: account age "
-        "or changeset count."
-    ),
-    "notifications": (
-        "The asker wants their own notifications: unread count or recent messages."
-    ),
-    "project_partners": (
-        "The asker wants the partners or partnerships recorded on one "
-        "specific project."
-    ),
-    "featured_projects": "The asker wants the site's featured projects.",
-    "active_projects": (
-        "The asker wants projects with recent activity (for example, active "
-        "in the last day)."
-    ),
-    "mywork": "The asker wants their own locked or currently assigned tasks.",
-    "user_profile": "The asker is asking about their own mapper level or badges.",
-    "user_contributions": (
-        "The asker wants their own contribution totals: tasks mapped, projects "
-        "worked on, or hours."
-    ),
-    "user_projects_created": (
-        "The asker wants projects that they personally created or authored. "
-        "Asking about some other project does not count."
-    ),
-    "user_org_projects": "The asker wants projects run by their own organisation.",
-    "user_activity": (
-        "The asker wants their own streak or the split between their mapping "
-        "and validation."
-    ),
-    "user_teams": "The asker wants to know which teams they belong to.",
-    "user_tasks": (
-        "The asker wants to know whether their own submitted tasks have been validated."
-    ),
-    "favorites": (
-        "The asker wants their own saved/favorite projects, or whether one "
-        "specific project is in their favorites."
-    ),
-    "global_stats": (
-        "The asker wants site-wide totals across Tasking Manager: how many "
-        "users, projects, or tasks exist overall."
-    ),
-    "project_search": (
-        "The asker wants to find projects by filters: country, difficulty, "
-        "organisation, campaign, expiring soon, or short on mappers."
-    ),
-    "trending_projects": "The asker wants the most active or popular projects right now.",
-    "user_recommendations": "The asker is asking for a project recommendation.",
+    "stats": "Task counts for one project.",
+    "summary": "One project's status, difficulty, organisation, progress, dates.",
+    "teams": "Teams or members on one project.",
+    "chat": "Recent discussion or comments on one project.",
+    "project_activity": "Latest task activity on one project.",
+    "project_contributions": "Contributors or daily activity for one project.",
+    "project_tasks": "Invalidated tasks or mapping by user on one project.",
+    "project_annotations": "Flagged task issues on one project.",
+    "similar_projects": "Projects similar to one project.",
+    "campaigns": "Campaigns on a project, or site campaigns.",
+    "organisation_info": "One named organisation's profile, projects, campaigns.",
+    "team_detail": "One team by number: details or members.",
+    "user_interests": "The asker's mapping interest mix.",
+    "user_osm_stats": "The asker's OSM account age or changeset count.",
+    "notifications": "The asker's notifications.",
+    "project_partners": "Partners on one project.",
+    "featured_projects": "Site featured projects.",
+    "active_projects": "Recently active projects.",
+    "mywork": "The asker's own locked or assigned tasks.",
+    "user_profile": "The asker's mapper level or badges.",
+    "user_contributions": "The asker's contribution totals: tasks mapped, projects worked on, or hours.",
+    "user_projects_created": "Projects the asker personally created.",
+    "user_org_projects": "Projects run by the asker's organisation.",
+    "user_activity": "The asker's streak or mapping/validation split.",
+    "user_teams": "Teams the asker belongs to.",
+    "user_tasks": "Whether the asker's own submitted tasks have been validated.",
+    "favorites": "The asker's saved/favorite projects.",
+    "global_stats": "Site-wide totals: how many users, projects, or tasks exist overall.",
+    "project_search": "Find projects by country, difficulty, organisation, campaign, expiry, mappers, or needing validation.",
+    "trending_projects": "Most active or popular projects now.",
+    "user_recommendations": "Project recommendation for the asker.",
 }
 
 # Operations that cannot run without one project id.
@@ -207,12 +149,6 @@ _DIFFICULTY_SYNONYMS = {
     "hard": "CHALLENGING",
 }
 
-_PERSONAL_OPS = tuple(
-    name
-    for name in OP_NAMES
-    if name.startswith("user_") or name in ("mywork", "notifications", "favorites")
-)
-
 _OP_LINES = "\n".join(f"- {name}: {OP_INSTRUCTIONS[name]}" for name in OP_NAMES)
 
 ROUTER_SYSTEM_PROMPT = f"""You are the Tasking Manager routing assistant.
@@ -224,29 +160,25 @@ JSON shape:
 
 Rules:
 - Use only operation names from the catalogue below.
-- Put live Tasking Manager data in "ops". Use "ops": [] with "needs_docs": true
-  for documentation-only questions.
+- Live data goes in "ops". Documentation-only questions use "ops": [] and
+  "needs_docs": true.
 - Set "needs_docs": true when the answer needs an explanation, definition, or
   procedure, including questions that also need live data.
 - "project_id" must be an integer named in the current question or recent
-  history. Never invent an id. Project operations need one project id; if the
-  user did not name a project, still return the operation with a null id and
-  the application will ask which project.
+  history. Never invent an id. If no project is named, still return project
+  operations with a null id and the application will ask which project.
 - If the question names two different projects, use a null id.
 - "filters" is only for project_search, organisation_info, and team_detail.
-  Allowed keys: difficulty (EASY|MODERATE|CHALLENGING), based_on_skill
-  ("true"), expiring_days (a positive integer string), short_on_mappers
-  ("true"), text_search, action (map|validate), country (canonical English
-  country name), organisation, campaign, team_id (a positive integer string).
+  Allowed keys: difficulty (EASY|MODERATE|CHALLENGING), based_on_skill ("true"),
+  expiring_days (a positive integer string), short_on_mappers ("true"),
+  text_search, action (map|validate), country (canonical English country name),
+  organisation, campaign, team_id (a positive integer string).
   organisation_info requires "organisation"; team_detail requires "team_id".
 - Never include user identity, permissions, or account ids.
+- These operations need a project id: {", ".join(PROJECT_OPS)}.
 
 Catalogue:
 {_OP_LINES}
-
-Project operations that require a project id: {", ".join(PROJECT_OPS)}.
-Operations that may use a project id when one is named: {", ".join(OPTIONAL_PROJECT_OPS)}.
-Personal operations: {", ".join(_PERSONAL_OPS)}.
 
 /no_think
 """
@@ -457,6 +389,25 @@ def _examples() -> tuple:
     return tuple(examples)
 
 
+def _last_turns(history, max_turns: int) -> list:
+    """Return the last ``max_turns`` complete turns, oldest first.
+
+    A turn starts at a user message and includes the following assistant
+    messages. A trailing user-only message is kept as an incomplete turn.
+    """
+    turns: list = []
+    current: list = []
+    for message in history or []:
+        if message.get("role") == "user" and current:
+            turns.append(current)
+            current = [message]
+        else:
+            current.append(message)
+    if current:
+        turns.append(current)
+    return [m for turn in turns[-max_turns:] for m in turn]
+
+
 def _build_messages(question: str, history) -> list:
     messages = [{"role": "system", "content": ROUTER_SYSTEM_PROMPT}]
     for example_question, example_route in _examples():
@@ -464,11 +415,11 @@ def _build_messages(question: str, history) -> list:
         messages.append(
             {"role": "assistant", "content": example_route.model_dump_json()}
         )
-    for message in (history or [])[-MAX_HISTORY_TURNS:]:
+    for message in _last_turns(history, MAX_HISTORY_TURNS):
         role = str(message.get("role") or "")
         content = str(message.get("content") or "").strip()
         if role in {"user", "assistant"} and content:
-            messages.append({"role": role, "content": content[:MAX_HISTORY_TURN_CHARS]})
+            messages.append({"role": role, "content": content})
     messages.append({"role": "user", "content": question[:MAX_QUESTION_CHARS]})
     return messages
 

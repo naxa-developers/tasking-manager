@@ -1,0 +1,32 @@
+{"id": "d01", "question": "What's my mapper level, and what do I need to reach the next one?"}
+{"id": "d02", "question": "What task do I currently have locked?"}
+{"id": "d03", "question": "What badges have I earned?"}
+{"id": "d04", "question": "How is my contribution this month compared to last month?"}
+{"id": "d05", "question": "What are the projects I have contributed to?"}
+{"id": "d06", "question": "What's my current mapping streak?"}
+{"id": "d07", "question": "What's my validation-vs-mapping split?"}
+{"id": "d08", "question": "What teams am I part of?"}
+{"id": "d09", "question": "How many projects are there on Tasking Manager?"}
+{"id": "d10", "question": "How many health-oriented projects are there?"}
+{"id": "d11", "question": "How many users are registered on Tasking Manager?"}
+{"id": "d12", "question": "How many tasks have been mapped/validated in total?"}
+{"id": "d13", "question": "What are the most active/trending projects right now?"}
+{"id": "d14", "question": "Which projects are beginner-friendly / match my skill level?"}
+{"id": "d15", "question": "Which projects are expiring soon or short on mappers?"}
+{"id": "d16", "question": "What's project X's difficulty level and required editor (iD/JOSM)?"}
+{"id": "d17", "question": "What's the status of project X (% mapped, % validated)?"}
+{"id": "d18", "question": "Recommend a project based on what I usually map"}
+{"id": "d19", "question": "Has my submitted task been validated yet?"}
+{"id": "d20", "question": "How do I request help or a mentor on a task I'm stuck on?"}
+{"id": "d21", "question": "What projects is my organization currently running?"}
+{"id": "d22", "question": "Who's the contact for project X?"}
+{"id": "d23", "question": "How do I register on Tasking Manager?"}
+{"id": "d24", "question": "Whom should I reach out to for support?"}
+{"id": "d25", "question": "How do I request project manager rights / create a new project?"}
+{"id": "d26", "question": "How do I get my organization added to Tasking Manager?"}
+{"id": "d27", "question": "Where are the tutorials/docs for using iD or JOSM with Tasking Manager?"}
+{"id": "d28", "question": "How many hours have I contributed to Tasking Manager?"}
+{"id": "d29", "question": "Which countries or organizations have the most active projects?"}
+{"id": "d30", "question": "Which projects are in a specific country, org, or campaign?"}
+{"id": "d31", "question": "Why was my last task invalidated, what did the validator say?"}
+{"id": "d32", "question": "How do I become a validator, not just a mapper?"}

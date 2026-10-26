@@ -6,7 +6,9 @@ import textwrap
 from typing import Dict, Iterable, List, Optional
 
 import litellm  # type: ignore
+from loguru import logger
 
+from chat.env import env_int
 from chat.retrieval.config import get_generation_config
 from chat.retrieval.guardrails import REFUSAL_TEMPLATES
 from chat.retrieval.policy import LOW_CONFIDENCE_ANSWER
@@ -16,7 +18,8 @@ from chat.retrieval.tokenizer import (
     truncate_to_tokens as _qwen_truncate,
 )
 
-# Prompt cap: none — the full prior conversation is always sent (all callers).
+# History policy: the newest six turns are sent in full; older turns are only
+# dropped when the prompt budget would otherwise be exceeded.
 
 # Single call per turn: the LLM is called exactly once. The generation prompt
 # never quotes user-visible refusal copy (a 1.7B model echoed it verbatim on
@@ -125,12 +128,13 @@ def _split_evidence(evidence: str) -> List[str]:
     return [block for block in (evidence or "").split("\n\n") if block.strip()]
 
 
-# Prompt budget: the llama.cpp stack runs with an 8192-token context and
-# LITELLM_MAX_TOKENS=2048, so the prompt must leave room for the answer.
-# Override the cap with RAG_PROMPT_TOKEN_BUDGET.
-_DEFAULT_PROMPT_TOKEN_BUDGET = 3200
+# Prompt budget: the llama.cpp stack runs with a 16384-token context, so the
+# prompt must leave room for the answer. Override with RAG_PROMPT_TOKEN_BUDGET.
+_DEFAULT_PROMPT_TOKEN_BUDGET = 11776
 # Reserve for the separators/joins added after section fitting.
-_PROMPT_OVERHEAD_TOKENS = 16
+_PROMPT_OVERHEAD_TOKENS = 64
+# Prior conversation sent to the generation call.
+_DEFAULT_HISTORY_TURNS = 6
 
 
 def _prompt_token_budget() -> int:
@@ -153,7 +157,7 @@ def _truncate_to_tokens(text: str, max_tokens: int) -> str:
 
 
 def _history_block(history: Optional[List[Dict[str, str]]]) -> str:
-    """Full prior conversation, oldest first — never trimmed."""
+    """Full prior conversation, oldest first — never trimmed per message."""
     if not history:
         return ""
     lines: List[str] = []
@@ -163,6 +167,38 @@ def _history_block(history: Optional[List[Dict[str, str]]]) -> str:
         if content:
             lines.append(f"{role}: {content}")
     return "\n".join(lines)
+
+
+def _last_turns(history, max_turns: int) -> List[List[dict]]:
+    """Split chronological messages into turns and keep the last ``max_turns``."""
+    turns: List[List[dict]] = []
+    current: List[dict] = []
+    for message in history or []:
+        if message.get("role") == "user" and current:
+            turns.append(current)
+            current = [message]
+        else:
+            current.append(message)
+    if current:
+        turns.append(current)
+    return turns[-max_turns:] if max_turns > 0 else []
+
+
+def _history_turns() -> int:
+    return env_int("RAG_HISTORY_MAX_TURNS", _DEFAULT_HISTORY_TURNS)
+
+
+def _history_fitting(history, remaining: int) -> str:
+    """Newest turns that fit ``remaining``; oldest turns are dropped first."""
+    if not history or remaining <= 0:
+        return ""
+    turns = _last_turns(history, _history_turns())
+    while turns:
+        block = _history_block([m for turn in turns for m in turn])
+        if _count_tokens(block) <= remaining:
+            return block
+        turns.pop(0)
+    return ""
 
 
 def _fit_evidence_blocks(blocks: Iterable[str], budget: int) -> List[str]:
@@ -222,6 +258,17 @@ def _delta(chunk) -> Optional[str]:  # type: ignore[no-untyped-def]
     except Exception:
         try:
             return chunk["choices"][0]["delta"]["content"]  # type: ignore[no-any-return]
+        except Exception:
+            return None
+
+
+def _finish_reason(chunk) -> Optional[str]:  # type: ignore[no-untyped-def]
+    """Extract a finish_reason from a litellm response or stream chunk."""
+    try:
+        return chunk.choices[0].finish_reason  # type: ignore[no-any-return]
+    except Exception:
+        try:
+            return chunk["choices"][0]["finish_reason"]  # type: ignore[no-any-return]
         except Exception:
             return None
 
@@ -288,6 +335,7 @@ class _RefusalBuffer:
 
 class LLMService:
     def __init__(self, model: Optional[str] = None) -> None:
+        self.last_finish_reason: Optional[str] = None
         if model:
             self.model = model.strip()
         else:
@@ -301,11 +349,12 @@ class LLMService:
         kw: dict = {
             "model": self.model or cfg.model,
             "temperature": cfg.temperature,
-            "max_tokens": cfg.max_tokens,
             "timeout": cfg.timeout,
             "num_retries": cfg.num_retries,
             "drop_params": cfg.drop_params,
         }
+        if cfg.max_tokens is not None:
+            kw["max_tokens"] = cfg.max_tokens
         if cfg.api_key:
             kw["api_key"] = cfg.api_key
         if cfg.api_base:
@@ -341,7 +390,9 @@ class LLMService:
         if domain_block:
             remaining -= _count_tokens(domain_block)
 
-        history_block = _history_block(history)
+        # History is capped by turn count and never allowed to starve evidence:
+        # the oldest turns are dropped until the block fits what is left.
+        history_block = _history_fitting(history, remaining)
         if history_block:
             remaining -= _count_tokens(history_block)
 
@@ -413,6 +464,9 @@ class LLMService:
         if kwargs is None:
             return LOW_CONFIDENCE_ANSWER
         resp = litellm.completion(**kwargs)
+        self.last_finish_reason = _finish_reason(resp)
+        if self.last_finish_reason == "length":
+            logger.warning("generation hit the context limit (finish_reason=length)")
         try:
             content = (resp.choices[0].message.content or "").strip()  # type: ignore
         except Exception:
@@ -443,6 +497,9 @@ class LLMService:
         buffer = _RefusalBuffer()
         yielded_any = False
         for chunk in stream:  # type: ignore
+            reason = _finish_reason(chunk)
+            if reason:
+                self.last_finish_reason = reason
             delta = _delta(chunk)
             if not delta:
                 continue
@@ -452,5 +509,7 @@ class LLMService:
         for piece in buffer.flush():
             yielded_any = True
             yield piece
+        if self.last_finish_reason == "length":
+            logger.warning("generation hit the context limit (finish_reason=length)")
         if not yielded_any:
             yield LOW_CONFIDENCE_ANSWER

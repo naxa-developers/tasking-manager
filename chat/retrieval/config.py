@@ -100,7 +100,7 @@ class GenerationConfig:
     api_key: Optional[str]
     api_base: Optional[str]
     temperature: float
-    max_tokens: int
+    max_tokens: Optional[int]
     timeout: float
     drop_params: bool = True
     num_retries: int = 2
@@ -126,7 +126,8 @@ def get_generation_config() -> GenerationConfig:
     api_key = env_optional("LLM_API_KEY", "LITELLM_API_KEY")
     api_base = env_optional("GENERATION_API_BASE", "LLM_API_BASE", "LITELLM_API_BASE")
     temp = env_float("LITELLM_TEMPERATURE", 0.2)
-    max_tokens = env_int("LITELLM_MAX_TOKENS", 512)
+    raw_max_tokens = env_int("LITELLM_MAX_TOKENS", 0)
+    max_tokens = raw_max_tokens if raw_max_tokens > 0 else None
     timeout = env_float("LITELLM_TIMEOUT", 30.0)
     num_retries = max(0, env_int("LITELLM_NUM_RETRIES", 2))
     return GenerationConfig(

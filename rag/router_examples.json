@@ -1,0 +1,157 @@
+[
+  {
+    "question": "How many tasks are mapped in project 42?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "stats"
+      ],
+      "project_id": 42,
+      "filters": {}
+    }
+  },
+  {
+    "question": "How do I validate a task?",
+    "route": {
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "How many tasks are in project 42 and how do I validate them?",
+    "route": {
+      "route": "BOTH",
+      "ops": [
+        "stats"
+      ],
+      "project_id": 42,
+      "filters": {}
+    }
+  },
+  {
+    "question": "Show me beginner projects in Nepal.",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "filters": {
+        "difficulty": "EASY",
+        "country": "Nepal"
+      }
+    }
+  },
+  {
+    "question": "Which teams are working on project 7?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "teams"
+      ],
+      "project_id": 7,
+      "filters": {}
+    }
+  },
+  {
+    "question": "Which projects have I created?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "user_projects_created"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "How many tasks are left in the project?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "stats"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "Which organizations have the most active projects?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "What is project 42's difficulty and required editor?",
+    "route": {
+      "route": "BOTH",
+      "ops": [
+        "summary"
+      ],
+      "project_id": 42,
+      "filters": {}
+    }
+  },
+  {
+    "question": "Were my submitted tasks validated?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "user_tasks"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "What's my mapper level?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "How many contributions have I made?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "What's a mapping level, and what am I?",
+    "route": {
+      "route": "BOTH",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "How many hours have I contributed?",
+    "route": {
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "filters": {}
+    }
+  }
+]

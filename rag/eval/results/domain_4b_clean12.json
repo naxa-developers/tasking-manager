@@ -1,0 +1,178 @@
+{
+  "mode": "domain",
+  "rows": [
+    {
+      "id": "d01",
+      "question": "What's my mapper level, and what do I need to reach the next one?",
+      "answer": "Your current mapper level is ADVANCED. There is no next level because you are at the highest mapping level.  \nPractical next step: Start validating tasks to improve data quality.",
+      "route": "BOTH",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 37.93
+    },
+    {
+      "id": "d02",
+      "question": "What task do I currently have locked?",
+      "answer": "You currently have no task locked.  \nNext step: Check available tasks at tasks.hotosm.org.",
+      "route": "DOMAIN",
+      "ops": [
+        "mywork"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 56.54
+    },
+    {
+      "id": "d03",
+      "question": "What badges have I earned?",
+      "answer": "None. Next step: Complete tasks to earn badges.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 70.78
+    },
+    {
+      "id": "d04",
+      "question": "How is my contribution this month compared to last month?",
+      "answer": "0 contributions in both months. Check your current projects for active tasks.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 95.58
+    },
+    {
+      "id": "d05",
+      "question": "What are the projects I have contributed to?",
+      "answer": "27 projects. View full list of projects.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 113.43
+    },
+    {
+      "id": "d06",
+      "question": "What's my current mapping streak?",
+      "answer": "0 days. Start mapping a task to begin your streak.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 65.42
+    },
+    {
+      "id": "d07",
+      "question": "What's my validation-vs-mapping split?",
+      "answer": "I couldn't put an answer together just now. Please try again in a moment.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "error",
+      "abstained": true,
+      "seconds": 361.41
+    },
+    {
+      "id": "d08",
+      "question": "What teams am I part of?",
+      "answer": "I couldn't put an answer together just now. Please try again in a moment.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_teams"
+      ],
+      "project_id": null,
+      "reason": "error",
+      "abstained": true,
+      "seconds": 361.85
+    },
+    {
+      "id": "d09",
+      "question": "How many projects are there on Tasking Manager?",
+      "answer": "118\nLive evidence shows projects_total: 118.\nNext step: View projects list",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 100.05
+    },
+    {
+      "id": "d10",
+      "question": "How many health-oriented projects are there?",
+      "answer": "0 health-oriented projects found. Search for \"health\" in Tasking Manager.",
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 111.11
+    },
+    {
+      "id": "d11",
+      "question": "How many users are registered on Tasking Manager?",
+      "answer": "28\nLive stats: 28\nCheck user list",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 104.9
+    },
+    {
+      "id": "d12",
+      "question": "How many tasks have been mapped/validated in total?",
+      "answer": "507 mapped, 241 validated\n\nEvidence shows separate counts for mapped and validated tasks.\n\nCheck overlap to get union count.",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 113.54
+    }
+  ],
+  "summary": {
+    "cases": 12,
+    "answered": 12,
+    "abstentions": 2,
+    "errors": 2,
+    "empty_answers": 0,
+    "route_counts": {
+      "BOTH": 1,
+      "DOMAIN": 11
+    },
+    "latency_mean_s": 132.71,
+    "latency_p50_s": 104.9,
+    "latency_p95_s": 361.4
+  },
+  "model": "ollama/qwen3:4b",
+  "api_base": "http://host.docker.internal:11434",
+  "wall_seconds": 1595.0
+}

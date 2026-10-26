@@ -203,7 +203,7 @@ async def _dispatch_evidence(user_id: int, domain_route: DomainRoute, db: Any) -
 
 def _retrieval_top_k() -> Optional[int]:
     """Cap fused results before prompt fitting (0 = uncapped)."""
-    value = env_int("RAG_RETRIEVAL_TOP_K", 10)
+    value = env_int("RAG_RETRIEVAL_TOP_K", 5)
     return value if value > 0 else None
 
 

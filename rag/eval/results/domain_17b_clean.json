@@ -1,0 +1,406 @@
+{
+  "mode": "domain",
+  "rows": [
+    {
+      "id": "d01",
+      "question": "What's my mapper level, and what do I need to reach the next one?",
+      "answer": "My mapper level is ADVANCED, and I'm at the highest level, so I don't need to reach any next level.",
+      "route": "BOTH",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 11.12
+    },
+    {
+      "id": "d02",
+      "question": "What task do I currently have locked?",
+      "answer": "You currently have no task locked.  \nNext step: Check if there's any other task or project mentioned in the evidence that might be locked.",
+      "route": "DOMAIN",
+      "ops": [
+        "mywork"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.25
+    },
+    {
+      "id": "d03",
+      "question": "What badges have I earned?",
+      "answer": "The user has earned 0 badges.  \nNext step: Inform the user that they currently have no badges earned.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 1.94
+    },
+    {
+      "id": "d04",
+      "question": "How is my contribution this month compared to last month?",
+      "answer": "The evidence does not provide specific data on individual contributions or monthly comparisons. To check your contribution details, visit the Tasking Manager \"My Contributions\" section.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.71
+    },
+    {
+      "id": "d05",
+      "question": "What are the projects I have contributed to?",
+      "answer": "The projects you've contributed to include:  \n1. #119 ward 7 tokha (mapped: 1, validated: 0)  \n2. #114 Tokha ward 7 (mapped: 4, validated: 0)  \n3. #99 Barbardiya municipality (no current tasks)  \n4. #98 Rapid editor test (mapped: 1, validated: 0)  \n5. #58 Rwanda replication (no current tasks)  \n6. #57 Rwanda (no current tasks)  \n7. #53 Shreepur (mapped: 1, validated: 0)  \n8. #49 simlapur (mapped: 3, validated: 0)  \n9. #30 Dodhara chadani (mapped: 16, validated: 5)  \n10. #27 bangladesh (no current tasks)  \n11. #24 test 50 (mapped: 1, validated: 0)  \n12. #23 test background (mapped: 3, validated: 3)  \n13. #21 Mapping Landslides... (no current tasks)  \n14. #20 test country tag (mapped: 7, validated: 4)  \n15. #19 test project (mapped: 2, validated: 0)  \n16. #17 sirte (status: ARCHIVED, mapped: 3, validated: 0)  \n17. #15 libya Data quality... (mapped: 1, validated: 0)  \n18. #14 Test dailekh (mapped: 75, validated: 76)  \n19. #13 Palpa gulmi (status: DRAFT, no current tasks)  \n20. #11 Test project 4 (mapped: 4, validated: 0)  \n21. #9 Test project 1 (status: ARCHIVED, mapped: 15, validated: 15)  \n22. #7 Foobar (status: DRAFT, mapped: 8, validated: 0)  \n23. #6 test by manjita (mapped: 159, validated: 0)  \n24. #5 Testing 123 (status: ARCHIVED, mapped: 1, validated: 1)  \n25. #3 Test by manjita (mapped: 140, validated: 126)  \n26. #2 Test project with a long name (mapped: 6, validated: 1)  \n27. #1 Home Playground (status: ARCHIVED, mapped: 2, validated: 0)  \n\nNext step: Verify if you need a specific subset of these projects (e.g., active or archived).",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 19.26
+    },
+    {
+      "id": "d06",
+      "question": "What's my current mapping streak?",
+      "answer": "Current mapping streak: 0 days  \nReason: The evidence explicitly states `current_mapping_streak_days: 0`.  \nNext step: Confirm the value by checking the latest data if further context is needed.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.25
+    },
+    {
+      "id": "d07",
+      "question": "What's my validation-vs-mapping split?",
+      "answer": "Validation share percent: 33% (254 tasks validated), Mapping share percent: 67% (518 tasks mapped).",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.28
+    },
+    {
+      "id": "d08",
+      "question": "What teams am I part of?",
+      "answer": "The teams you're part of are:  \n- Cool Cool team  \n- Test team 2  \n- Test team mp  \n- My Mapping Team 111  \n- Test Project xyz  \n- Teset  \n- team for fastapi team  \n- test orgss  \n\nNext step: Confirm if duplicates or missing teams need clarification.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_teams"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.7
+    },
+    {
+      "id": "d09",
+      "question": "How many projects are there on Tasking Manager?",
+      "answer": "The evidence does not explicitly state the total number of projects on Tasking Manager. However, the listed projects (e.g., #1797, #1796, #1795, #1794) suggest there are at least four projects mentioned. For an exact count, check the project details or the Nepal Mapping Progress Dashboard.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 6.39
+    },
+    {
+      "id": "d10",
+      "question": "How many health-oriented projects are there?",
+      "answer": "2  \nReason: Entries 1 and 2 are explicitly health-oriented projects, while entries 3, 4, and 5 are withheld or unspecified.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.84
+    },
+    {
+      "id": "d11",
+      "question": "How many users are registered on Tasking Manager?",
+      "answer": "The evidence does not contain a numerical value for the number of registered users on Tasking Manager. Please provide additional context or check the evidence again for any missing details.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.29
+    },
+    {
+      "id": "d12",
+      "question": "How many tasks have been mapped/validated in total?",
+      "answer": "The evidence does not specify the exact number of mapped/validated tasks. The total contributions (e.g., task actions) are 123456, but this refers to actions, not individual tasks. To find the exact task count, check the project's specific metrics or contact the project manager.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.49
+    },
+    {
+      "id": "d13",
+      "question": "What are the most active/trending projects right now?",
+      "answer": "There are no projects with recent activity based on the last 90 days of mapping and validation lock activity.  \n\nNext step: Verify if the data period or metric differs from the user's expectations.",
+      "route": "DOMAIN",
+      "ops": [
+        "trending_projects"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.85
+    },
+    {
+      "id": "d14",
+      "question": "Which projects are beginner-friendly / match my skill level?",
+      "answer": "The two projects (#99 Barbardiya municipality and #2 Test project with a long name) are beginner-friendly as they have a difficulty level of EASY. Use the \"Difficulty level\" filter to explore more projects matching your skill level.",
+      "route": "BOTH",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.24
+    },
+    {
+      "id": "d15",
+      "question": "Which projects are expiring soon or short on mappers?",
+      "answer": "The evidence shows projects like #1048 (Tanahu) with \"In Progress (18%)\" and #1073 (Kaligandaki Landslide) with \"In Progress (27%)\" but no explicit expiring dates. Projects with \"Completed\" statuses (e.g., #1010, #1044) may not be expiring. However, \"In Progress\" projects with low percentages (e.g., #1048) might be short on mappers. \n\n**Next step:** Check the \"Task Mapping Status\" and \"Task Validation Status\" for projects with \"In Progress\" but low percentages to identify those potentially short on mappers.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 14.09
+    },
+    {
+      "id": "d16",
+      "question": "What's project X's difficulty level and required editor (iD/JOSM)?",
+      "answer": "The evidence does not specify the difficulty level or required editor for project X. Please provide the project name or additional details to proceed.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.59
+    },
+    {
+      "id": "d17",
+      "question": "What's the status of project X (% mapped, % validated)?",
+      "answer": "The evidence does not mention a project named X. Please specify which project you're referring to, and use the form tasks.hotosm.org/projects/123 to check its status.",
+      "route": "BOTH",
+      "ops": [
+        "summary"
+      ],
+      "project_id": 123,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.46
+    },
+    {
+      "id": "d18",
+      "question": "Recommend a project based on what I usually map",
+      "answer": "Recommend: Hiking Maps  \nReason: This project aligns with common mapping interests (hiking trails, terrain) and is explicitly listed in the evidence.  \nNext step: Ask the user to clarify if they prefer a different project type (e.g., relief maps, UK leisure map).",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.53
+    },
+    {
+      "id": "d19",
+      "question": "Has my submitted task been validated yet?",
+      "answer": "The submitted task is in the \"READY\" state, indicating it's waiting to be validated. Validation typically occurs after mapping, so it's currently pending. Check the task status for confirmation.  \n\n**Next step:** Verify the task status in the \"READY\" list and wait for validation to complete.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_tasks"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.97
+    },
+    {
+      "id": "d20",
+      "question": "How do I request help or a mentor on a task I'm stuck on?",
+      "answer": "How to request help or a mentor on a task you're stuck on:  \n1. Join real-time chats (e.g., HOT Tech page) to ask questions.  \n2. Reach out via the HOT Tech page if chat support isn't available.  \n3. Use the Tasking Manager's validator feedback loop to ask for help.  \n\nNext step: Check real-time chats (e.g., HOT Tech page) for immediate support.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.88
+    },
+    {
+      "id": "d21",
+      "question": "What projects is my organization currently running?",
+      "answer": "Naxa Test ORG has 27 projects running, including:  \n- #11 Test project 4 (Nepal, mapped 2%, validated 0%)  \n- #15 libya Data quality monitoring test (Libya, mapped 1%, validated 0%)  \n- #62 Changunarayan Municipality (Nepal, mapped 0%, validated 0%)  \n- #27 bangladesh (Bangladesh, mapped 2%, validated 0%)  \n- #19 test project (Nepal, mapped 5%, validated 0%)  \n\nThe test organisation has 1 project: #120 new test project (Indonesia, mapped 0%, validated 0%).  \n\nNext step: Confirm which organisation the user refers to (Naxa Test ORG or test) to narrow results.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_org_projects"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 6.1
+    },
+    {
+      "id": "d22",
+      "question": "Who's the contact for project X?",
+      "answer": "The question lacks a specific project reference. No contact information is provided in the evidence. Please specify the project number to retrieve the contact details.",
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.39
+    },
+    {
+      "id": "d23",
+      "question": "How do I register on Tasking Manager?",
+      "answer": "How do I register on Tasking Manager?  \n1. Check if your organization is listed on the page (organizations listed below).  \n2. If not, complete the form to register your interest.  \n3. Follow the OSM OAuth 2 registration steps (login to OSM, create client ID/secret, set redirect URL `http://127.0.0.1:3000/authorized`).  \n\nNext step: Complete the form on the HOT's Tasking Manager page.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 7.87
+    },
+    {
+      "id": "d24",
+      "question": "Whom should I reach out to for support?",
+      "answer": "You should reach out to the coordinators (Pierre B\u00e9land and Fr\u00e9d\u00e9ric Bonifas) via email at activation.mali.hotosm.org for coordination, or use IRC at irc.oftc.net #hot for discussions. For further help, contact HOT on Slack. \n\nSteps:  \n1. Contact coordinators via email (activation.mali.hotosm.org).  \n2. Use IRC (irc.oftc.net #hot) for real-time discussions.  \n3. Reach out to HOT on Slack for additional support.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.13
+    },
+    {
+      "id": "d25",
+      "question": "How do I request project manager rights / create a new project?",
+      "answer": "To request project manager rights and create a new project:  \n1. **Contact HOT** to set up your organization on Tasking Manager and add yourself as an Organization Manager.  \n2. **Create a project** via the Tasking Manager interface (e.g., via the \"Manage\" section) by specifying the project name, area of interest, and tasks.  \n\nNext step: Contact HOT to configure your organization and proceed with project creation.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 6.6
+    },
+    {
+      "id": "d26",
+      "question": "How do I get my organization added to Tasking Manager?",
+      "answer": "To add your organization to Tasking Manager:  \n1. Check if your organization is listed in the table.  \n2. If not, complete the form to register your interest.  \n3. Follow the link to your organization\u2019s page and contact a manager.  \n4. If you have over 100 changesets, reach out to HOT to schedule calls for project setup.  \n\nNext step: Complete the form if your organization is not already listed.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.28
+    },
+    {
+      "id": "d27",
+      "question": "Where are the tutorials/docs for using iD or JOSM with Tasking Manager?",
+      "answer": "The tutorials for iD and JOSM with Tasking Manager are available in the following resources:  \n- **YouTube Playlist**: [Humanitarian OpenStreetMap Team - One Minute Tutorial Videos](https://www.youtube.com/playlist?list=PLb9506_-6FMHZ3nwn9heri3xjQKrSq1hN) (covers iD and JOSM basics).  \n- **HOT Tips**: Includes iD help menu, shortcut list, and Blake Girardot's West Africa Mapping guide.  \n\nNext step: Direct the user to the YouTube playlist for iD/JOSM tutorials.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 6.33
+    },
+    {
+      "id": "d28",
+      "question": "How many hours have I contributed to Tasking Manager?",
+      "answer": "225.0 hours  \nCheck the evidence for confirmation.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 1.85
+    },
+    {
+      "id": "d29",
+      "question": "Which countries or organizations have the most active projects?",
+      "answer": "Naxa Test ORG has the most active projects with 59 projects.  \nNext step: Verify if the \"Naxa Test ORG\" is indeed the highest-count organisation in the dataset.",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.96
+    },
+    {
+      "id": "d30",
+      "question": "Which projects are in a specific country, org, or campaign?",
+      "answer": "There are no projects matching the filters (campaign and organisation) in the evidence. The query returns 0 matches. To find projects in a specific country or organisation, verify the filters or clarify the project details. Next step: Ask the user to confirm the project or adjust the filters.",
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.98
+    },
+    {
+      "id": "d31",
+      "question": "Why was my last task invalidated, what did the validator say?",
+      "answer": "The reason your last task was invalidated and the validator's comment are recorded in the **Task Invalidation History Table**. To find details, check this table for entries related to your task.  \n\nNext step: Navigate to the Task Invalidation History Table to view the specific reason and validator information.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.79
+    },
+    {
+      "id": "d32",
+      "question": "How do I become a validator, not just a mapper?",
+      "answer": "To become a validator, gain experience by mapping tasks and learning validation processes. Next step: Start with a small project to build experience.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.44
+    }
+  ],
+  "summary": {
+    "cases": 32,
+    "answered": 32,
+    "abstentions": 0,
+    "errors": 0,
+    "route_counts": {
+      "BOTH": 3,
+      "DOMAIN": 13,
+      "KB": 16
+    },
+    "latency_mean_s": 5.15,
+    "latency_p50_s": 4.3,
+    "latency_p95_s": 11.1
+  },
+  "model": "ollama/qwen3:1.7b",
+  "api_base": "http://host.docker.internal:11434",
+  "wall_seconds": 167.2
+}

@@ -18,19 +18,22 @@ services:
       - --port
       - "8000"
       - --hf-repo
-      - ggml-org/Qwen3-1.7B-GGUF
+      - ggml-org/Qwen3-4B-GGUF
       - --hf-file
-      - Qwen3-1.7B-Q4_K_M.gguf
+      - Qwen3-4B-Q4_K_M.gguf
       - -c
-      - "8192"
+      - "16384"
       - --parallel
       - "1"
       - --threads
-      - "2"
+      - "4"
       - --load-mode
       - mlock
     restart: unless-stopped
-    memswap_limit: 5G
+    # Host access for the standalone lab eval (backend uses llm:8000 on tm-net).
+    ports:
+      - "8000:8000"
+    memswap_limit: 6G
     ulimits:
       memlock:
         soft: -1
@@ -38,8 +41,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: 5G
+          cpus: "4"
+          memory: 6G
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
       interval: 10s

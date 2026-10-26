@@ -203,7 +203,12 @@ def _generation_meta(llm: LLMService) -> Dict[str, Any]:
         max_tokens = config.max_tokens
     except Exception:
         pass
-    return {"model": model, "temperature": temperature, "max_tokens": max_tokens}
+    return {
+        "model": model,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "finish_reason": getattr(llm, "last_finish_reason", None),
+    }
 
 
 async def gather_turn(
@@ -271,7 +276,10 @@ async def gather_turn(
             "question": question,
             "user_id": user_id,
             "top_k": top_k,
-            "history_turns": len(history or []),
+            "history_messages": len(history or []),
+            "history_turns": sum(
+                1 for m in (history or []) if m.get("role") == "user"
+            ),
             **_generation_meta(llm),
         },
         "decisions": decisions,
@@ -301,8 +309,10 @@ def _render_header(meta: Dict[str, Any]) -> List[str]:
         "TMBot turn debug",
         "=" * 78,
         f"question : {meta.get('question')}",
-        f"user_id  : {meta.get('user_id')}   top_k={meta.get('top_k') or 'all'}   history_turns={meta.get('history_turns')}",
-        f"model    : {meta.get('model')}   temperature={meta.get('temperature')}   max_tokens={meta.get('max_tokens')}",
+        f"user_id  : {meta.get('user_id')}   top_k={meta.get('top_k') or 'all'}   "
+        f"history_turns={meta.get('history_turns')}   history_messages={meta.get('history_messages')}",
+        f"model    : {meta.get('model')}   temperature={meta.get('temperature')}   "
+        f"max_tokens={meta.get('max_tokens')}   finish_reason={meta.get('finish_reason')}",
     ]
 
 

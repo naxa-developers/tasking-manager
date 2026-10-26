@@ -1,0 +1,2211 @@
+{
+  "mode": "kb",
+  "rows": [
+    {
+      "id": "pi-001",
+      "question": "How do I create osm account and log in via osm oauth?",
+      "answer": "To create an OSM account and log in via OSM OAuth, follow these steps:\n\n1. Go to https://www.openstreetmap.org/user/new.\n2. Fill in your email address and name.\n3. Confirm your email address by entering it twice.\n4. Choose a password that is strong and different from your bank account.\n5. Click \"Accept\" to proceed.\n6. You will receive a confirmation email. Check your inbox or spam folder to confirm your account.\n\nNext step: Check your confirmation email to ensure it is received.",
+      "reason": "ok",
+      "f1": 0.2857,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.74
+    },
+    {
+      "id": "pi-002",
+      "question": "I'm curious about bearer token session management (6-hour session expiry, 120 s validation window) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The bearer token session management in Tasking Manager has a 6-hour expiry time and a 120-second validation window. The token is generated using the `gen_token` command with the user's ID. Once the token expires, it must be regenerated. The validation window ensures that the token is valid within 120 seconds of issuance. \n\nNext step: Verify the token expiry and validation window settings by checking the tasking-manager directory.",
+      "reason": "ok",
+      "f1": 0.1758,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.5
+    },
+    {
+      "id": "pi-003",
+      "question": "edit self profile name",
+      "answer": "The user can edit their self profile name by following these steps:\n\n1. Visit your user profile at https://www.openstreetmap.org/user/<your-username>.\n2. Locate the \"Name\" field in your profile.\n3. Edit the name and save the changes.\n\nIf you need further assistance, let me know.",
+      "reason": "ok",
+      "f1": 0.2535,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.98
+    },
+    {
+      "id": "pi-004",
+      "question": "As a project manager, manage notification preferences (mentions, project activity, broadcast, team broadcast, task comments, validation/invalidation) \u2014 what do I need to know?",
+      "answer": "As a project manager, you need to know about the notification settings in the Tasking Manager. These settings include mentions, project activity, broadcast, team broadcast, task comments, validation/invalidation, and more. You can manage these preferences through the user interface. \n\nNext step: Check the notification settings in the Tasking Manager interface to configure your preferences.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.45
+    },
+    {
+      "id": "pi-005",
+      "question": "What is set default editor preference (id / josm / potlatch / field papers / rapid / custom) and how does it work?",
+      "answer": "The default editor preference is set to \"iD\" (online editor) in the browser. It allows you to start the editor by simply clicking on the Edit button. The preference can be changed in your user preferences (click on your username at the top right corner of your browser, then choose 'My preferences').",
+      "reason": "ok",
+      "f1": 0.1842,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.22
+    },
+    {
+      "id": "pi-006",
+      "question": "What is verify email address (token-based, 24 h expiry) and how does it work?",
+      "answer": "The verify email address (token-based, 24 h expiry) is a feature that allows users to resend an email verification token to their registered email address. The token is sent in a base64 encoded session token header, and it expires after 24 hours. The process works as follows: \n\n1. The user logs in and is shown a \"Verify Email\" button.\n2. The system sends a verification token via the header in the request.\n3. The token is used to resend the verification email to the user's registered email address.\n4. The token expires after 24 hours, so it must be used within that timeframe.\n\nNext step: Check if the user's email address is registered and if the token is valid.",
+      "reason": "ok",
+      "f1": 0.1778,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.28
+    },
+    {
+      "id": "pi-007",
+      "question": "I'm curious about enable expert mode \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "Enable expert mode in Tasking Manager allows users to access additional features and controls within the platform. When enabled, users can view more detailed information about their contributions, manage their editing settings, and access advanced tools. To enable expert mode, go to your user profile settings and switch on expert mode.",
+      "reason": "ok",
+      "f1": 0.3611,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.19
+    },
+    {
+      "id": "pi-008",
+      "question": "delete anonymize own account",
+      "answer": "The question does not specify which account to delete or whether it is an account with anonymized edits. If you want to delete your own account, follow these steps:\n\n1. Log in to your OpenStreetMap account.  \n2. Go to My Settings.  \n3. Use the \"Delete Account...\" button.  \n4. Confirm the deletion and follow the prompts.  \n\nIf you are referring to anonymized edits, ensure they are public before deletion.",
+      "reason": "ok",
+      "f1": 0.2439,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.15
+    },
+    {
+      "id": "pi-009",
+      "question": "For my role, how does block user / read-only mode (`userrole.read_only = -1`) work?",
+      "answer": "The question is about how block user / read-only mode (`userrole.read_only = -1`) works for a user's role. The evidence does not provide specific details about this setting or its interaction with roles. \n\nNext step: Check the OSM documentation or community resources for details about `userrole.read_only = -1` and its impact on roles.",
+      "reason": "ok",
+      "f1": 0.2326,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.88
+    },
+    {
+      "id": "pi-010",
+      "question": "What is browse / search all published projects and how does it work?",
+      "answer": "The browse and search all published projects functionality allows you to find and access projects that are available for mapping or validation. You can use the search filters section to narrow down the projects based on various criteria such as project number, difficulty level, organization, location, interests, and more. The search results are displayed in a list, and you can sort them as needed.\n\nNext step: Check the \"Search Projects\" section to see how you can search for specific projects by number or description.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.73
+    },
+    {
+      "id": "pi-011",
+      "question": "What is filter by difficulty, project status (published/archived), priority, mapping type, campaign, organisation, country, interests, text search (`#id` or description) and how does it work?",
+      "answer": "The filter options include difficulty, project status (published/archived), priority, mapping type, campaign, organisation, country, interests, and text search. These filters allow you to narrow down the projects based on specific criteria. \n\nNext step: Check the documentation for detailed explanations of how each filter works.",
+      "reason": "ok",
+      "f1": 0.2069,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.64
+    },
+    {
+      "id": "pi-012",
+      "question": "I'm looking for a project to map but I don't know where to start \u2014 how do I search and filter available projects?",
+      "answer": "You can use the Search and Filter options to find projects. Here's how:\n\n1. Click on \"Search Projects\" to enter a project number or search text.\n2. Use the \"Difficulty level\" filter to find projects matching your experience level.\n3. Use the \"Any project\" filter to select a project to map or validate.\n4. Use the \"More filters\" section to add additional filters like Campaign, Organization, Location, or Interests.\n5. Sort the results as needed.\n\nNext, click on \"Explore Projects\" on the top bar to start searching.",
+      "reason": "ok",
+      "f1": 0.189,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.09
+    },
+    {
+      "id": "pi-013",
+      "question": "view task grid colour",
+      "answer": "The task grid color is not directly mentioned in the evidence. A practical next step is to check the project settings or documentation for details on how to customize the task grid color.",
+      "reason": "ok",
+      "f1": 0.2963,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.57
+    },
+    {
+      "id": "pi-014",
+      "question": "As a mapper, random task selection vs. selecting a specific task on the map \u2014 how does that apply to me?",
+      "answer": "If random task selection is enabled, contributors cannot select specific tasks for mapping. If it is disabled, you can select specific tasks on the map. \n\nNext step: Check the status of the task you want to map to determine if random selection is enabled or disabled.",
+      "reason": "ok",
+      "f1": 0.4396,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "pi-015",
+      "question": "What is `enforce_random_task_selection=true` forces random only and how does it work?",
+      "answer": "The setting `enforce_random_task_selection=true` ensures that random task selection is enforced on the task selection page. It works by preventing users from selecting tasks in a deterministic manner, forcing them to choose tasks randomly. \n\nNext step: Check if the setting is enabled in the Tasking Manager configuration.",
+      "reason": "ok",
+      "f1": 0.3191,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.22
+    },
+    {
+      "id": "pi-016",
+      "question": "What is lock task for mapping and how does it work?",
+      "answer": "Lock task for mapping is a feature that allows users to lock a task for mapping purposes. It ensures that only the designated user can proceed with the mapping process. The lock is typically applied via an API call, such as the POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id} endpoint. This action requires a valid session token and is used to restrict access to the task until it is unlocked. The lock is usually temporary and can be removed by unlocking it through another API call. \n\nNext step: Check if the lock task for mapping is enabled for the current project.",
+      "reason": "ok",
+      "f1": 0.24,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.62
+    },
+    {
+      "id": "pi-017",
+      "question": "I'm curious about edit geometry in id / josm / potlatch2 / field papers / custom / rapid (rapid power-user flag) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The edit geometry functionality in Tasking Manager allows users to modify the geometry of existing OSM objects. This includes editing lines, polygons, and other geometric elements. Users can edit geometry directly in the Tasking Manager interface, similar to how they would in iD, JOSM, Potlatch2, or Field Papers. The process involves selecting an object, opening the geometry editor, and making the desired changes. \n\nIf you want to edit geometry in Tasking Manager, you can follow these steps:\n1. Select an object in the map.\n2. Open the geometry editor by clicking on the \"Edit\" button.\n3. Make the desired changes to the geometry.\n4. Save the changes and upload them to OSM if required.",
+      "reason": "ok",
+      "f1": 0.1571,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.59
+    },
+    {
+      "id": "pi-018",
+      "question": "find projects filtering",
+      "answer": "The \"find projects filtering\" refers to the ability to search and filter projects in the Tasking Manager. You can use the Search and Filter options to narrow down the projects you want to work on. \n\nNext step: Explore the Search and Filter options in the Tasking Manager to find projects that match your needs.",
+      "reason": "ok",
+      "f1": 0.2308,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.08
+    },
+    {
+      "id": "pi-019",
+      "question": "As a mapper, split task (divide into 4 smaller tasks, only while `locked_for_mapping`) \u2014 how does that apply to me?",
+      "answer": "As a mapper, you can split a task into 4 smaller tasks only when the task is in the `locked_for_mapping` state. This allows you to work on different parts of the task separately. \n\nNext step: Check the status of the task to confirm it is in the `locked_for_mapping` state.",
+      "reason": "ok",
+      "f1": 0.2857,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.28
+    },
+    {
+      "id": "pi-020",
+      "question": "What is save edits to osm (changeset with `changeset_comment`, source, hashtags) and how does it work?",
+      "answer": "The `changeset_comment` is a field in the changeset that allows users to add a human-readable comment describing their edits. It can include text, hashtags, and other information. To save edits to OpenStreetMap, you can use the iD editor by clicking on the save icon, adding a comment, and then uploading the changes. The `source` field indicates the software or tool used to make the edits, and `hashtags` are added as a separate field to describe the changes. \n\nNext step: Check the iD editor's interface to confirm the fields available for saving edits.",
+      "reason": "ok",
+      "f1": 0.2087,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.83
+    },
+    {
+      "id": "pi-021",
+      "question": "What is lock duration extension (`extendlocktimedto`) and how does it work?",
+      "answer": "The `extendlocktimedto` action extends the duration of locked tasks. It is used to lock tasks for validation, allowing them to be processed for validation purposes. To use it, you send a POST request to the appropriate endpoint with the task IDs you want to extend. The action requires a valid session token and language parameter. \n\nNext step: Check the project ID and task IDs to apply the extension.",
+      "reason": "ok",
+      "f1": 0.3186,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.67
+    },
+    {
+      "id": "pi-022",
+      "question": "I'm curious about auto-unlock after lock expiry (cron / on project fetch) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The auto-unlock feature in Tasking Manager unlocks tasks after a certain period (lock expiry) without requiring manual intervention. It typically triggers automatically when a project is fetched or when a cron job runs. The exact mechanism depends on the project's configuration and the system's settings.\n\nNext step: Check the project's configuration settings to confirm if auto-unlock is enabled.",
+      "reason": "ok",
+      "f1": 0.2581,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.44
+    },
+    {
+      "id": "pi-023",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.2656,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.92
+    },
+    {
+      "id": "pi-024",
+      "question": "As a mapper, mark as bad imagery (clouds / fuzzy / no imagery) \u2014 how does that apply to me?",
+      "answer": "To mark a task as bad imagery (due to clouds, fuzzy tiles, or no imagery), you should:\n\n1. Check if alternative imagery provides better results.  \n2. If not, indicate \"The imagery is bad\" and confirm by clicking `Submit task`.  \n\nThis helps ensure that mappers are aware of the limitations and can adjust their approach accordingly.",
+      "reason": "ok",
+      "f1": 0.321,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.43
+    },
+    {
+      "id": "pi-025",
+      "question": "What is stop mapping (abandon, revert to prior state, optional comment) and how does it work?",
+      "answer": "The stop mapping process allows mappers to revert to a previous state or abandon a task. It works by modifying the local copy of the map data to undo changes made by a changeset. The reverter plugin handles the reversal of changes, preserving the original state of the map data. If the changeset added a tag, it will be removed; if it removed or modified a tag, it will be restored. Deleted objects are undeleted, and the object's ID remains the same. A comment can be added to describe the changeset. \n\nNext step: Check if there is a specific project involved and provide the relevant form tasks.hotosm.org/projects/123.",
+      "reason": "ok",
+      "f1": 0.1692,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.09
+    },
+    {
+      "id": "pi-026",
+      "question": "What is add comment on task (without state change), @-mention triggers notification and how does it work?",
+      "answer": "The \"Add Comment\" button on a task is used to add a new comment to the task. If there is no state change, the comment is added without any validation or approval. @-mentions trigger notifications to the relevant users, typically based on the content of the comment or the context of the task. The notification system checks if the comment meets the criteria for notification and sends a message to the appropriate users.\n\nNext step: Check the task validation settings to confirm how @-mentions trigger notifications.",
+      "reason": "ok",
+      "f1": 0.2667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.17
+    },
+    {
+      "id": "pi-027",
+      "question": "I'm curious about leave / resume workflow (locked tasks panel, resume mapping) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The locked tasks panel in Tasking Manager controls which tasks are currently being mapped. When a task is locked, no other mapper can select it until it is released. To resume mapping a locked task, you need to unlock it by following the instructions in the Tasking Manager. \n\nNext step: Check the locked tasks panel to see if the task is locked, and if so, follow the instructions to unlock it.",
+      "reason": "ok",
+      "f1": 0.2828,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.31
+    },
+    {
+      "id": "pi-028",
+      "question": "undo last action revertown",
+      "answer": "The action \"undo last action revertown\" refers to reverting the last action in the system. To perform this, follow these steps:\n\n1. Locate the \"Undo\" icon on the lower left corner of the screen.\n2. Tap the \"Undo\" icon to revert the most recent changes.",
+      "reason": "ok",
+      "f1": 0.3457,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.83
+    },
+    {
+      "id": "pi-029",
+      "question": "As a validator, full taskstatus lifecycle \u2014 what's the process?",
+      "answer": "The process for a validator involves several steps: validating a task, reviewing the mapping, and ensuring the data meets quality standards. The task status moves through stages such as \"Pending Validation,\" \"Validating,\" \"Validated,\" and \"Completed.\" \n\nNext step: Validate a task to begin the process.",
+      "reason": "ok",
+      "f1": 0.2,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.91
+    },
+    {
+      "id": "pi-030",
+      "question": "What is one-lock-per-user invariant (mapping + validation share the same `locked_tasks` budget) and how does it work?",
+      "answer": "The one-lock-per-user invariant ensures that a user can lock tasks for validation or mapping only once, sharing the same budget for locked tasks. It works by limiting a user's ability to lock tasks for validation or mapping to a single lock entry, preventing overuse of the locked tasks budget. \n\nNext step: Check if the invariant is enforced in the system by reviewing the available endpoints and their parameters.",
+      "reason": "ok",
+      "f1": 0.3478,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.34
+    },
+    {
+      "id": "pi-031",
+      "question": "What is taskhistory audit trail (`locked_for_mapping`, `locked_for_validation`, `state_change`, `comment`, `auto_unlocked_*`, `extended_*`) and how does it work?",
+      "answer": "The taskhistory audit trail includes fields like `locked_for_mapping`, `locked_for_validation`, `state_change`, `comment`, `auto_unlocked_*`, and `extended_*`. These fields track the state of a task during its lifecycle, including when it was locked for mapping, validation, or state changes, and any comments or automatic unlocks. The audit trail helps mappers understand the history of a task and resolve conflicts.\n\nNext step: Check the project instructions to see how these fields are used in the context of the project.",
+      "reason": "ok",
+      "f1": 0.313,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.67
+    },
+    {
+      "id": "pi-032",
+      "question": "Can you walk me through what happens to a task from start to finish? What states does it go through?",
+      "answer": "The task starts by navigating to the project instructions. It then proceeds to validate tasks, which involves selecting tasks and validating them. The task moves through states such as \"Pending,\" \"Validating,\" \"Locked,\" and \"Completed.\" \n\nNext step: Identify the specific project and track the task's state changes.",
+      "reason": "ok",
+      "f1": 0.1538,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.18
+    },
+    {
+      "id": "pi-033",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.2017,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.72
+    },
+    {
+      "id": "pi-034",
+      "question": "As a validator, unlock after validation (mark `validated` or `invalidated` with optional comment + mapping issues) \u2014 what's the process?",
+      "answer": "The process involves using the `/api/v2/projects/{project_id}/tasks/actions/unlock-after-validation` endpoint. You need to send a POST request with the `validatedTasks` parameter containing the task IDs and any optional comment about mapping issues. \n\nNext step: Send a POST request to the unlock-after-validation endpoint with the appropriate parameters.",
+      "reason": "ok",
+      "f1": 0.1918,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.11
+    },
+    {
+      "id": "pi-035",
+      "question": "What is stop validating (abandon lock, revert to prior state) and how does it work?",
+      "answer": "The \"stop validating\" action unlocks a task that is locked for validation, reverting it to its last status. It removes the lock and allows the task to be edited again. The reverter plugin automatically undoes the changeset, restoring the object to its state before the changeset was applied. \n\nNext step: Check if the task is locked for validation and use the \"stop validation\" action to unlock it.",
+      "reason": "ok",
+      "f1": 0.2292,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.71
+    },
+    {
+      "id": "pi-036",
+      "question": "What is self-validation guard (mappers cannot validate own tasks) and how does it work?",
+      "answer": "Self-validation guard is a policy in OpenStreetMap that prevents a contributor from validating their own tasks. It ensures that validation is done by experienced mappers to maintain data quality. The policy applies to all tasks, but contributors can request to validate tasks they have mapped themselves. \n\nNext step: Check if the project creator has set validation restrictions to any user or teams.",
+      "reason": "ok",
+      "f1": 0.2247,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.21
+    },
+    {
+      "id": "pi-037",
+      "question": "I'm curious about mapping issue annotation on invalidation (per-issue counts, category fk) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The mapping issue annotation system tracks per-issue counts and category relationships in Tasking Manager. When a task is invalidated, the system records the count of invalidations for each category, allowing users to see how many tasks are invalidated in each category. This helps in understanding the impact of invalidations on different categories.\n\nNext step: Check the Task Invalidation History Table to see the counts for each category.",
+      "reason": "ok",
+      "f1": 0.2857,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.17
+    },
+    {
+      "id": "pi-038",
+      "question": "validate task",
+      "answer": "To validate a task, follow these steps:\n\n1. Click on the red button \"Contribute\" to move to the next page.\n2. Select a blue task to validate.\n3. Click on the red button \"Validate selected task\" at the bottom right.\n4. A new page will open in the Tasking Manager and the selected task will be loaded into your editor.",
+      "reason": "ok",
+      "f1": 0.1099,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.33
+    },
+    {
+      "id": "pi-039",
+      "question": "As a project manager, admin bulk operations: `invalidate_all_tasks`, `validate_all_tasks`, `reset_all_badimagery`, `map_all_tasks` \u2014 what do I need to know?",
+      "answer": "As a project manager, when performing bulk operations like `invalidate_all_tasks`, `validate_all_tasks`, `reset_all_badimagery`, or `map_all_tasks`, you need to know that these operations affect all tasks in a project. You must handle them with care as there is no undo. These operations reset or validate tasks, and you should ensure the project is in a stable state before performing them. \n\nNext step: Check the project status and confirm the tasks are ready for bulk operations.",
+      "reason": "ok",
+      "f1": 0.3333,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.82
+    },
+    {
+      "id": "pi-040",
+      "question": "What is osmcha filter linkage (`osmcha_filter_id` on project, validator qa via external tool) and how does it work?",
+      "answer": "OSMCha filter linkage (`osmcha_filter_id`) is a mechanism that allows validators to filter changesets based on specific criteria when using the OSMCha tool. It works by specifying a filter ID that defines the conditions for the changesets to be analyzed. The filter is applied to the changesets in the project, and it can be used to narrow down the list of changesets based on factors like mapper experience level, new users, or other specific criteria.\n\n**How it works:**\n1. Validators can specify an `osmcha_filter_id` in the settings of the OSMCha tool to define the filtering criteria.\n2. The filter is applied to the changesets in the project, allowing validators to focus on specific subsets of changesets.\n3. This helps in efficiently analyzing changesets that are relevant to the validation process.\n\n**Next step:** If you want to use a specific filter, provide the `osmcha_filter_id` in the settings of the OSMCha tool.",
+      "reason": "ok",
+      "f1": 0.1561,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.1
+    },
+    {
+      "id": "pi-041",
+      "question": "How do I create draft project (draw aoi polygon or upload geojson/kml/zipped shapefile; optional clone from existing project)?",
+      "answer": "To create a draft project (draw aoi polygon or upload geojson/kml/zipped shapefile; optional clone from existing project), follow these steps:\n\n1. Click on `Manage` in the navigation on the top.  \n2. In the first row, click on the `Add` button to create a new project.  \n3. Choose between drawing the area of interest manually or uploading a file.  \n4. If cloning an existing project, search for the OSM username of the manager you want to clone from.  \n5. Once the project is created, you can adjust the area of interest, task grid, and priority areas as needed.  \n\nNext step: If you want to clone an existing project, search for the OSM username of the manager you want to clone from.",
+      "reason": "ok",
+      "f1": 0.3851,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.74
+    },
+    {
+      "id": "pi-042",
+      "question": "I'm curious about define task grid (grid vs arbitrary mode, resize larger/smaller, selective split/draw-area-to-split, trim to aoi with sharp-clip option, discard tiny tasks < 2000 m\u00b2) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "In Tasking Manager, the \"Define task grid\" process involves several options:\n\n1. **Grid Mode**: You can define a grid that divides the mapping area into smaller, manageable tasks. This is useful for large areas where you want to split the work into smaller, more manageable parts.\n\n2. **Resize Larger/Smaller**: You can adjust the size of the task squares to fit your mapping needs. You can resize them to be larger or smaller depending on the area you want to map.\n\n3. **Selective Split/Draw-Area-To-Split**: You can choose to split specific task squares or draw an area on the map to split into smaller tasks. This allows for more precise control over how the tasks are divided.\n\n4. **Trim to AOI with Sharp-Clip Option**: You can trim the tasks to a specific area of interest (AOI) and apply a sharp clip to the edges of the AOI. This helps in focusing the mapping on the desired area.\n\n5. **Discard Tiny Tasks < 2000 m\u00b2**: You can choose to discard tasks that are smaller than 2000 m\u00b2, which can confuse mappers. This helps in keeping the number of tasks manageable.\n\n**Next Step**: If you want to see the actual grid and adjust its size, you can click on the \"Trim\" button and select the AOI with the sharp-clip option.",
+      "reason": "ok",
+      "f1": 0.2114,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 5.66
+    },
+    {
+      "id": "pi-043",
+      "question": "import pre defined tasks",
+      "answer": "To import pre-defined tasks, follow these steps:\n\n1. Ensure the project area is defined.\n2. Enable the \"Set tasks using uploaded polygons\" toggle.\n3. Upload the pre-defined tasks (e.g., GeoJSON, KML, or zipped shapefile).\n4. Confirm the tasks are imported and displayed.\n\nIf the evidence does not contain the detail being asked for, suggest a practical next step.",
+      "reason": "ok",
+      "f1": 0.2826,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.22
+    },
+    {
+      "id": "pi-044",
+      "question": "As a project manager, assign project to organisation + optional campaign(s) \u2014 what do I need to know?",
+      "answer": "To assign a project to an organisation and optionally a campaign, you need to know the following:\n\n- The project's unique ID (`project_id`).\n- The organisation's unique ID (`organisation_id`).\n- The campaign's unique ID (`campaign_id`), which is optional.\n- A valid session token for authentication.\n\nNext step: Use the POST /api/v2/projects/{project_id}/campaigns/{campaign_id}/ endpoint to assign the campaign to the project.",
+      "reason": "ok",
+      "f1": 0.303,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.4
+    },
+    {
+      "id": "pi-045",
+      "question": "What is set default changeset comment (`{default_changeset_comment}-{projectid} {custom}`) and how does it work?",
+      "answer": "The default changeset comment is a predefined template that is used when no custom comment is provided. It typically includes the project ID and a placeholder for a custom comment. The default comment is set by the system and is used to track changes in a specific project. When a user creates a changeset, if they do not provide a custom comment, the system uses the default comment. This helps in organizing and tracking changes within a project. \n\nNext step: Check the project ID in the changeset metadata to confirm the default comment is applied.",
+      "reason": "ok",
+      "f1": 0.2927,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.8
+    },
+    {
+      "id": "pi-046",
+      "question": "How do I edit project info locales (`name`, `shortdescription`, `description`, `instructions`, optional `pertaskinstructions`) with per-locale fallback?",
+      "answer": "The evidence does not provide specific instructions on editing project info locales with per-locale fallback. A practical next step is to check the Tasking Manager documentation for guidance on locale settings and project management.",
+      "reason": "ok",
+      "f1": 0.1975,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.81
+    },
+    {
+      "id": "pi-047",
+      "question": "I'm curious about set status (`draft`/`published`/`archived`) \u2014 publish triggers locale validation; draft visibility restricted \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The status in Tasking Manager can be set to `draft`, `published`, or `archived`. \n\n- **Draft**: Projects start in draft mode, where they are not discoverable and cannot be contributed to. This is ideal for testing and setting up the project.\n- **Published**: Projects are publicly listed and open for mapping/validation.\n- **Archived**: Projects are public but locked for contributions. They can be archived if the project is fully mapped, outdated, or no longer needed.\n\nPublishing a project triggers locale validation, ensuring that the project is ready for public use. Draft projects have restricted visibility, meaning they are not visible to the public.\n\n**Next step**: If you want to publish a project, ensure it is fully mapped and validated, and follow the steps to publish it.",
+      "reason": "ok",
+      "f1": 0.137,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.5
+    },
+    {
+      "id": "pi-048",
+      "question": "set metadata priority urgent",
+      "answer": "The metadata priority should be set to \"Urgent\".  \nNext, update the project metadata to reflect the \"Urgent\" priority.",
+      "reason": "ok",
+      "f1": 0.0984,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.34
+    },
+    {
+      "id": "pi-049",
+      "question": "As a project manager, configure priority areas (draw geojson polygons, highlighted on mapper map) \u2014 what do I need to know?",
+      "answer": "To configure priority areas, you need to know:\n\n1. The project's mapping area is defined (either by drawing or uploading a GeoJSON, KML, or zipped shapefile).\n2. You need to draw a polygon representing the mapping area in the map frame.\n3. Hold the right mouse button down to move the map without clicking, which will add a node.\n4. Click on your starting point to complete the polygon.\n\nNext step: Draw the polygon representing the mapping area in the map frame.",
+      "reason": "ok",
+      "f1": 0.1579,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.65
+    },
+    {
+      "id": "pi-050",
+      "question": "What is configure imagery: bing/custom url, `imagery` string, `id_presets`, `josm_preset`, `extra_id_params` and how does it work?",
+      "answer": "The `configure imagery` section in JOSM allows you to set up imagery sources, including Bing or custom URLs. The `imagery` string specifies the type of imagery (e.g., satellite, aerial), and `id_presets`, `josm_preset`, and `extra_id_params` are parameters that control how the imagery is displayed and interacted with. \n\nTo configure it, you would:\n1. Go to Preferences > Imagery.\n2. Select the imagery type (Bing or custom).\n3. Enter the URL for the imagery.\n4. Set parameters like `id_presets` and `josm_preset` as needed.\n5. Save the settings.\n\nNext step: Verify the configuration by adding the imagery in JOSM.",
+      "reason": "ok",
+      "f1": 0.2712,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.74
+    },
+    {
+      "id": "pi-051",
+      "question": "What is configure categories mapping types (`roads`/`buildings`/`waterways`/`land_use`/`other`) & interests and how does it work?",
+      "answer": "The configure categories mapping types (`roads`, `buildings`, `waterways`, `land_use`, `other`) and interests involve defining how different types of mapping (e.g., roads, buildings, waterways) are categorized and how they relate to interests (e.g., shops, abandoned buildings, etc.). This helps in organizing and understanding the mapping data.\n\nNext step: Check the project overview page for details on how these categories are configured and used.",
+      "reason": "ok",
+      "f1": 0.3333,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.47
+    },
+    {
+      "id": "pi-052",
+      "question": "Who can view a private project and who is blocked from seeing it?",
+      "answer": "Private projects are visible to users who are part of the project's team or have been granted access by the project administrator. Users who are not part of the team or have not been granted access are blocked from viewing the project. \n\nNext step: Check the project's team membership to determine who has access.",
+      "reason": "ok",
+      "f1": 0.2637,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.17
+    },
+    {
+      "id": "pi-053",
+      "question": "Which team roles can be linked to a project and what does each role allow?",
+      "answer": "Team roles that can be linked to a project are Mapper, Validator, and Project Manager. Each role allows the following:  \n- **Mapper**: Can find and select mapping projects to work on.  \n- **Validator**: Can validate data, but requires permission from the project administrator.  \n- **Project Manager**: Can assign teams, manage project access, and edit project metadata.",
+      "reason": "ok",
+      "f1": 0.3333,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.28
+    },
+    {
+      "id": "pi-054",
+      "question": "As a project manager, set allowed users for private projects (`project_allowed_users`) \u2014 what do I need to know?",
+      "answer": "As a project manager, to set allowed users for private projects (`project_allowed_users`), you need to know that this setting controls which users are permitted to map or validate data in private projects. You can configure this in the Tasking Manager interface under the project settings. \n\nNext step: Check the Tasking Manager interface to configure `project_allowed_users` for private projects.",
+      "reason": "ok",
+      "f1": 0.3095,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.49
+    },
+    {
+      "id": "pi-055",
+      "question": "What is choose editors per project: `mapping_editors` / `validation_editors` (id, josm, potlatch2, field papers, custom, rapid) and how does it work?",
+      "answer": "",
+      "reason": "error",
+      "f1": 0.0,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 361.35
+    },
+    {
+      "id": "pi-056",
+      "question": "What does the enforce random task selection toggle do for mappers?",
+      "answer": "The enforce random task selection toggle prevents mappers from selecting specific tasks for mapping.",
+      "reason": "ok",
+      "f1": 0.3158,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.22
+    },
+    {
+      "id": "pi-057",
+      "question": "I'm curious about manage custom editor (name/url/description, e.g. rapidid) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The Custom Editor feature in Tasking Manager allows users to add a custom editor to the settings menu. It enables linking to external editors like RapidID for mapping and validation. To use it, you need to define the editor in the settings menu and ensure the project manager allows the editor for mapping and validation. \n\nNext step: Define the custom editor in the settings menu and verify that the project manager permits the editor for mapping and validation.",
+      "reason": "ok",
+      "f1": 0.2,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.47
+    },
+    {
+      "id": "pi-058",
+      "question": "localize project info supported",
+      "answer": "The evidence does not contain information about localizing project info. A practical next step is to check the documentation or support resources for details on localizing project information.",
+      "reason": "ok",
+      "f1": 0.0784,
+      "abstained": true,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "pi-059",
+      "question": "As a project manager, clone project (`clonefromprojectid`, optional `sandbox`, `database` override) \u2014 what do I need to know?",
+      "answer": "To clone a project using the `clonefromprojectid` parameter, you need to know the following:\n\n- The `cloneFromProjectId` value: This is the ID of the project you want to clone.\n- The optional `sandbox` parameter: If set to `true`, the cloned project will be a sandbox project.\n- The optional `database` parameter: This specifies the database to use for the cloned project.\n\nNext step: Provide the `cloneFromProjectId` value and specify whether you want to clone a sandbox project and which database to use.",
+      "reason": "ok",
+      "f1": 0.2,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.92
+    },
+    {
+      "id": "pi-060",
+      "question": "What is save & test / publish (`projectstatus=published` triggers locale + licence validation) and how does it work?",
+      "answer": "Save and test: After setting up your project, press \"Save\" to save your changes. To publish, select `Project Page` and ensure `projectstatus=published`. This triggers locale and licence validation, ensuring translations and licenses are correct.\n\nNext step: Check your project carefully, ensure instructions are clear, and verify imagery loading and clarity.",
+      "reason": "ok",
+      "f1": 0.2338,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.76
+    },
+    {
+      "id": "pi-061",
+      "question": "What is message all contributors (broadcast to every mapper/validator on project, markdown \u2192 html, @-aware) and how does it work?",
+      "answer": "Message all contributors is a feature that sends a message to all mappers and validators associated with a project. It converts markdown content into HTML and makes the message @-aware, allowing it to be delivered to specific users. The message is sent via a POST request to the specified endpoint. \n\nNext step: Verify the message is sent by checking the project's Tasking Manager status.",
+      "reason": "ok",
+      "f1": 0.2268,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.94
+    },
+    {
+      "id": "pi-062",
+      "question": "I'm curious about feature / unfeature project (highlighted on explore page) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The feature highlighted on the Explore page is **Sandbox projects**. These projects are designed to allow users to practice mapping without affecting real-world data. Key aspects include:\n\n- **Environment selection**: Environment selection happens during project creation.\n- **Editors available**: Only the iD editor is enabled for sandbox projects.\n- **Data preservation**: Sandbox data is flushed monthly, and users can request preservation via a ticket.\n- **Priority**: All Sandbox projects default to low priority and cannot be changed.\n\nNext step: If you want to see specific details about sandbox projects, check the HOT Tasking Manager Organizations page.",
+      "reason": "ok",
+      "f1": 0.1705,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.75
+    },
+    {
+      "id": "pi-063",
+      "question": "transfer ownership project_id new",
+      "answer": "To transfer ownership of a project with the given `project_id` to a new user, follow these steps:\n\n1. Use the POST request to transfer ownership:  \n   `POST /api/v2/projects/{project_id}/actions/transfer-ownership`  \n   - Replace `{project_id}` with the actual project ID.  \n   - Include the base64 encoded session token in the headers.  \n   - Provide the new owner's username in the request body.  \n\nNext step: Execute the POST request with the correct parameters.",
+      "reason": "ok",
+      "f1": 0.2353,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.6
+    },
+    {
+      "id": "pi-064",
+      "question": "As a project manager, actions: `map_all_tasks`, `validate_all_tasks`, `invalidate_all_tasks`, `reset_all_badimagery`, `reset_all_tasks` (preserve history, zero counters) \u2014 what do I need to know?",
+      "answer": "As a project manager, to perform the specified actions, you need to know the following:\n\n- The `map_all_tasks` action sets the status of all tasks to \"mapped\".\n- The `validate_all_tasks` action sets the status of all tasks to \"validated\".\n- The `invalidate_all_tasks` action sets the status of all tasks to \"invalidated\".\n- The `reset_all_badimagery` action resets all tasks to their pristine state but preserves history tags.\n- The `reset_all_tasks` action resets all tasks to their pristine state but preserves history tags and zero counters.\n\nNext step: Confirm the project ID to perform these actions.",
+      "reason": "ok",
+      "f1": 0.2571,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.14
+    },
+    {
+      "id": "pi-065",
+      "question": "What is archive / publish / draft transitions + project lifecycle philosophy (responsive management, sequencing projects, imagery considerations, alignment) and how does it work?",
+      "answer": "Archive, publish, and draft transitions are part of the project lifecycle, where projects start as draft, move to published, and eventually archive. The philosophy emphasizes responsive management, sequencing projects, and considering imagery when planning. Projects must end in archive, and the lifecycle involves tracking progress, prioritizing, and ensuring relevance. The process includes manual archiving, managing multiple projects, and maintaining focus on relevant ones.",
+      "reason": "ok",
+      "f1": 0.14,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.47
+    },
+    {
+      "id": "pi-066",
+      "question": "What is delete project (only if no mapped work i.e. no tasks with status \u2260 `ready`) and how does it work?",
+      "answer": "The \"delete project\" action is not explicitly mentioned in the provided evidence. However, if a project has no mapped work (i.e., no tasks with status \u2260 `ready`), it can be deleted. To delete a project, you would need to confirm that there are no active tasks and then proceed with the deletion process.",
+      "reason": "ok",
+      "f1": 0.3542,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.24
+    },
+    {
+      "id": "pi-067",
+      "question": "I'm curious about `set-interests` and `intersecting-tiles` admin utilities \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The `set-interests` and `intersecting-tiles` utilities in Tasking Manager are used to manage the area of interest (AOI) and tile intersections for mapping projects. \n\n**How it works:**\n1. The `set-interests` utility allows you to define the area of interest (AOI) for a project, which determines which tiles are included in the mapping task.\n2. The `intersecting-tiles` utility retrieves the tiles that intersect with the AOI, which helps in efficiently distributing tasks to mappers.\n\n**Next step:**\nTo use these utilities, log in to Tasking Manager and navigate to the project settings to define the area of interest and manage tile intersections.",
+      "reason": "ok",
+      "f1": 0.2815,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.92
+    },
+    {
+      "id": "pi-068",
+      "question": "Who can view a private project and who is blocked from seeing it?",
+      "answer": "Private projects are visible to users who are part of the project's team or have been granted access by the project administrator. Users who are not part of the team or have not been granted access are blocked from viewing the project. \n\nNext step: Check the project's team membership to determine who has access.",
+      "reason": "ok",
+      "f1": 0.3186,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.53
+    },
+    {
+      "id": "pi-069",
+      "question": "As a project manager, mappability decision tree (`is_user_permitted_to_map`) \u2014 what do I need to know?",
+      "answer": "As a project manager, you need to know the validation rules for the project, including whether the user is allowed to map, and whether they have the necessary experience level to map. The validation rules are set by the project creator and depend on the project type. You should check the project's allowed users and validation permissions to determine if a user is permitted to map. If the user is not permitted, they cannot map the task. If they are permitted, they can map the task, but they must meet the required experience level. \n\nNext step: Check the project's allowed users and validation permissions to determine if a user is permitted to map.",
+      "reason": "ok",
+      "f1": 0.3164,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.71
+    },
+    {
+      "id": "pi-070",
+      "question": "What is validatability decision tree (`is_user_permitted_to_validate`) and how does it work?",
+      "answer": "The validatability decision tree (`is_user_permitted_to_validate`) is a system designed to determine whether a user is authorized to validate features in OpenStreetMap (OSM). It works by checking if the user has the necessary permissions based on their role, organization, or other criteria. The system ensures that only authorized users can validate features, maintaining data quality and integrity.\n\nNext step: Check the evidence for details about the validatability decision tree and its implementation.",
+      "reason": "ok",
+      "f1": 0.1982,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.66
+    },
+    {
+      "id": "pi-071",
+      "question": "What is team-gated permission model (`mappingpermission.teams=2`, `validationpermission.teams=2`) and how does it work?",
+      "answer": "The team-gated permission model (`mappingpermission.teams=2`, `validationpermission.teams=2`) restricts mapping and validation permissions to specific teams. When set to `2`, it means that only team members can perform mapping and validation actions on projects. This ensures that only authorized team members can edit or validate projects.\n\n**Next step:** If you want to configure this setting, check the project's configuration settings in the Tasking Manager.",
+      "reason": "ok",
+      "f1": 0.3364,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.68
+    },
+    {
+      "id": "pi-072",
+      "question": "I just started mapping \u2014 how do mapper levels and badges work and how do I level up?",
+      "answer": "The mapper levels and badges system is designed to recognize your contributions and skill level as you map. To level up, you need to:  \n1. Earn the required badges (e.g., Highways, Waterways, Buildings) by completing tasks.  \n2. Pass a human review by Tasking Manager admins or select Super Mappers.  \n\nNext step: Start mapping and complete tasks to earn badges and progress.",
+      "reason": "ok",
+      "f1": 0.1798,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.37
+    },
+    {
+      "id": "pi-073",
+      "question": "license gate license_id on",
+      "answer": "The evidence shows that the license gate accepts a license ID via a POST request to /api/v2/licenses/{license_id}/actions/accept-for-me. To use this, you would need to send a POST request with the license ID in the path.",
+      "reason": "ok",
+      "f1": 0.1282,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.06
+    },
+    {
+      "id": "pi-074",
+      "question": "Who can view a private project and who is blocked from seeing it?",
+      "answer": "Private projects are visible to users who are part of the project's team or have been granted access by the project administrator. Users who are not part of the team or have not been granted access are blocked from viewing the project. \n\nNext step: Check the project's team membership to determine who has access.",
+      "reason": "ok",
+      "f1": 0.3186,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.57
+    },
+    {
+      "id": "pi-075",
+      "question": "How can I view organisation profile (name, slug, logo, description, url, type, subscription_tier, managers, teams)?",
+      "answer": "To view the organisation profile, you can use the following methods:\n\n1. **GET /api/v2/organisations/{slug}** - Retrieve the organisation by its slug. This will return the profile information including name, slug, logo, description, url, type, subscription_tier, managers, and teams.\n\nNext step: Use the `GET /api/v2/organisations/{slug}` endpoint with the organisation's slug to fetch the profile details.",
+      "reason": "ok",
+      "f1": 0.2316,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.27
+    },
+    {
+      "id": "pi-076",
+      "question": "How do I create / update / delete organisation?",
+      "answer": "To create, update, or delete an organisation, you can use the following endpoints:\n\n1. **Create an organisation**:\n   - Use the POST endpoint: `POST /api/v2/organisations/`\n   - Provide the required parameters in the request body.\n\n2. **Update an organisation**:\n   - Use the PATCH endpoint: `PATCH /api/v2/organisations/{organisation_id}/`\n   - Provide the updated parameters in the request body.\n\n3. **Delete an organisation**:\n   - Use the DELETE endpoint: `DELETE /api/v2/organisations/{organisation_id}/`\n   - Ensure you have the correct organisation ID and valid credentials.\n\nNext step: Verify the organisation ID and credentials to proceed with the action.",
+      "reason": "ok",
+      "f1": 0.0917,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.41
+    },
+    {
+      "id": "pi-077",
+      "question": "I'm curious about manage organisation managers (`organisation_managers` join; at least one manager invariant) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The `organisation_managers` in Tasking Manager are responsible for managing projects and teams within an organization. They have the\u6743\u9650 to create and modify associated projects, and they can also manage teams. To manage organisation managers, you would need to log into the Tasking Manager interface and navigate to the `Manage` section in the main navigation. From there, you can add or remove organisation managers as needed.\n\n1. Log into the Tasking Manager interface.\n2. Navigate to the `Manage` section in the main navigation.\n3. Add or remove organisation managers as needed.",
+      "reason": "ok",
+      "f1": 0.1239,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.61
+    },
+    {
+      "id": "pi-078",
+      "question": "find projects filtering",
+      "answer": "The \"find projects filtering\" refers to the ability to search and filter projects in the Tasking Manager. You can use the Search and Filter options to narrow down the projects you want to work on. \n\nNext step: Explore the Search and Filter options in the Tasking Manager to find projects that match your needs.",
+      "reason": "ok",
+      "f1": 0.2308,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.99
+    },
+    {
+      "id": "pi-079",
+      "question": "As a mapper, create team within organisation \u2014 how does that apply to me?",
+      "answer": "As a mapper, you can create a team within your organization by following these steps:\n\n1. Log in to the Tasking Manager.\n2. Navigate to the \"Manage\" section in the main navigation.\n3. Select \"Teams\" to view and manage teams associated with your organization.\n4. Click \"Create Team\" to set up a new team.\n5. Define the team's name, description, and access settings (public or private).\n6. Save the team and assign it to your organization.\n\nIf you need further assistance, contact the technical maintainers of the Tasking Manager instance.",
+      "reason": "ok",
+      "f1": 0.2167,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.44
+    },
+    {
+      "id": "pi-080",
+      "question": "What is join team (request / auto-join / invite-only) and how does it work?",
+      "answer": "The \"join team\" process involves requesting access to a team, which can be done through an invite, auto-join, or invite-only setup. \n\n- **Join Team (Request / Auto-join / Invite-only):** This refers to the process of requesting access to a team. It can be done through an invite, auto-join, or invite-only setup, depending on the team's configuration.\n- **How It Works:** To join a team, you can either accept an invite sent to your email, auto-join if the team is configured to auto-join, or invite-only if the team is set to require an invitation.\n\nNext step: Check the team's configuration to determine if it is invite-only, auto-join, or requires an invitation.",
+      "reason": "ok",
+      "f1": 0.2452,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.84
+    },
+    {
+      "id": "pi-081",
+      "question": "How do I manage team members (add by username, update role manager/member, activate pending, reject/accept, invite, leave)?",
+      "answer": "To manage team members, you can use the following actions:\n\n1. **Add a member by username**: Use the `/api/v2/teams/{team_id}/actions/join` endpoint to accept or reject a team invite.\n2. **Update role (manager/member)**: Use the `/api/v2/teams/{team_id}/actions/add` endpoint to join a team and assign a role.\n3. **Activate pending members**: Use the `/api/v2/teams/{team_id}/actions/join` endpoint to accept pending invitations.\n4. **Reject/accept**: Use the `/api/v2/teams/{team_id}/actions/join` endpoint to reject or accept a team invite.\n5. **Invite a member**: Use the `/api/v2/teams/{team_id}/actions/join` endpoint to invite a member.\n6. **Leave a team**: Use the `/api/v2/teams/{team_id}/actions/leave` endpoint to remove a user from a team.\n\nNext step: Check the team's role and ensure you have the necessary permissions to manage members.",
+      "reason": "ok",
+      "f1": 0.1699,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.68
+    },
+    {
+      "id": "pi-082",
+      "question": "Which team roles can be linked to a project and what does each role allow?",
+      "answer": "Team roles that can be linked to a project are Mapper, Validator, and Project Manager. Each role allows the following:  \n- **Mapper**: Can find and select mapping projects to work on.  \n- **Validator**: Can validate data, but requires permission from the project administrator.  \n- **Project Manager**: Can assign teams, manage project access, and edit project metadata.",
+      "reason": "ok",
+      "f1": 0.3333,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.09
+    },
+    {
+      "id": "pi-083",
+      "question": "find projects filtering",
+      "answer": "The \"find projects filtering\" refers to the ability to search and filter projects in the Tasking Manager. You can use the Search and Filter options to narrow down the projects you want to work on. \n\nNext step: Explore the Search and Filter options in the Tasking Manager to find projects that match your needs.",
+      "reason": "ok",
+      "f1": 0.2308,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.46
+    },
+    {
+      "id": "pi-084",
+      "question": "As a project manager, view user detail (username, mapping_level, badges, stats, countries mapped, top causes/projects, activity timeline) \u2014 what do I need to know?",
+      "answer": "To view user details (username, mapping_level, badges, stats, countries mapped, top causes/projects, activity timeline) as a project manager, you need to ensure the following:\n\n1. **Project Permissions**: You must have access to the project's settings and permissions, which can be managed through the project's settings.\n2. **Expert Mode Enabled**: Live monitoring is available to all logged-in users who have expert mode enabled.\n3. **User Contributions**: Users must have at least one contribution (note or changeset) to be recognized.\n4. **Project Configuration**: Ensure the project is configured correctly, including the default data source and any necessary settings.\n\nNext step: Check your project settings to confirm expert mode is enabled and verify user contributions.",
+      "reason": "ok",
+      "f1": 0.2073,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.71
+    },
+    {
+      "id": "pi-085",
+      "question": "What is admin-only endpoints: organisation delete, team admin, banner, application, image upload, license/mapping-level/badge crud and how does it work?",
+      "answer": "Admin-only endpoints include organisation delete, team admin, banner, application, image upload, and license/mapping-level/badge crud. These endpoints require administrative privileges to access and modify. \n\nNext step: Verify if these endpoints are explicitly mentioned in the evidence.",
+      "reason": "ok",
+      "f1": 0.274,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.0
+    },
+    {
+      "id": "pi-086",
+      "question": "How can I view mapping levels (beginner \u2192 intermediate \u2192 advanced) and requirements (badges/stats thresholds)?",
+      "answer": "The mapping levels (beginner \u2192 intermediate \u2192 advanced) and requirements (badges/stats thresholds) can be viewed by checking the user's profile or project settings. To view the specific thresholds, navigate to the user's profile and look at the \"Badges\" section. If you need further details, provide the project name, and I will assist you.",
+      "reason": "ok",
+      "f1": 0.24,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.31
+    },
+    {
+      "id": "pi-087",
+      "question": "I just started mapping \u2014 how do mapper levels and badges work and how do I level up?",
+      "answer": "The mapper levels and badges system is designed to recognize your contributions and skill level as you map. To level up, you need to:  \n1. Earn the required badges (e.g., Highways, Waterways, Buildings) by completing tasks.  \n2. Pass a human review by Tasking Manager admins or select Super Mappers.  \n\nNext step: Start mapping and complete tasks to earn badges and progress.",
+      "reason": "ok",
+      "f1": 0.3261,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.25
+    },
+    {
+      "id": "pi-088",
+      "question": "badges earn by meeting",
+      "answer": "The badges earn by meeting the requirements specified in the badge's requirements field. \n\nNext step: Check the badge's requirements field to determine what criteria must be met to earn the badge.",
+      "reason": "ok",
+      "f1": 0.1538,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.25
+    },
+    {
+      "id": "pi-089",
+      "question": "As a project manager, project stats: percent mapped/validated, total tasks, mapped/validated/bad_imagery counts, `statsservice` counters \u2014 what do I need to know?",
+      "answer": "As a project manager, you need to know the following:\n- The percent mapped/validated for each project (e.g., Project 1882: 76% mapped, 1% validated).\n- The total number of tasks for each project (e.g., Project 1882 has 1 task).\n- The counts of mapped/validated/bad_imagery (e.g., 1 bad_imagery count).\n- The `statsservice` counters (e.g., project_stats: 100% mapped, 100% validated).\n\nNext step: Check the project stats in the Tasking Manager by navigating to the project details.",
+      "reason": "ok",
+      "f1": 0.3304,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.09
+    },
+    {
+      "id": "pi-090",
+      "question": "What is contribution timelines (`get_contribs_by_day`, per-day mapped/validated/invalidated with cumulative) and how does it work?",
+      "answer": "The contribution timelines show the number of mapped, validated, and invalidated contributions for each day. It displays cumulative counts for each day. To view it, navigate to the project information page and look at the Contributions Timeline graph. \n\n1. Check the project information page for the Contributions Timeline graph.  \n2. The graph will show the number of mapped, validated, and invalidated contributions for each day.",
+      "reason": "ok",
+      "f1": 0.3036,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.93
+    },
+    {
+      "id": "pi-091",
+      "question": "What is user stats (tasks mapped/validated/invalidated, projects_mapped list, countries contributed, interests stats, edits by numbers, elements mapped) and how does it work?",
+      "answer": "The user stats section in Tasking Manager provides detailed metrics about user contributions. It includes:\n\n- **Tasks Mapped/Validated/Invalidated**: These are tracked across different sections, such as the home page and individual user statistics.\n- **Projects Mapped List**: This shows the list of projects that the user has mapped or validated.\n- **Countries Contributed To**: This indicates the countries where the user has contributed to OpenStreetMap.\n- **Interests Stats**: These are the different types of mapping (e.g., roads, buildings, waterways, land use, other) that the user has contributed to.\n- **Edits by Numbers**: This shows the count of edits made by the user.\n\nThe data is sourced from the Tasking Manager backend and is updated regularly. The user can view these metrics under the \"My Contributions\" section. \n\nNext step: Check the \"My Contributions\" section in Tasking Manager to see the detailed stats.",
+      "reason": "ok",
+      "f1": 0.1935,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.88
+    },
+    {
+      "id": "pi-092",
+      "question": "I'm curious about project contributor leaderboard & activity feed (10/page, `projectactivitydto`, excludes `comment` from activity but separately fetchable) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The project contributor leaderboard and activity feed in Tasking Manager are designed to provide a comprehensive view of contributor activity and contributions. The leaderboard displays top contributors based on their activity, such as number of tasks completed, time spent, and other metrics. The activity feed shows recent actions, such as task assignments, validation status changes, and comments. The `projectactivitydto` is a data transfer object used to fetch this information. The activity feed excludes comments but can be separately fetched for more detailed insights. \n\nNext step: Check the `projectactivitydto` documentation to understand the specific fields and parameters used to fetch the leaderboard and activity feed.",
+      "reason": "ok",
+      "f1": 0.2797,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.98
+    },
+    {
+      "id": "pi-093",
+      "question": "download task project data",
+      "answer": "The \"download task project data\" can be done through the \"Download OSM Data\" section on each project's home page. This allows users to export pre-generated base map features in formats like GeoJSON, KML, and SHP. \n\nNext step: Navigate to the project's home page and locate the \"Download OSM Data\" section to initiate the download.",
+      "reason": "ok",
+      "f1": 0.1982,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.9
+    },
+    {
+      "id": "pi-094",
+      "question": "As a project manager, inbox / notifications (per user, `unread_count`, date stamping) \u2014 what do I need to know?",
+      "answer": "As a project manager, you need to know about notification settings, unread counts, and date stamping to manage your inbox effectively. \n\nNext step: Check the notification settings in your account to customize how you receive alerts and updates.",
+      "reason": "ok",
+      "f1": 0.1951,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.71
+    },
+    {
+      "id": "pi-095",
+      "question": "What is system messages (welcome, validation/invalidation, mention, broadcast, team broadcast, project chat, project activity) \u2014 markdown templates per `settings.org_code` and how does it work?",
+      "answer": "The evidence does not provide specific information about system messages, their templates, or how they work based on `settings.org_code`. A practical next step is to check the documentation or settings section of the Tasking Manager platform to find details about system messages and their configuration.",
+      "reason": "ok",
+      "f1": 0.1524,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.07
+    },
+    {
+      "id": "pi-096",
+      "question": "What is email verification + notification emails (`is_email_verified`, smtp `send_email_alert` per inserted message, batched with 0.5 s sleep per 10) and how does it work?",
+      "answer": "The email verification process involves resending a verification token to the user via the API endpoint `/api/v2/users/me/actions/verify-email`. This token is used to confirm the user's email address. The notification emails (`is_email_verified`) are sent via the `/api/v2/system/contact-admin` endpoint, where the system admin can send an email to the user. The `send_email_alert` function is used to send alerts, and it is batched with a 0.5-second sleep per 10 entries to manage the rate of email sends.\n\nNext step: Verify the email verification process by testing the `/api/v2/users/me/actions/verify-email` endpoint.",
+      "reason": "ok",
+      "f1": 0.175,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.35
+    },
+    {
+      "id": "pi-097",
+      "question": "I'm curious about @-mention parsing in task comments / project chat (parse username from comment, notify mentioned users excluding self) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The @-mention parsing in Tasking Manager works by extracting usernames from comment text and notifying the mentioned users, excluding the user themselves. This is typically handled by the system's parsing logic, which identifies patterns in the comment text to recognize usernames. The system then sends notifications to the identified users, ensuring they are informed of mentions in comments or project chat.\n\nNext step: Check if there are specific configurations or settings related to @-mention parsing in Tasking Manager.",
+      "reason": "ok",
+      "f1": 0.2143,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.67
+    },
+    {
+      "id": "pi-098",
+      "question": "project chat questions comments",
+      "answer": "The \"project chat questions comments\" refer to the \"Comments\" tab in the project page, where users can ask questions and leave comments. To access this, log into Tasking Manager, navigate to the project, and use the \"Comments\" tab. All comments are public and not live chat. If you need to add a comment, use the POST /api/v2/projects/{project_id}/comments/ endpoint.",
+      "reason": "ok",
+      "f1": 0.2906,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.53
+    },
+    {
+      "id": "pi-099",
+      "question": "As a validator, favorite / unfavorite project (`project_favorites` many-to-many; per-user project list) \u2014 what's the process?",
+      "answer": "As a validator, to favorite or unfavorite a project, you need to use the `/api/v2/projects/{project_id}/favorite` endpoint. The process involves:\n\n1. Obtain a valid session token (e.g., `Token sessionTokenHere==`).\n2. Use the `/api/v2/projects/{project_id}/favorite` endpoint with the project ID.\n3. Send a POST request to set a project as a favorite or a PUT request to unfavorite it.\n\nIf you need to validate a project, ensure you are in the appropriate validation team (e.g., HOT Global Validators) and follow the project's validation restrictions.",
+      "reason": "ok",
+      "f1": 0.1967,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.21
+    },
+    {
+      "id": "pi-100",
+      "question": "What is user interests & project interests assignment (many-to-many `user_interests`, `project_interests`) and how does it work?",
+      "answer": "User interests and project interests are many-to-many relationships that allow users to associate themselves with interests. User interests are stored in the `user_interests` table, while project interests are stored in the `project_interests` table. These relationships are created via API endpoints, such as `/api/v2/users/me/actions/set-interests/` for users and `/api/v2/projects/{project_id}/actions/set-interests/` for projects. The `interests` parameter in the request body is used to establish the connection. \n\nNext step: Verify the current status of user and project interest assignments using the `/api/v2/users/me/queries/interests/` endpoint.",
+      "reason": "ok",
+      "f1": 0.2083,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.81
+    },
+    {
+      "id": "pi-101",
+      "question": "What is recommended / similar projects (cosine similarity on `mapping_types`, `country`, `categories`, `difficulty`, `default_locale`) and how does it work?",
+      "answer": "The recommendation for similar projects based on cosine similarity on `mapping_types`, `country`, `categories`, `difficulty`, and `default_locale` is provided by the API endpoint `/api/v2/projects/queries/{project_id}/similar-projects/`. This endpoint returns similar projects that match the specified criteria. \n\nNext step: Check the project ID to see if the similar projects are returned based on the specified filters.",
+      "reason": "ok",
+      "f1": 0.2759,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.23
+    },
+    {
+      "id": "pi-102",
+      "question": "I'm curious about consume imagery per task (project `imagery` field, background toggle bing/custom, fallback to bing) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The imagery field in Tasking Manager allows you to specify the source for each task. If the imagery is listed in the dropdown, it is used; if not, you can choose \"Custom\" and add a TMS URL. If you're using OpenAerialMap, you can host your own imagery. The background toggle allows you to switch between Bing and custom imagery, with Bing being the default.\n\nHow it works:\n1. Choose the imagery source from the dropdown menu.\n2. If the imagery is not listed, select \"Custom\" and add a TMS URL.\n3. The system will use the specified imagery for each task.\n4. If you want to switch between Bing and custom imagery, use the background toggle.",
+      "reason": "ok",
+      "f1": 0.2166,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.59
+    },
+    {
+      "id": "pi-103",
+      "question": "imagery settings",
+      "answer": "The imagery settings in JOSM can be adjusted to customize how imagery is loaded. To modify settings, follow these steps:\n\n1. Go to the Preferences menu (Ctrl+Alt+P).\n2. Navigate to the WMS/TMS section.\n3. Check the box that says \"Store WMS endpoint only\" to enable custom layer selection.\n4. Save the changes and restart JOSM for the settings to take effect.",
+      "reason": "ok",
+      "f1": 0.2174,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.58
+    },
+    {
+      "id": "pi-104",
+      "question": "As a validator, id embedded editor (embed corecontext, locale, changeset comment, container `id-container`, history watch `therearechanges` \u2192 `setdisable`) \u2014 what's the process?",
+      "answer": "The process involves validating the embedded editor's core context, locale, changeset comment, `id-container`, and history watch `therearechanges` \u2192 `setdisable`. \n\nNext step: Validate the embedded editor's core context, locale, changeset comment, `id-container`, and history watch `therearechanges` \u2192 `setdisable`.",
+      "reason": "ok",
+      "f1": 0.2588,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.87
+    },
+    {
+      "id": "pi-105",
+      "question": "What is josm remote control / `extra_id_params` passthrough and how does it work?",
+      "answer": "The `extra_id_params` passthrough is a feature that allows additional parameters to be passed to JOSM when it controls the remote server. It enables the inclusion of custom parameters in the URL used to fetch map data. \n\n**How it works:**\n1. When you click a URL in the task manager, JOSM uses the `extra_id_params` to pass additional parameters to the remote server.\n2. These parameters can include things like map zoom levels, coordinates, or other custom data needed for the task.\n3. The `extra_id_params` are passed as part of the URL template, which is used to fetch the appropriate map data.\n\n**Next step:** If you want to see how `extra_id_params` are used in practice, check the task manager jobs for examples of URLs that include these parameters.",
+      "reason": "ok",
+      "f1": 0.129,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.41
+    },
+    {
+      "id": "pi-106",
+      "question": "What is rapid / custom editor injection (`custom_editor` relationship, `rapid_power_user` flag, `extraidparams`) and how does it work?",
+      "answer": "The `custom_editor` relationship, `rapid_power_user` flag, and `extraidparams` are configuration parameters used to customize the behavior of the RapiD editor. The `custom_editor` relationship allows linking to a custom editor, while the `rapid_power_user` flag enables poweruser mode, allowing unlimited feature addition. The `extraidparams` parameter adds custom parameters to the editor URL. These settings are typically configured in the project settings or through the editor URL.",
+      "reason": "ok",
+      "f1": 0.2778,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.28
+    },
+    {
+      "id": "pi-107",
+      "question": "I'm curious about preset filtering (`presetmanager.addablepresetids(null or presets)`) per project \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The `presetmanager.addablepresetids(null or presets)` functionality allows you to specify which presets are available for a project. Presets are predefined sets of features that can be assigned to individual objects during mapping. When you add presets to a project, they become available for use in the iD editor. \n\nIf you want to restrict which presets are available for a project, you can use this functionality to specify the allowed presets. This helps ensure that only the relevant presets are available to contributors, improving the efficiency and accuracy of mapping tasks.\n\nNext step: Check if the project has a specific preset list or if you need to define one.",
+      "reason": "ok",
+      "f1": 0.2143,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.07
+    },
+    {
+      "id": "pi-108",
+      "question": "task history per task",
+      "answer": "The task history table tracks the state changes for a task, not including invalidation. It contains a description of the status change, when it changed, and the user ID when the task is locked for mapping.\n\n1. Check the task history table to see the state changes for a specific task.\n2. Identify the status changes and the timestamps for each change.\n3. Note the user ID when the task was locked for mapping.",
+      "reason": "ok",
+      "f1": 0.2632,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.81
+    },
+    {
+      "id": "pi-109",
+      "question": "As a project manager, project activity feed (last 10 non-comment actions, paginated, `liverpool`-? actually `task_history` by `action_date desc`) \u2014 what do I need to know?",
+      "answer": "I need to know the project ID to fetch the task history. The feed includes last 10 non-comment actions, paginated, sorted by action_date descending. Next step: Check the project ID and use the API to fetch the task history.",
+      "reason": "ok",
+      "f1": 0.1856,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.02
+    },
+    {
+      "id": "pi-110",
+      "question": "What is contributions per user on project (`mapped_tasks_by_user`, `validated_by`, `project_participants`) and how does it work?",
+      "answer": "The evidence does not provide specific details about contributions per user on a project, such as `mapped_tasks_by_user`, `validated_by`, or `project_participants`. To find this information, you would need to check the project's contribution statistics or use the API to retrieve the data.",
+      "reason": "ok",
+      "f1": 0.2979,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.25
+    },
+    {
+      "id": "pi-111",
+      "question": "What is export mapped osm data via hot export tool / overpass (project-centric s3 path `hotosm_project_{id}/tm/.../{format}.zip`, feature-type split nodes/lines/polygons) and how does it work?",
+      "answer": "The export mapped OSM data via the HOT Export Tool includes pre-generated base map feature exports in GeoJSON, KML, and SHP formats, stored in the S3 path `hotosm_project_{id}/tm/.../{format}.zip`. The data is exported using the HOT Export Service, which allows users to select an area of interest, map features, and choose file formats. The data is then converted and filtered to meet the required format. \n\nThe data is exported using the Overpass service to extract specific layer features, which are then converted to the desired format (e.g., GeoJSON, KML, SHP). The feature-type split (nodes, lines, polygons) is handled by the export tool, ensuring the data is structured appropriately for GIS tools.\n\nNext step: Verify the S3 path and confirm the format compatibility with the export tool.",
+      "reason": "ok",
+      "f1": 0.2674,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.56
+    },
+    {
+      "id": "pi-112",
+      "question": "I'm curious about download aoi / task grid geojson (as_file true vs inline) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The download aoi and task grid geojson in Tasking Manager are handled through the `/api/v2/projects/{project_id}/queries/aoi/` endpoint. When `as_file` is set to `true`, the GeoJSON data is saved as a file instead of being rendered inline. When `as_file` is set to `false`, the GeoJSON is rendered directly in the browser. \n\nNext step: Check the project's settings to confirm the `as_file` parameter is configured correctly.",
+      "reason": "ok",
+      "f1": 0.2703,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.99
+    },
+    {
+      "id": "pi-113",
+      "question": "data license governance project",
+      "answer": "The data license governance project involves managing and ensuring compliance with open government licenses. The project aims to standardize the use of public sector data under the Open Government Licence v3.0. \n\nNext step: Review the evidence to identify specific data sources and their licensing terms.",
+      "reason": "ok",
+      "f1": 0.241,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.77
+    },
+    {
+      "id": "pi-114",
+      "question": "As a project manager, rest api v2 (`/api/v2/` fastapi, openapi at `api_docs` / swagger / `swagger.js`) \u2014 what do I need to know?",
+      "answer": "The API documentation provides information about the available endpoints and their purposes. To understand what you need to know, you should:\n\n1. Review the Swagger UI documentation at `GET /api/v2/system/docs/json` to understand the available endpoints and their descriptions.\n2. Check the project summary endpoint at `GET /api/v2/projects/{project_id}/queries/summary/` to get information about specific projects.\n3. Use the partner list endpoint at `GET /api/v2/projects/{project_id}/partners/` to retrieve information about partners associated with a project.\n4. Access project statistics at `GET /api/v2/projects/{project_id}/statistics/` to get statistical data about a project.\n5. Get task annotations for a project at `GET /api/v2/projects/{project_id}/annotations/` to retrieve annotations related to tasks.\n\nNext step: Review the Swagger UI documentation at `GET /api/v2/system/docs/json` to understand the available endpoints and their descriptions.",
+      "reason": "ok",
+      "f1": 0.1132,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.68
+    },
+    {
+      "id": "pi-115",
+      "question": "What is application key / oauth application flow (if used: pass-through osm oauth + session token) and how does it work?",
+      "answer": "The application key/OAuth application flow involves creating an application key for a user to access OSM Cha API. The process includes:\n\n1. Using the POST /api/v2/system/authentication/applications/ endpoint to create an application key.\n2. The system generates a base64 encoded session token (default: Token sessionTokenHere==).\n3. The application key is returned as a JSON response with a 200 status code.\n4. The application key is used to authorize API requests by including the token in the header.\n\nHow does it work? The application key is generated by the system and used to authenticate API requests. The token is base64 encoded and included in the header to authorize access to the OSM Cha API.",
+      "reason": "ok",
+      "f1": 0.1324,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.1
+    },
+    {
+      "id": "pi-116",
+      "question": "What is canonical error surface: http 400/401/403/404/409/500 with json `{error, subcode}` (subcode stable, text may change) and how does it work?",
+      "answer": "The canonical error surface for HTTP status codes 400/401/403/404/409/500 with JSON `{error, subcode}` includes:\n\n- **400 (Bad Request)**: If the text field was not present\n- **401 (Unauthorized)**: If the user is not authenticated\n- **403 (Forbidden)**: If the user is not authenticated and the coordinates fall within a Moderation Zone\n- **404 (Not Found)**: If the request is not a HTTP POST request\n- **409 (Conflict)**: If the changeset in question has already been closed\n- **500 (Internal Server Error)**: If there are errors parsing the XML\n\nThe error messages may change, but the subcode remains stable. The system returns JSON with `error` and `subcode` to provide structured error information.\n\nNext step: Verify if the system supports the `error, subcode` format for the specified status codes.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.88
+    },
+    {
+      "id": "pi-117",
+      "question": "I'm curious about imagery troubleshooting (empty task imagery, missing `gpxurl`, missing presets) fallbacks: bing default, reset offset to [0,0], `addablepresetids(null)`, log \u201cerror loading gpx data\u201d \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The tasking manager does not have a direct fallback mechanism for empty task imagery, missing `gpxurl`, missing presets, or other specific issues. The system does not support custom fallbacks for these specific errors. To address this, you can check the tasking manager's documentation or contact the support team for further assistance.",
+      "reason": "ok",
+      "f1": 0.2286,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.54
+    },
+    {
+      "id": "pi-118",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.129,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.26
+    },
+    {
+      "id": "pi-119",
+      "question": "As a validator, support channel: project chat \u2192 manager message \u2192 inbox; no built-in helpdesk, falls back to working-groups / learnosm docs \u2014 what's the process?",
+      "answer": "The process for supporting as a validator involves the following steps:\n\n1. Use project chat to communicate with the project manager.  \n2. If the project manager does not respond, send a message to the relevant working group (e.g., #quality_wg in HOTOSM Slack).  \n3. If the issue persists, refer to the learnosm documentation for guidance.  \n\nNo built-in helpdesk is available, so direct communication with the project manager or working group is recommended.",
+      "reason": "ok",
+      "f1": 0.254,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.71
+    },
+    {
+      "id": "pi-120",
+      "question": "What is mapswipe project tasks derived from mapswipe user-group contributions (task creation `has_arbitrary_tasks`, `tasks_from_aoi_features` with `issquare=false`) + stats sync via graphql/csrf flow and how does it work?",
+      "answer": "MapSwipe project tasks are derived from user-group contributions where users create tasks through specific API endpoints like `has_arbitrary_tasks` and `tasks_from_aoi_features` with `issquare=false`. These tasks are generated based on user input and are synchronized with the backend using a GraphQL/CSRF flow. The system validates and processes these tasks to ensure they meet mapping standards before uploading them to OpenStreetMap. \n\nNext step: Verify the exact API endpoints and their usage in the Tasking Manager interface.",
+      "reason": "ok",
+      "f1": 0.1748,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.86
+    },
+    {
+      "id": "pi-121",
+      "question": "What is partner management (`partners` table: `primary_hashtag`, `secondary_hashtag`, `logo_url`, permalink, website_links, link_meta/x/instagram, current_projects) crud and how does it work?",
+      "answer": "The `partners` table in the HotTM system manages partner relationships with the following CRUD operations:\n\n- **Create (POST)**: Adds a new partner with details like name, primary/secondary hashtags, logo URL, website links, and metadata.\n- **Read (GET)**: Retrieves information about a specific partner by its permalink.\n- **Update (PUT)**: Modifies an existing partner's details, such as name, hashtags, links, and project associations.\n- **Delete (DELETE)**: Removes a partner from the system.\n\n**How it works**:\n- Partners are created using the `POST /api/v2/partners/` endpoint.\n- Partners can be updated using the `PUT /api/v2/partners/{partner_id}/` endpoint.\n- Partners can be retrieved using the `GET /api/v2/partners/{permalink}/` endpoint.\n- Partners can be associated with projects using the `POST /api/v2/projects/partnerships/` endpoint.\n\n**Next step**: If you need to create or update a partner, use the appropriate endpoints and provide the necessary details.",
+      "reason": "ok",
+      "f1": 0.1333,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.87
+    },
+    {
+      "id": "pi-122",
+      "question": "I'm looking for a project to map but I don't know where to start \u2014 how do I search and filter available projects?",
+      "answer": "You can use the Search and Filter options to find projects. Here's how:\n\n1. Click on \"Search Projects\" to enter a project number or search text.\n2. Use the \"Difficulty level\" filter to find projects matching your experience level.\n3. Use the \"Any project\" filter to select a project to map or validate.\n4. Use the \"More filters\" section to add additional filters like Campaign, Organization, Location, or Interests.\n5. Sort the results as needed.\n\nNext, click on \"Explore Projects\" on the top bar to start searching.",
+      "reason": "ok",
+      "f1": 0.1714,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.35
+    },
+    {
+      "id": "pi-123",
+      "question": "How does database federation work for projects like OpenHistoricalMap?",
+      "answer": "The evidence does not contain specific details about database federation for projects like OpenHistoricalMap. A practical next step is to check the project's documentation or contact the project maintainers for clarification.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.75
+    },
+    {
+      "id": "pi-124",
+      "question": "As a project manager, sandbox projects (`sandbox=true`) \u2014 isolated practice projects \u2014 what do I need to know?",
+      "answer": "As a project manager, sandbox projects (`sandbox=true`) are isolated practice projects. You need to know:\n\n- Sandbox projects are isolated and cannot be switched between Sandbox and OSM database after creation.\n- Sandbox projects default to low priority and cannot be changed.\n- Sandbox data is flushed monthly and must be preserved by raising a ticket.\n- Sandbox projects use the ID editor only and cannot use other editors.\n- Sandbox projects have a clear sandbox indicator badge and are filtered separately.\n\nNext step: Check if your project is set to sandbox and ensure you are aware of the isolation and data management rules.",
+      "reason": "ok",
+      "f1": 0.2203,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.78
+    },
+    {
+      "id": "pi-125",
+      "question": "What is private projects (`private boolean` + `project_allowed_users` union + team gating) visibility enforcement across get / task grid / csv and how does it work?",
+      "answer": "The visibility enforcement for private projects is handled as follows:\n\n- **Get Request**: Private projects are visible to users who are part of the teams defined in the project settings (e.g., HOT Global Validators and Validator Trainees). This is enforced by checking the user's team membership and ensuring they have the necessary permissions (e.g., Mapping or Validation).\n- **Task Grid**: Private projects are not visible to users outside the defined teams. The task grid will not display any tasks from private projects unless the user is part of the authorized teams.\n- **CSV Export**: Private projects are not included in CSV exports, as they are hidden from all users except those in the authorized teams.\n- **Team Gating**: Private projects are gated by team membership. Only users in the defined teams can access the project, and they must have the appropriate permissions (Mapping or Validation) to interact with the project.\n\n**Next Step**: Verify the visibility enforcement by checking the project settings and testing access for authorized teams.",
+      "reason": "ok",
+      "f1": 0.2667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.26
+    },
+    {
+      "id": "pi-126",
+      "question": "What is osm oauth scope (limited access grant via osm auth, `osm_client_id` + `osm_server_url`, `osm_redirect_uri`, changeset push authorization) and how does it work?",
+      "answer": "The OSM OAuth scope for limited access grant involves using `osm_client_id` and `osm_server_url` with a redirect URI (`osm_redirect_uri`). It allows a user to authorize a specific application to access their data. The process works as follows:\n\n1. The user logs in to OSM and grants permission to the application.\n2. The application receives an `osm_client_id` and `osm_server_url` from OSM.\n3. The application uses the `osm_redirect_uri` to redirect the user to a login page.\n4. The user authorizes the application, and OSM returns a token.\n5. The application uses the token to make API calls to OSM.\n\nHow does it work? It uses OAuth 2.0 to authenticate and authorize access to user data. The application requests access to specific permissions (e.g., read preferences, write API) and stores the token for subsequent requests.",
+      "reason": "ok",
+      "f1": 0.1401,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.83
+    },
+    {
+      "id": "pi-127",
+      "question": "Which team roles can be linked to a project and what does each role allow?",
+      "answer": "Team roles that can be linked to a project are Mapper, Validator, and Project Manager. Each role allows the following:  \n- **Mapper**: Can find and select mapping projects to work on.  \n- **Validator**: Can validate data, but requires permission from the project administrator.  \n- **Project Manager**: Can assign teams, manage project access, and edit project metadata.",
+      "reason": "ok",
+      "f1": 0.1842,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.27
+    },
+    {
+      "id": "pi-128",
+      "question": "pii handling city country",
+      "answer": "The question is about handling PII (Personal Identifiable Information) for a city and country. The evidence does not provide specific details on PII handling. A practical next step is to consult the documentation or guidelines related to PII handling for cities and countries.",
+      "reason": "ok",
+      "f1": 0.1212,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.79
+    },
+    {
+      "id": "pi-129",
+      "question": "For my role, how does learn pathway hub (`/learn` with 4 tracks: learn to map \u2192 map, validate, manage, plus video/tutorials) linking to learnosm manuals and hot working groups work?",
+      "answer": "The learn pathway hub (`/learn`) links to learnosm manuals and HOT working groups. It includes four tracks: learn to map, map, validate, and manage. These tracks provide step-by-step guides, video tutorials, and resources for contributing to OpenStreetMap and participating in HOT initiatives. \n\nNext step: Verify the specific links and resources for your role.",
+      "reason": "ok",
+      "f1": 0.3571,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.02
+    },
+    {
+      "id": "pi-130",
+      "question": "What is license acceptance interstitial (project has `license_id`; user must accept `licenses.plain_text` before mapping) and how does it work?",
+      "answer": "The license acceptance interstitial is a step where a user must accept the license terms before mapping. It ensures that the user has agreed to the terms before proceeding with any mapping actions. The user must accept the `licenses.plain_text` field, which is a plain text version of the license terms, to proceed with mapping. \n\nNext step: Verify if the user has accepted the license terms by checking the `licenses.plain_text` field.",
+      "reason": "ok",
+      "f1": 0.2353,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.8
+    },
+    {
+      "id": "pi-131",
+      "question": "What is system languages / translations (i18n via `system/languages/`, `fetchlocaljsonapi('system/languages/')`; 27 locales `en, fr, de, pt_br \u2026` + editor assets `assetpath '/static/id/' .locale(locale)`) and how does it work?",
+      "answer": "The system supports 27 locales (en, fr, de, pt_br, etc.) and provides translations via the `/api/v2/system/languages/` endpoint. The `fetchlocaljsonapi('system/languages/')` endpoint retrieves the list of supported languages. The system uses locale parameters to display content in different languages, such as `de` for German, `fr` for French, and `pt_br` for Brazilian Portuguese. The `assetpath '/static/id/' .locale(locale)` dynamically generates the correct path for assets based on the current locale.\n\nNext step: Verify the supported locales and ensure the system is configured to handle the desired language settings.",
+      "reason": "ok",
+      "f1": 0.2969,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.38
+    },
+    {
+      "id": "pi-132",
+      "question": "I just started mapping \u2014 how do mapper levels and badges work and how do I level up?",
+      "answer": "The mapper levels and badges system is designed to recognize your contributions and skill level as you map. To level up, you need to:  \n1. Earn the required badges (e.g., Highways, Waterways, Buildings) by completing tasks.  \n2. Pass a human review by Tasking Manager admins or select Super Mappers.  \n\nNext step: Start mapping and complete tasks to earn badges and progress.",
+      "reason": "ok",
+      "f1": 0.0882,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.52
+    },
+    {
+      "id": "pi-133",
+      "question": "mapping types feature type",
+      "answer": "The \"mapping types\" feature type refers to the different ways features can be mapped in a project, such as buildings, roads, and waterways. The type of mapping affects the size of the task squares required for each feature. \n\nNext step: Check the \"Types of mapping\" section for detailed information on available mapping types.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.72
+    },
+    {
+      "id": "pi-134",
+      "question": "As a project manager, josm preset / `id_presets` management (per-project preset allow-list; rapid power user toggle) \u2014 what do I need to know?",
+      "answer": "The iD Presets management allows project managers to control which presets are available to contributors per project. Project managers need to know that presets are added to a project via the project settings, and contributors can toggle presets on/off using the preset toggle button. For rapid power user toggle, project managers can enable or disable presets directly in the project settings.\n\n1. Add presets to the project via the project settings.\n2. Contributors can toggle presets on/off using the preset toggle button.\n3. Project managers can enable or disable presets directly in the project settings.",
+      "reason": "ok",
+      "f1": 0.1325,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.61
+    },
+    {
+      "id": "pi-135",
+      "question": "What is changeset comment templating includes `default_changeset_comment` prefix plus user-custom suffix \u2192 used for osmcha filter linkage and ohsome hashtag analytics (`hashtag=%2a`) and how does it work?",
+      "answer": "The changeset comment templating includes `default_changeset_comment` prefix plus user-custom suffix, used for OSMCha filter linkage and OHSome hashtag analytics (`hashtag=%2a`). It works by combining a default template with user-defined suffixes to generate unique identifiers for changesets, which are then used in OSMCha filters and OHSome hashtag analytics. \n\nNext step: Verify if the `default_changeset_comment` prefix is correctly implemented in OSMCha filters and OHSome hashtag analytics.",
+      "reason": "ok",
+      "f1": 0.2569,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.78
+    },
+    {
+      "id": "pi-136",
+      "question": "enforce_random_task_selection true forces random",
+      "answer": "enforce_random_task_selection: true forces random task selection for mapping. Next step: Check if the setting is enabled in the project's configuration.",
+      "reason": "ok",
+      "f1": 0.2941,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.95
+    },
+    {
+      "id": "pi-137",
+      "question": "imagery settings",
+      "answer": "The imagery settings in JOSM can be adjusted to customize how imagery is loaded. To modify settings, follow these steps:\n\n1. Go to the Preferences menu (Ctrl+Alt+P).\n2. Navigate to the WMS/TMS section.\n3. Check the box that says \"Store WMS endpoint only\" to enable custom layer selection.\n4. Save the changes and restart JOSM for the settings to take effect.",
+      "reason": "ok",
+      "f1": 0.0964,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.09
+    },
+    {
+      "id": "pi-138",
+      "question": "save edits to osm",
+      "answer": "To save edits to OpenStreetMap (OSM), follow these steps:\n\n1. Connect to the internet.\n2. Open JOSM and select the area you want to edit.\n3. Make your edits in JOSM.\n4. Click on the \"File\" menu and select \"Upload Data.\"\n5. Enter a comment describing your edits.\n6. Click \"Upload Changes\" and authenticate with your OSM username and password if needed.\n7. Wait a few seconds for your changes to be uploaded.\n8. Your edits are now saved to OSM.\n\nIf you don't see your changes, try refreshing the page (Ctrl+R).",
+      "reason": "ok",
+      "f1": 0.2459,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.84
+    },
+    {
+      "id": "pi-139",
+      "question": "manage team members add",
+      "answer": "To manage team members and add them, you can use the following steps:\n\n1. Use the POST /api/v2/teams/{team_id}/actions/add endpoint to add a team member.\n2. Ensure you have the correct team ID and the member's details.\n3. Send a POST request with the member's username and role.\n\nIf you need to add multiple members, use the same endpoint and repeat the process.",
+      "reason": "ok",
+      "f1": 0.2381,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.62
+    },
+    {
+      "id": "pi-140",
+      "question": "What languages does Tasking Manager support and how does translation fallback work?",
+      "answer": "Tasking Manager supports multiple languages, but the exact list is not specified in the evidence. To find out which languages are supported, you can check the `SUPPORTED_LANGUAGES` dictionary in the config file. \n\nNext step: Check the `SUPPORTED_LANGUAGES` dictionary in the config file to determine the supported languages.",
+      "reason": "ok",
+      "f1": 0.1892,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.68
+    },
+    {
+      "id": "pi-141",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.129,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.01
+    },
+    {
+      "id": "pi-142",
+      "question": "I'm curious about view task grid (colour-coded by taskstatus), priority-areas overlay \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The Tasking Manager displays a grid of tasks colored according to their status. Uncolored tasks are ready and available for mapping, pale blue for validation, yellow for more mapping needed, green for mapped and validated, and grey squares are not available. Priority areas are highlighted for volunteers to prioritize, and if they select 'Map a task', it will randomly select a task from the priority area first.\n\nNext step: Check the Tasking Manager's map key for details on priority areas and task statuses.",
+      "reason": "ok",
+      "f1": 0.1458,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.17
+    },
+    {
+      "id": "pi-143",
+      "question": "mapper levels",
+      "answer": "The mapper levels determine the difficulty level displayed for your project. They can be set to Easy, Moderate, or Challenging. \n\nNext step: Check the project's current mapper level using the API.",
+      "reason": "ok",
+      "f1": 0.1587,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.44
+    },
+    {
+      "id": "pi-144",
+      "question": "feature unfeature project highlighted",
+      "answer": "To unfeature a project highlighted, use the `/api/v2/projects/{project_id}/actions/remove-feature/` endpoint.  \nReason: This endpoint is used to unset a project as featured tags.  \nNext step: Identify the project ID and call the endpoint with the project ID as the parameter.",
+      "reason": "ok",
+      "f1": 0.2651,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.04
+    },
+    {
+      "id": "pi-145",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.2017,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.99
+    },
+    {
+      "id": "pi-146",
+      "question": "I'm looking for a project to map but I don't know where to start \u2014 how do I search and filter available projects?",
+      "answer": "You can use the Search and Filter options to find projects. Here's how:\n\n1. Click on \"Search Projects\" to enter a project number or search text.\n2. Use the \"Difficulty level\" filter to find projects matching your experience level.\n3. Use the \"Any project\" filter to select a project to map or validate.\n4. Use the \"More filters\" section to add additional filters like Campaign, Organization, Location, or Interests.\n5. Sort the results as needed.\n\nNext, click on \"Explore Projects\" on the top bar to start searching.",
+      "reason": "ok",
+      "f1": 0.2692,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.75
+    },
+    {
+      "id": "pi-147",
+      "question": "find projects filtering",
+      "answer": "The \"find projects filtering\" refers to the ability to search and filter projects in the Tasking Manager. You can use the Search and Filter options to narrow down the projects you want to work on. \n\nNext step: Explore the Search and Filter options in the Tasking Manager to find projects that match your needs.",
+      "reason": "ok",
+      "f1": 0.2381,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.76
+    },
+    {
+      "id": "pi-148",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.2656,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.28
+    },
+    {
+      "id": "pi-149",
+      "question": "edit geometry in id",
+      "answer": "To edit geometry in iD, follow these steps:\n\n1. Open iD in your web browser.\n2. Select the object you want to edit (e.g., a way or relation).\n3. Click on the \"Edit\" button to open the editor.\n4. Use the \"Edit geometries\" feature to adjust the geometry of the object.\n5. Save your changes and exit the editor.",
+      "reason": "ok",
+      "f1": 0.1707,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.49
+    },
+    {
+      "id": "pi-150",
+      "question": "find projects filtering",
+      "answer": "The \"find projects filtering\" refers to the ability to search and filter projects in the Tasking Manager. You can use the Search and Filter options to narrow down the projects you want to work on. \n\nNext step: Explore the Search and Filter options in the Tasking Manager to find projects that match your needs.",
+      "reason": "ok",
+      "f1": 0.2308,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.57
+    },
+    {
+      "id": "pi-151",
+      "question": "lock task for mapping",
+      "answer": "To lock a task for mapping, use the following steps:\n\n1. Send a POST request to the API endpoint:  \n   `POST /api/v2/projects/{project_id}/tasks/actions/lock-for-mapping/{task_id}`  \n   with the required parameters:  \n   - `project_id` (path, required)  \n   - `task_id` (path, required)  \n\n2. Include the Base64 encoded session token in the header.  \n   Example: `Authorization: Basic Token sessionTokenHere==`  \n\n3. The task will be locked, and a 2-hour countdown will start.  \n   After 2 hours, the task will be automatically released.",
+      "reason": "ok",
+      "f1": 0.129,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.26
+    },
+    {
+      "id": "pi-152",
+      "question": "system messages welcome validation",
+      "answer": "The system messages welcome validation refers to the process of sending a welcome message to users when they first join the system. This can be done using the `/api/v2/system/banner` endpoint to update the welcome message. \n\nTo update the welcome message:\n1. Send a PATCH request to `/api/v2/system/banner` with the message in markdown format (max 255 characters) and set `visible: true` to make it visible.",
+      "reason": "ok",
+      "f1": 0.2124,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.87
+    },
+    {
+      "id": "pi-153",
+      "question": "view project public vs",
+      "answer": "The terms \"public\" and \"private\" refer to the visibility and accessibility of a project. A \"public\" project is open for mapping and validation by the wider community, while a \"private\" project is restricted to authorized users only. \n\nNext step: Clarify whether the project is public or private and adjust settings accordingly.",
+      "reason": "ok",
+      "f1": 0.2574,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.59
+    },
+    {
+      "id": "pi-154",
+      "question": "imagery settings",
+      "answer": "The imagery settings in JOSM can be adjusted to customize how imagery is loaded. To modify settings, follow these steps:\n\n1. Go to the Preferences menu (Ctrl+Alt+P).\n2. Navigate to the WMS/TMS section.\n3. Check the box that says \"Store WMS endpoint only\" to enable custom layer selection.\n4. Save the changes and restart JOSM for the settings to take effect.",
+      "reason": "ok",
+      "f1": 0.15,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.01
+    },
+    {
+      "id": "pi-155",
+      "question": "I'm curious about imagery offset from `extra_id_params` (`offset=10,-10` \u2192 `geometerstooffset`) and reset when absent \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The imagery offset in Tasking Manager is a parameter that adjusts the position of the aerial imagery relative to the map. When you set `offset=10,-10`, it tells the system to shift the imagery by 10 meters in the x-direction and -10 meters in the y-direction. This adjustment is applied to the entire project area, ensuring that the imagery aligns with the map.\n\nIf the `offset` parameter is absent, the system will reset the imagery to its default position, which is typically based on the reference imagery (like Bing Aerial Imagery). \n\n**Next step:** Check if the `offset` parameter is present in the task settings to adjust the imagery alignment.",
+      "reason": "ok",
+      "f1": 0.25,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.86
+    },
+    {
+      "id": "pi-156",
+      "question": "notifications inbox",
+      "answer": "The \"notifications inbox\" refers to the section where users can view and manage their notifications. The evidence shows several endpoints related to notifications, including endpoints for updating notification datetime, counting unread messages, deleting multiple notifications, and marking messages as read. These endpoints are part of the Tasking Manager API.\n\nNext step: Check the endpoints related to notifications to understand how to interact with the inbox.",
+      "reason": "ok",
+      "f1": 0.1702,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.97
+    },
+    {
+      "id": "pi-157",
+      "question": "mapping issue annotation on",
+      "answer": "The term \"mapping issue annotation\" refers to annotations added to maps to highlight potential issues. These annotations are often used in the context of mapping tools like iD or Tasking Manager to indicate problems such as overlapping highways, incorrect tag values, or other inconsistencies.\n\nIf you are looking for specific annotations or want to check for potential issues, you can use the iD editor's \"checking feature\" or review the warnings and annotations in the Tasking Manager interface. \n\nNext step: Check the iD editor's \"checking feature\" to identify potential issues in your mapped area.",
+      "reason": "ok",
+      "f1": 0.1103,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.14
+    },
+    {
+      "id": "pi-158",
+      "question": "I'm curious about license gate (`license_id` on project \u2192 `user_licenses` check \u2192 `userlicenseerror`) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The license gate (`license_id` on project \u2192 `user_licenses` check \u2192 `userlicenseerror`) in Tasking Manager ensures that a user can only accept a license if they are authorized to do so. This is done by checking if the user has accepted the license terms for the specific license ID associated with the project. If the user has not accepted the license terms, the system returns a 401 Unauthorized error. \n\nNext step: Provide the user with the steps to accept a license in the Tasking Manager interface.",
+      "reason": "ok",
+      "f1": 0.1481,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.79
+    },
+    {
+      "id": "pi-159",
+      "question": "random task selection vs",
+      "answer": "The question is incomplete. Please provide the full question.",
+      "reason": "ok",
+      "f1": 0.0741,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.1
+    },
+    {
+      "id": "pi-160",
+      "question": "editors iD JOSM",
+      "answer": "iD and JOSM are two popular editors for OpenStreetMap. iD is an online editor that allows you to edit maps directly in your browser, while JOSM is a desktop editor that offers more advanced features. \n\nNext step: Check the status of the task to see if it is open for editing with either editor.",
+      "reason": "ok",
+      "f1": 0.1667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.24
+    },
+    {
+      "id": "pi-161",
+      "question": "Can a mapper manage users or change another person's profile?",
+      "answer": "No, a mapper cannot manage users or change another person's profile. The evidence indicates that mappers can only send messages to users and view their recent edits, but they cannot modify user accounts or profiles.",
+      "reason": "ok",
+      "f1": 0.1556,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.88
+    },
+    {
+      "id": "pi-162",
+      "question": "Can a guest lock a task for mapping without logging in?",
+      "answer": "No, a guest cannot lock a task for mapping without logging in. Guests must log in to lock tasks. Next step: Verify if the guest has logged in before attempting to lock a task.",
+      "reason": "ok",
+      "f1": 0.2121,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.32
+    },
+    {
+      "id": "pi-163",
+      "question": "Can a project manager validate their own mapping the same way an administrator can?",
+      "answer": "No, a project manager cannot validate their own mapping the same way an administrator can. Project managers have access to project settings and can manage teams, but they do not have the same level of validation permissions as administrators. Administrators have broader control over validation and editing permissions for projects. \n\nNext step: Check if the project has validation permissions set to \"Only team members\" to ensure project managers can validate their own mapping.",
+      "reason": "ok",
+      "f1": 0.3304,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.14
+    },
+    {
+      "id": "pi-164",
+      "question": "Can a regular mapper create a new project?",
+      "answer": "Yes, a regular mapper can create a new project. \n\nReason: Mappers are able to login to the Tasking Manager to find and select a mapping project to work on. \n\nNext step: Click on `Manage` in the navigation on the top, and click on the `Add` button to create one.",
+      "reason": "ok",
+      "f1": 0.3,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.99
+    },
+    {
+      "id": "pi-165",
+      "question": "Can a mapper view a private project they aren't on the allowed list for?",
+      "answer": "No, a mapper cannot view a private project they aren't on the allowed list for. \n\nNext step: Check if the mapper is part of the team listed in the project's settings.",
+      "reason": "ok",
+      "f1": 0.3409,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "pi-166",
+      "question": "Can a validator lock a task that is still in Ready state for validation?",
+      "answer": "Yes, a validator can lock a task that is still in Ready state for validation. The lock action is applicable to tasks in any state, including Ready. The lock action ensures that the task is locked for validation, preventing unauthorized modifications until it is unlocked.\n\nNext step: Verify the current status of the task to confirm it is in Ready state.",
+      "reason": "ok",
+      "f1": 0.2667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.3
+    },
+    {
+      "id": "pi-167",
+      "question": "Can a blocked read-only user still map tasks?",
+      "answer": "A blocked user cannot map tasks. Blocked users are restricted from performing certain actions, including mapping, due to community guidelines and moderation policies. If you believe a user should be unblocked, you can request this through the appropriate channels.",
+      "reason": "ok",
+      "f1": 0.1373,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.5
+    },
+    {
+      "id": "pi-168",
+      "question": "Can guests post comments on tasks?",
+      "answer": "Yes, guests can post comments on tasks. The API endpoint `/api/v2/projects/{project_id}/comments/tasks/{task_id}/` allows adding comments outside of mapping/validation tags, implying that guest accounts have access to this functionality. \n\nNext step: Verify if the guest account has the necessary permissions by checking the project's access settings.",
+      "reason": "ok",
+      "f1": 0.1867,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.02
+    },
+    {
+      "id": "pi-169",
+      "question": "Can a mapper delete a project that has already been mapped?",
+      "answer": "Yes, a mapper can delete a project that has already been mapped, but only if the project has not been deleted by another user. The `Delete Project` option is available for projects that have not been deleted by any contributors. \n\nNext step: Check if the project has been deleted by other users or if the user has the necessary permissions to delete it.",
+      "reason": "ok",
+      "f1": 0.3265,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.12
+    },
+    {
+      "id": "pi-170",
+      "question": "Can a user edit another user's profile?",
+      "answer": "Yes, users can edit each other's profiles on OpenStreetMap. \n\nReason: The evidence shows that users can send messages to other users and view their recent edits, indicating they can interact with and edit other users' profiles.\n\nNext step: If you want to edit another user's profile, you can visit their user page by entering their username in the browser address bar.",
+      "reason": "ok",
+      "f1": 0.3023,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.88
+    },
+    {
+      "id": "pi-171",
+      "question": "Can anyone change mapper levels manually or is it automatic?",
+      "answer": "The mapper levels are automatically set based on the project's difficulty and the contributor's experience. You cannot change mapper levels manually.",
+      "reason": "ok",
+      "f1": 0.1463,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.85
+    },
+    {
+      "id": "pi-172",
+      "question": "Can an anonymous user favorite a project?",
+      "answer": "An anonymous user cannot favorite a project because the API requires a valid session token for authentication. The endpoint requires a base64 encoded session token in the header. \n\nNext step: Check if the user has a valid session token to proceed.",
+      "reason": "ok",
+      "f1": 0.1587,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "faq-173",
+      "question": "Why did my task lock disappear after I left it open?",
+      "answer": "The task lock may have disappeared because the session token expired or the user left the task open without unlocking it. To prevent this, ensure you unlock the task before leaving it open.",
+      "reason": "ok",
+      "f1": 0.2373,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.29
+    },
+    {
+      "id": "faq-174",
+      "question": "I mapped a task but a validator marked it invalid \u2014 how do I see what was wrong?",
+      "answer": "To see what was wrong with the task, follow these steps:\n\n1. Go to the Tasking Manager.\n2. Find the task that was marked invalid.\n3. Click on the task to view its details.\n4. Check the validation feedback provided in the Tasking Manager.\n\nIf the task is still locked, you need to unlock it first.",
+      "reason": "ok",
+      "f1": 0.1818,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.45
+    },
+    {
+      "id": "faq-175",
+      "question": "How do I know if my mapping passed validation?",
+      "answer": "To determine if your mapping passed validation, check the task status in Tasking Manager. If the task is marked as \"Validated,\" it means the mapping has been reviewed and confirmed to be complete and of good quality. If not, further action may be required. \n\nNext step: Check the task status in Tasking Manager.",
+      "reason": "ok",
+      "f1": 0.2268,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.71
+    },
+    {
+      "id": "faq-176",
+      "question": "Can I map in JOSM instead of iD? How do I set it up?",
+      "answer": "Yes, you can map in JOSM instead of iD. To set it up, follow these steps:\n\n1. Install JOSM if you haven't already.  \n2. Open JOSM and go to the \"Settings\" menu.  \n3. In the \"Preferences\" section, select \"Map Editor\" and choose \"JOSM\" as your preferred editor.  \n4. Restart JOSM for the changes to take effect.  \n\nThis allows you to use JOSM for mapping, similar to iD, with additional features and customization options.",
+      "reason": "ok",
+      "f1": 0.1875,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.8
+    },
+    {
+      "id": "faq-177",
+      "question": "Where do I find the changeset comment I should use?",
+      "answer": "The changeset comment should be written in the changeset upload section of the editor. You can find the exact comment instructions in the OpenStreetMap documentation. \n\nNext step: Check the OpenStreetMap documentation for the exact instructions on writing changeset comments.",
+      "reason": "ok",
+      "f1": 0.2564,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.63
+    },
+    {
+      "id": "faq-178",
+      "question": "I got an error 'UserLicenseError' when trying to map \u2014 what do I do?",
+      "answer": "The error 'UserLicenseError' indicates that the user has not accepted the license terms. To resolve this, you need to accept the license terms before proceeding with your mapping.\n\nNext step: Accept the license terms by visiting the OpenStreetMap website or using the appropriate interface.",
+      "reason": "ok",
+      "f1": 0.2188,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.96
+    },
+    {
+      "id": "faq-179",
+      "question": "How do I get notified when someone mentions me in a comment?",
+      "answer": "The question is about how to get notified when someone mentions you in a comment. Based on the evidence provided, there is no direct information about notification settings for mentions. A practical next step is to check the notification settings in your account settings.",
+      "reason": "ok",
+      "f1": 0.2667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.13
+    },
+    {
+      "id": "faq-180",
+      "question": "What's the difference between mapping permission ANY vs TEAMS?",
+      "answer": "The difference between mapping permission \"ANY\" vs \"TEAMS\" is as follows:\n\n- **ANY**: All users (including non-mappers) can map the project. This is the most permissive setting.\n- **TEAMS**: Only specific teams (defined by the project creator) can map the project. Teams must be defined separately and have appropriate permissions.\n\nNext step: If you want to set up a team, use the \"Add teams\" feature in the Tasking Manager.",
+      "reason": "ok",
+      "f1": 0.3529,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.72
+    },
+    {
+      "id": "faq-181",
+      "question": "How do I undo my last mapping submission?",
+      "answer": "To undo your last mapping submission, follow these steps:\n\n1. Go to the project where your submission was made.\n2. Locate the task associated with your submission.\n3. Click the \"Undo\" button to revert your changes.\n4. Confirm the action to complete the undo.\n\nIf you need further assistance, let me know the project name.",
+      "reason": "ok",
+      "f1": 0.243,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.4
+    },
+    {
+      "id": "faq-182",
+      "question": "Why can't I see a project my friend shared \u2014 it says private?",
+      "answer": "The project is private, so it is not visible to all users. You can check if your friend is part of the teams defined for private projects. If they are, they should be able to see the project. If not, they may need to request access.",
+      "reason": "ok",
+      "f1": 0.3301,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.78
+    },
+    {
+      "id": "faq-183",
+      "question": "How do I find projects that match my interests?",
+      "answer": "To find projects that match your interests, follow these steps:\n\n1. Use the \"Any project\" filter in the Search Projects section to specify your interests.\n2. Enter your interest in the \"Filter by interest on project\" field.\n3. Sort the results by your interests to see projects that match your interests.\n\nNext step: Check the \"Filter by interest on project\" field in the Search Projects section to specify your interests.",
+      "reason": "ok",
+      "f1": 0.2342,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.36
+    },
+    {
+      "id": "faq-184",
+      "question": "What are mapper levels and do they affect what I can map?",
+      "answer": "Mapper levels determine the difficulty level displayed for your project. They affect what you can map by adjusting the complexity of the tasks, but they do not change who can contribute to the project. They are based on your mapping experience and skill level. \n\nNext step: Check the \"Mapper level\" section in the evidence to see how it affects your mapping capabilities.",
+      "reason": "ok",
+      "f1": 0.2391,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.01
+    },
+    {
+      "id": "faq-185",
+      "question": "How does the Tasking Manager relate to OpenStreetMap?",
+      "answer": "The Tasking Manager is a tool used to coordinate mapping on OpenStreetMap. It helps organize volunteers and groups to map geographic areas by dividing them into manageable tasks. It provides a platform for collaborative mapping, ensuring consistency and quality by offering instructions for mappers. The Tasking Manager is part of the OpenStreetMap ecosystem and is used by both humanitarian organizations and other communities to manage mapping projects.",
+      "reason": "ok",
+      "f1": 0.4,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.09
+    },
+    {
+      "id": "faq-186",
+      "question": "Where can I see my mapping statistics and contributions?",
+      "answer": "You can see your mapping statistics and contributions under the \"My Contributions\" section in Tasking Manager. \n\nNext step: Check your profile in Tasking Manager to view your statistics and contributions.",
+      "reason": "ok",
+      "f1": 0.1839,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.45
+    },
+    {
+      "id": "faq-187",
+      "question": "What is MapSwipe and how does it relate to Tasking Manager tasks?",
+      "answer": "MapSwipe is a mobile application developed by MSF and HeiGIT as part of the Missing Maps project. It helps users identify locations with buildings, highways, etc., by swiping through imagery. MapSwipe is designed to simplify the process of contributing to OpenStreetMap, allowing users to focus on areas that need mapping without spending hours scanning difficult terrains. \n\nMapSwipe relates to Tasking Manager tasks by providing a tool for users to contribute to OSM through a minimalistic approach, making it accessible to those without prior OSM experience. Tasking Manager tasks can be linked to MapSwipe contributions, enabling users to submit their findings directly through the app. \n\nNext step: Check if MapSwipe contributions are linked to specific Tasking Manager tasks.",
+      "reason": "ok",
+      "f1": 0.1314,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.78
+    },
+    {
+      "id": "faq-188",
+      "question": "How do I export data I've mapped for use outside Tasking Manager?",
+      "answer": "To export data you've mapped for use outside Tasking Manager, follow these steps:\n\n1. Use the OSM Export Tool provided by Tasking Manager.  \n2. Navigate to the \"Download OSM Data\" section for your project.  \n3. Select the format (GeoJSON, KML, SHP, or others as listed).  \n4. Download the exported data.  \n\nIf you need further assistance, let me know the specific project name.",
+      "reason": "ok",
+      "f1": 0.354,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.04
+    },
+    {
+      "id": "faq-189",
+      "question": "Who can create a project \u2014 can any mapper do it?",
+      "answer": "Yes, any mapper can create a project. \n\nReason: Mappers have the basic permission to create projects, but some projects may be restricted based on their state or team assignments.\n\nNext step: Check if any specific projects are restricted or require special permissions.",
+      "reason": "ok",
+      "f1": 0.1481,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.08
+    },
+    {
+      "id": "faq-190",
+      "question": "I keep getting 'ProjectNotPublished' \u2014 why?",
+      "answer": "The 'ProjectNotPublished' error occurs when the project is not published, which is required for mapping. Check if the project is published and try again. \n\nNext step: Verify if the project is published by checking the project details.",
+      "reason": "ok",
+      "f1": 0.1311,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.63
+    },
+    {
+      "id": "pi-173",
+      "question": "As a validator, how do I lock tasks for validation and what states must they be in?",
+      "answer": "To lock tasks for validation, you need to use the `/api/v2/projects/{project_id}/tasks/actions/lock-for-validation` endpoint. The tasks must be in the \"Ready for validation\" state. \n\nNext step: Use the provided endpoint to lock tasks for validation.",
+      "reason": "ok",
+      "f1": 0.2632,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.78
+    },
+    {
+      "id": "pi-174",
+      "question": "Who is allowed to validate tasks and who is blocked by level, team, or license?",
+      "answer": "Who can validate tasks? Validation is restricted to users with intermediate or advanced level mappers, and teams with appropriate permissions. Users who are blocked include those who marked the same task as 'mapped' and are from the same project. If a project creator chooses \"Any user,\" then all users are allowed to validate, but this is not recommended. If a project creator chooses \"Teams,\" then only the specified teams are allowed to validate. \n\nNext step: Check the project settings to confirm validation permissions.",
+      "reason": "ok",
+      "f1": 0.3014,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.78
+    },
+    {
+      "id": "pi-175",
+      "question": "Can a validator validate their own mapping, or will it be blocked?",
+      "answer": "A validator cannot validate their own mapping, as per the first rule: \"irrespective of experience level, a contributor is blocked from validating the same task that they marked as 'mapped'.\" This restriction applies to all tasks, and the project creator sets the validation permissions. \n\nNext step: Check the project's validation settings to confirm the specific restriction.",
+      "reason": "ok",
+      "f1": 0.3125,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.68
+    },
+    {
+      "id": "pi-176",
+      "question": "How does a validator mark a task as invalidated and add mapping issue categories?",
+      "answer": "The validator marks a task as invalidated by updating the Task Invalidation History table, which tracks when the task was invalidated and when the issue is resolved. To add mapping issue categories, the validator uses the POST /api/v2/tasks/issues/categories/ endpoint to create new categories. \n\n1. Use the POST endpoint to create a new mapping-issue category.\n2. Provide the required parameters, such as name and description.\n3. Send the request with a valid session token.",
+      "reason": "ok",
+      "f1": 0.3548,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.1
+    },
+    {
+      "id": "pi-177",
+      "question": "What is the lifecycle of an invalidation history entry and when does it close?",
+      "answer": "The lifecycle of an invalidation history entry begins when a validator invalidates a task. It remains in the invalid state until the issue is resolved. Once resolved, the entry transitions to a closed state. The entry closes when the issue is resolved, and the system no longer tracks it. \n\nNext step: Check the invalidation history table for specific entries to confirm the lifecycle.",
+      "reason": "ok",
+      "f1": 0.3036,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.73
+    },
+    {
+      "id": "pi-178",
+      "question": "How should I use OSMCha to check quality after validation?",
+      "answer": "OSMCha is used to check quality after validation by examining changesets and filtering by user or experience level. To use OSMCha for quality checks:\n\n1. Open OSMCha via the Tasking Manager's main project page or an individual task.\n2. Filter changesets by \"New mapper\" to identify beginner mappers.\n3. Inspect changesets for suspicious edits or inconsistencies.\n4. Open changesets directly in JOSM to review any changes made later.\n\nNext step: Ensure you are using the correct filter and view changesets for quality checks.",
+      "reason": "ok",
+      "f1": 0.2519,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.75
+    },
+    {
+      "id": "pi-179",
+      "question": "What tagging should I expect and how do presets affect validation?",
+      "answer": "You should expect to follow the tagging guidelines listed in the Task Manager under the \"Instructions\" section. Presets affect validation by providing a standardized set of tags that should be used, but they do not eliminate validation issues. You should check the geographic area's OSM wiki page for guidelines and use consistent tagging. \n\n1. Follow the tagging guidelines listed in the Task Manager under \"Instructions\".\n2. Check the geographic area's OSM wiki page for guidelines.\n3. Use consistent tagging.",
+      "reason": "ok",
+      "f1": 0.2308,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.74
+    },
+    {
+      "id": "pi-180",
+      "question": "What does NotReadyForValidation or CannotValidateMappedTask mean when I try to validate?",
+      "answer": "NotReadyForValidation means the task is not MAPPED, BADIMAGERY, or INVALIDATED, so it cannot be validated. CannotValidateMappedTask means the task is not mapped by the same user who marked it as mapped or there is bad imagery. \n\nNext step: Check if the task is mapped or has bad imagery to determine the reason for the error.",
+      "reason": "ok",
+      "f1": 0.1609,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.0
+    },
+    {
+      "id": "pi-181",
+      "question": "As a validator, how do I stop validating and revert a lock without marking?",
+      "answer": "To stop validating and revert a lock without marking, you can use the `POST /api/v2/projects/{project_id}/tasks/actions/stop-validation` endpoint. This action unlocks the task and resets it to its last status. \n\nNext step: Send a POST request to the endpoint with the appropriate parameters.",
+      "reason": "ok",
+      "f1": 0.2857,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "pi-182",
+      "question": "How can a validator leave feedback for the mapper after invalidating?",
+      "answer": "The validator can leave feedback using the comment section in the Tasking Manager. \n\nNext step: Check the Tasking Manager interface to locate the comment section for the specific task.",
+      "reason": "ok",
+      "f1": 0.0789,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.25
+    },
+    {
+      "id": "pi-183",
+      "question": "Who can create a new project and what organization role is required?",
+      "answer": "Who can create a new project: Organization managers. The required role is Organization Manager.",
+      "reason": "ok",
+      "f1": 0.3636,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.25
+    },
+    {
+      "id": "pi-184",
+      "question": "How do I define the area of interest when creating a project \u2014 draw vs upload?",
+      "answer": "How do I define the area of interest when creating a project \u2014 draw vs upload?\n\nThe answer is: You may choose between defining the area of interest by either drawing it manually or uploading a file.\n\nNext step: If you want to draw the area of interest, click on the `Draw` button on the left and use the mouse to draw a polygon that tightly frames the area of interest.",
+      "reason": "ok",
+      "f1": 0.45,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.1
+    },
+    {
+      "id": "pi-185",
+      "question": "How do I define the task grid, resize tasks, trim to AOI, and discard tiny tasks?",
+      "answer": "To define the task grid, resize tasks, trim to AOI, and discard tiny tasks, follow these steps:\n\n1. **Define the task grid**: In the Tasking Manager interface, set the mapping area by defining the project area.\n2. **Resize tasks**: After determining task sizes, resize tasks by trimming those that do not overlap your project area.\n3. **Trim to AOI**: Enable the \"Trim the tasks to define the exact Area of Interest for mapping\" option before trimming to sharpen the edge of your area of interest.\n4. **Discard tiny tasks**: After trimming, if you encounter a message about tasks smaller than 2,000m\u00b2, select \"Discard\" to remove them.\n\nNext, ensure your project does not exceed 1,000 tasks to avoid hitting the maximum limit of 5,000 tasks.",
+      "reason": "ok",
+      "f1": 0.2876,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.13
+    },
+    {
+      "id": "pi-186",
+      "question": "How do I assign an organization and optional campaign when creating a project?",
+      "answer": "To assign an organization and optional campaign when creating a project, follow these steps:\n\n1. Use the POST /api/v2/projects/{project_id}/campaigns/{campaign_id}/ endpoint to assign a campaign to a project.\n2. If you want to assign an organization, use the POST /api/v2/organisations/{organisation_id}/campaigns/{campaign_id}/ endpoint.\n3. Ensure you have the correct project and campaign IDs, and use the appropriate session token for authentication.",
+      "reason": "ok",
+      "f1": 0.2963,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.52
+    },
+    {
+      "id": "pi-187",
+      "question": "How do I configure general information per language for a project?",
+      "answer": "To configure general information per language for a project, follow these steps:\n\n1. Go to the project settings.\n2. Navigate to the \"Long Description\" section.\n3. Add or edit the text fields to provide details about the project, collaborators, and expected impact.\n4. If you want to add a translation, click on the two-letter language code and enter the translated text.\n5. Save the changes.\n\nIf you need further assistance, please specify which project you are referring to.",
+      "reason": "ok",
+      "f1": 0.2314,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.56
+    },
+    {
+      "id": "pi-188",
+      "question": "What does publishing a project validate \u2014 which fields must be complete?",
+      "answer": "Publishing a project in HOT validates the project's metadata and configuration, ensuring that it meets the required standards. The fields that must be complete include the project name, description, and any specific requirements set by the project creator. If any of these fields are missing or incomplete, the project cannot be published. \n\nNext step: Check the project's metadata to ensure all required fields are complete before publishing.",
+      "reason": "ok",
+      "f1": 0.2975,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.26
+    },
+    {
+      "id": "pi-189",
+      "question": "How do I set mapping and validation team restrictions and minimum levels?",
+      "answer": "To set mapping and validation team restrictions and minimum levels, follow these steps:\n\n1. Go to the project settings in Tasking Manager.\n2. Under \"Validation permissions,\" choose \"Teams\" and select the desired teams.\n3. Set the minimum level for validation to \"Advanced mapper\" or \"Super Mapper\" as needed.\n4. Save the changes.\n\nIf you need to set up your organization on HOT's Tasking Manager, contact the technical maintainers.",
+      "reason": "ok",
+      "f1": 0.3604,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.26
+    },
+    {
+      "id": "pi-190",
+      "question": "How do I assign a team to a project with MAPPER, VALIDATOR, or PROJECT_MANAGER role?",
+      "answer": "To assign a team to a project with a specific role (MAPPER, VALIDATOR, or PROJECT_MANAGER), follow these steps:\n\n1. Use the API endpoint: `POST /api/v2/projects/{project_id}/teams`\n2. In the request body, specify the role (e.g., \"MAPPER\", \"VALIDATOR\", \"PROJECT_MANAGER\").\n3. Include the team ID in the path as a parameter.\n4. Send the request with a valid session token (base64 encoded).\n\nNext step: Verify the project ID and team ID to ensure they are correct before making the request.",
+      "reason": "ok",
+      "f1": 0.313,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.61
+    },
+    {
+      "id": "pi-191",
+      "question": "How do I clone a project and what happens to the clone's status and author?",
+      "answer": "To clone a project, follow these steps:\n\n1. Use the `cloneFromProjectId` parameter in the request body to specify the project you want to clone.\n2. Set the `sandbox` parameter to `true` if you want to create a sandbox clone.\n3. Set the `database` parameter to the desired environment (e.g., \"dev\", \"prod\").\n\nWhen cloning a project, the clone will inherit the same status and author as the original project. The clone will be a duplicate with the same settings, but the actual data will be new. The clone will be in the same state as the original project, including any tasks, priorities, and areas of interest.",
+      "reason": "ok",
+      "f1": 0.2114,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.26
+    },
+    {
+      "id": "pi-192",
+      "question": "How do I run bulk operations like invalidate all validated tasks or reset bad imagery?",
+      "answer": "To run bulk operations like invalidate all validated tasks or reset bad imagery, follow these steps:\n\n1. Identify the project ID.\n2. Use the appropriate API endpoint with the correct parameters.\n3. Send a POST request with the required parameters (project_id and session token).\n4. Handle the response to confirm the operation was successful.\n\nExample: To invalidate all validated tasks in a project with ID `123`, use the endpoint `POST /api/v2/projects/123/tasks/actions/invalidate-all/`.",
+      "reason": "ok",
+      "f1": 0.3025,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.06
+    },
+    {
+      "id": "pi-193",
+      "question": "Can an administrator manage users, organizations, and teams \u2014 what is admin-only?",
+      "answer": "An administrator can manage users, organizations, and teams. Admin-only refers to the fact that certain actions or features are restricted to administrators only.",
+      "reason": "ok",
+      "f1": 0.1667,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.37
+    },
+    {
+      "id": "pi-194",
+      "question": "Search projects by #1234 identifier \u2014 how does text search work?",
+      "answer": "The text search functionality allows you to search for projects by entering a specific identifier, such as #1234. The search is case-insensitive and uses regular expressions for matching. \n\nNext step: Check if the identifier #1234 exists in the projects list by searching using the text search feature.",
+      "reason": "ok",
+      "f1": 0.2472,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.61
+    },
+    {
+      "id": "pi-195",
+      "question": "How do I use the world map with clusters to find projects geographically?",
+      "answer": "The world map with clusters allows you to find projects geographically. To use it, follow these steps:\n\n1. Open the Tasking Manager and navigate to the world map view.\n2. Use the clusters to zoom in on specific regions or areas of interest.\n3. Click on a cluster to view the project details, including its location and status.\n4. Select a project by clicking on its link from the map.\n\nIf you need further assistance, let me know!",
+      "reason": "ok",
+      "f1": 0.2376,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.76
+    },
+    {
+      "id": "pi-196",
+      "question": "What prerequisites do I need before I can start mapping \u2014 do I need to be logged in and accept a license?",
+      "answer": "You need to be logged in to OpenStreetMap.org before you can use the Tasking Manager. You do not need to accept a license, but you must have an OpenStreetMap account to access the Tasking Manager. \n\nNext step: Log in to OpenStreetMap.org using your account.",
+      "reason": "ok",
+      "f1": 0.2472,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.92
+    },
+    {
+      "id": "pi-197",
+      "question": "I want to validate \u2014 what level and team membership do I need beforehand?",
+      "answer": "To validate, you need to meet the following requirements:  \n1. **Level**: You must be an Advanced Mapper or higher (as defined by the project creator).  \n2. **Team Membership**: You must be part of a validated team (e.g., Validator Trainees or HOT Global Validators).  \n\nIf you are a new mapper, you may need to complete additional training or meet the project creator's validation restrictions.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.32
+    },
+    {
+      "id": "pi-198",
+      "question": "What are the preconditions for publishing a project \u2014 which info must be filled in first?",
+      "answer": "The preconditions for publishing a project include filling in the following information first:  \n1. Project description  \n2. Instructions  \n3. Metadata  \n\nNext step: Fill in the project description and instructions carefully to ensure clarity and data quality.",
+      "reason": "ok",
+      "f1": 0.2529,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.51
+    },
+    {
+      "id": "pi-199",
+      "question": "What restrictions prevent me from locking a second task when I already hold one?",
+      "answer": "The restriction prevents you from locking a second task when you already hold one because the task is locked for mapping. You can only unlock a task that is locked for mapping. \n\nNext step: Check if the task is locked for mapping and try unlocking it before locking a new task.",
+      "reason": "ok",
+      "f1": 0.3871,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.87
+    },
+    {
+      "id": "pi-200",
+      "question": "Why can't I split a task \u2014 what are the size and state restrictions?",
+      "answer": "The error messages indicate that tasks cannot be split due to size and state restrictions. The size restrictions include tasks that are too small to be split, and the state restrictions include tasks that are in invalid states for mapping. \n\nNext step: Check the task size and state to determine why it cannot be split.",
+      "reason": "ok",
+      "f1": 0.2472,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.0
+    },
+    {
+      "id": "pi-201",
+      "question": "Are there restrictions on deleting a project that already has mapped tasks?",
+      "answer": "Yes, there are restrictions on deleting a project that already has mapped tasks. The evidence indicates that deleting a project is permanent and cannot be reversed, and it is not possible to delete a project after any contributions have been made to it. \n\nNext step: Check if there are specific restrictions mentioned in the evidence related to deleted projects.",
+      "reason": "ok",
+      "f1": 0.2718,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.99
+    }
+  ],
+  "summary": {
+    "cases": 219,
+    "answered": 218,
+    "answered_pct": 99.5,
+    "abstentions": 1,
+    "abstention_pct": 0.5,
+    "f1_mean": 0.2346,
+    "f1_median": 0.2332,
+    "latency_mean_s": 4.1,
+    "latency_p50_s": 2.3,
+    "latency_p95_s": 3.8,
+    "errors": 1
+  },
+  "model": "ollama/qwen3:1.7b",
+  "api_base": "http://host.docker.internal:11434",
+  "wall_seconds": 899.6
+}

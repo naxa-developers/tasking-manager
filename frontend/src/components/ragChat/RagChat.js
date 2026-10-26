@@ -38,12 +38,15 @@ export const RagChat = () => {
     setError(null);
     try {
       const data = await getRagSession(token, locale, id);
-      const serverMessages = data.messages || [];
+      // The API returns turns (question + answer), not role-tagged messages.
+      const turns = data.turns || [];
       setMessages(
-        serverMessages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
+        turns
+          .flatMap((t) => [
+            { role: 'user', content: t.question },
+            { role: 'assistant', content: t.answer },
+          ])
+          .filter((m) => m.content),
       );
     } catch (err) {
       setError(err?.response?.data?.Error || err?.message || 'Failed to load session');
@@ -194,7 +197,7 @@ export const RagChat = () => {
               >
                 <div className="f6 b truncate">{s.title || 'New chat'}</div>
                 <div className="f7 o-50 flex justify-between items-center mt1">
-                  <span>{s.message_count || 0} msgs</span>
+                  <span>{s.turn_count || 0} turns</span>
                   <button
                     className="bn bg-transparent red pointer f7"
                     onClick={(e) => {

@@ -1,0 +1,141 @@
+{
+  "mode": "kb",
+  "rows": [
+    {
+      "id": "pi-001",
+      "question": "How do I create osm account and log in via osm oauth?",
+      "answer": "To create an OSM account and log in via OSM OAuth:  \n1. Go to [https://www.openstreetmap.org/user/new](https://www.openstreetmap.org/user/new).  \n2. Fill in your email address, choose a display name (e.g., real name or space-separated name), and set a password.  \n3. Confirm your email by clicking the link in the confirmation message.  \n4. Agree to the Contributor Terms (select \"Rest of the world\" unless you're in France/Italy).  \n5. Click \"Accept\" to proceed.  \n\n**Next step:** If you already have an account, log in via the OSM homepage (e.g., click \"Log in\" on the Tasking Manager homepage).",
+      "reason": "ok",
+      "f1": 0.2946,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 14.92
+    },
+    {
+      "id": "pi-002",
+      "question": "I'm curious about bearer token session management (6-hour session expiry, 120 s validation window) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The bearer token session management in Tasking Manager involves generating a base64 encoded session token via the `gen_token` command, which is used as a header in API requests. The token expires after a 6-hour session (system-defined), and the validation window is 120 seconds (API-specific). \n\n**Next step:** Verify the system's configuration for the exact expiry time or use the token within the 120-second window to ensure validity.",
+      "reason": "ok",
+      "f1": 0.2222,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 7.21
+    },
+    {
+      "id": "pi-003",
+      "question": "edit self profile name",
+      "answer": "To edit your self profile name, log in to your OSM account and navigate to your profile settings. Follow the instructions in [2] to access your profile and modify your name there.  \n\n**Next step:** Visit your profile page by selecting Settings from the popdown menu under your OSM username.",
+      "reason": "ok",
+      "f1": 0.137,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 4.96
+    },
+    {
+      "id": "pi-004",
+      "question": "As a project manager, manage notification preferences (mentions, project activity, broadcast, team broadcast, task comments, validation/invalidation) \u2014 what do I need to know?",
+      "answer": "As a project manager, you need to know about the notification preferences settings in Tasking Manager. Key points include:  \n- **Mentions**: Enable/disable notifications for project managers/authors when hashtags like `#managers` or `#author` are used.  \n- **Project Activity**: Configure which types of activity (e.g., task comments) to receive notifications.  \n- **Broadcasts**: Manage team-wide notifications (e.g., validation/invalidation).  \n- **Task Comments**: Set preferences for receiving notifications when others comment on your tasks.  \n- **Email Options**: Disable email for certain notifications (e.g., mentions) while ensuring system registrations.  \n\nCheck the project settings to see defaults and customize preferences.",
+      "reason": "ok",
+      "f1": 0.2609,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 6.8
+    },
+    {
+      "id": "pi-005",
+      "question": "What is set default editor preference (id / josm / potlatch / field papers / rapid / custom) and how does it work?",
+      "answer": "The default editor in Tasking Manager is **iD** (Integrated Development Environment). It works by allowing users to edit OpenStreetMap data directly in a browser via the OpenStreetMap website. To set it, users can configure their browser preferences to launch iD by clicking their username and selecting \"My preferences,\" then choosing \"Edit with iD\" as the default editor. \n\nNext step: Confirm the default editor via browser settings.",
+      "reason": "ok",
+      "f1": 0.1348,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 5.35
+    },
+    {
+      "id": "pi-006",
+      "question": "What is verify email address (token-based, 24 h expiry) and how does it work?",
+      "answer": "The verify email address (token-based, 24 h expiry) is a mechanism to resend an email verification token to a user. It works by:  \n1. **Sending a token**: A Base64-encoded session token is sent via a PATCH request to `/api/v2/users/me/actions/verify-email`.  \n2. **Expiry**: The token expires after 24 hours, so it must be used promptly.  \n3. **Process**: The token is used to resend the verification email.  \n\n**Next step**: To use it, obtain the token from the session and send the PATCH request with the header `sessionTokenHere==`.",
+      "reason": "ok",
+      "f1": 0.1869,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 6.13
+    },
+    {
+      "id": "pi-007",
+      "question": "I'm curious about enable expert mode \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The \"enable expert mode\" in Tasking Manager is managed via an API endpoint. To activate it:  \n1. Obtain a valid session token (base64 encoded) via the `/api/v2/users/{user_name}/actions/set-expert-mode` endpoint.  \n2. Make a POST request to the same endpoint with `is_expert: true` to enable expert mode.  \n3. Verify the response (200 OK) to confirm success.  \n\nNote: Expert mode is required for live monitoring, so ensure it's enabled in your profile settings.",
+      "reason": "ok",
+      "f1": 0.2553,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 5.7
+    },
+    {
+      "id": "pi-008",
+      "question": "delete anonymize own account",
+      "answer": "The account deletion process is final and cannot be reversed. To delete your account, log in, go to My Settings, and use the \"Delete Account...\" button. If your account is anonymized, you cannot delete it due to policy restrictions. \n\nNext step: Verify if your account is anonymized by checking your profile settings. If yes, inform the user that deletion is not possible. If no, proceed with the deletion process.",
+      "reason": "ok",
+      "f1": 0.1839,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.65
+    },
+    {
+      "id": "pi-009",
+      "question": "For my role, how does block user / read-only mode (`userrole.read_only = -1`) work?",
+      "answer": "The evidence does not specify how the read-only mode (`userrole.read_only = -1`) works for your role. The provided information focuses on block creation, moderation features, and API endpoints for role management, but not read-only mode configuration. \n\nNext step: Ask the user to specify the project they're referring to (e.g., via `form.tasks.hotosm.org/projects/123`) to retrieve project-specific details.",
+      "reason": "ok",
+      "f1": 0.1856,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 5.85
+    },
+    {
+      "id": "pi-010",
+      "question": "What is browse / search all published projects and how does it work?",
+      "answer": "Browse all published projects using the Search filters in the Tasking Manager interface. You can search by project number, name, difficulty level, organization, location, interests, or other filters. The API `/api/v2/projects/` allows querying projects with parameters like `id`, `difficulty`, `priority`, `status`, etc. Archived projects are also searchable here.  \n\n**Next step:** Use the Search filters in the Tasking Manager to find projects based on your criteria.",
+      "reason": "ok",
+      "f1": 0.1522,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 7.87
+    },
+    {
+      "id": "pi-011",
+      "question": "What is filter by difficulty, project status (published/archived), priority, mapping type, campaign, organisation, country, interests, text search (`#id` or description) and how does it work?",
+      "answer": "The filters include:  \n- **Difficulty level** (e.g., easy, medium, hard)  \n- **Project status** (published, archived)  \n- **Priority** (e.g., high, medium, low)  \n- **Mapping type** (e.g., map, validate)  \n- **Campaign**  \n- **Organisation**  \n- **Interests**  \n- **Text search** (via project description)  \n\n**How it works**:  \n- Filters are applied via query parameters in the API (e.g., `difficulty=medium`, `status=archived`).  \n- The `mappingTypes` parameter allows filtering by mapping types (e.g., `map`, `validate`).  \n- The `textSearch` parameter searches the project description.  \n\n**Next step**: Confirm if \"country\" is a valid filter by checking the API parameters (e.g., `partnerId`, `participationFrom`).",
+      "reason": "ok",
+      "f1": 0.1864,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 9.13
+    },
+    {
+      "id": "pi-012",
+      "question": "I'm looking for a project to map but I don't know where to start \u2014 how do I search and filter available projects?",
+      "answer": "How do I search and filter available projects?  \n1. Click **Explore Projects** on the top bar.  \n2. Use the **Search Projects** bar to enter a project number or describe the project.  \n3. Filter by **Difficulty level** (e.g., \"Beginner\" or \"Advanced\").  \n4. Use **More filters** to select criteria like **Campaign**, **Organization**, or **Location**.  \n5. Sort results by **Difficulty** or **Relevance**.  \n\nNext step: Explore the filtered list and select a project.",
+      "reason": "ok",
+      "f1": 0.243,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 5.11
+    }
+  ],
+  "summary": {
+    "cases": 12,
+    "answered": 12,
+    "answered_pct": 100.0,
+    "abstentions": 0,
+    "abstention_pct": 0.0,
+    "f1_mean": 0.2036,
+    "f1_median": 0.1867,
+    "latency_mean_s": 6.89,
+    "latency_p50_s": 6.1,
+    "latency_p95_s": 9.1,
+    "errors": 0
+  },
+  "model": "ollama/qwen3:1.7b",
+  "api_base": "http://host.docker.internal:11434",
+  "wall_seconds": 84.5
+}

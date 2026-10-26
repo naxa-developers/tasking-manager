@@ -7,32 +7,35 @@ from chat.retrieval.guardrails import neutralize_untrusted
 
 DomainStatus = Literal["OK", "UNAUTHORIZED", "NOT_FOUND", "TIMEOUT", "UNAVAILABLE"]
 
-_VALUE_CHARS = 200
 _BLOCK_CHARS_DEFAULT = 2000
 _TRUNCATION = "\n[truncated]"
 
 
 def _block_char_limit() -> int:
-    """Max chars per rendered evidence block (env ``RAG_EVIDENCE_MAX_CHARS``)."""
+    """Max chars per rendered evidence block (0 = uncapped)."""
     raw = os.environ.get("RAG_EVIDENCE_MAX_CHARS", "")
     try:
         limit = int(raw)
     except (TypeError, ValueError):
         return _BLOCK_CHARS_DEFAULT
+    if limit == 0:
+        return 0
     return limit if limit >= 200 else _BLOCK_CHARS_DEFAULT
 
 
-def safe_value(value: Any, limit: int = _VALUE_CHARS) -> str:
-    """Neutralize one rendered value: no injection text, no newlines, capped."""
-    text = neutralize_untrusted(str(value if value is not None else ""))
-    if len(text) > limit:
-        text = text[:limit].rsplit(" ", 1)[0] + "…"
-    return text
+def safe_value(value: Any, limit: int = 0) -> str:
+    """Neutralize one rendered value: no injection text, no newlines.
+
+    ``limit`` is accepted for call-site compatibility and ignored; the prompt
+    budget is the only length bound.
+    """
+    del limit
+    return neutralize_untrusted(str(value if value is not None else ""))
 
 
 def _cap_block(block: str) -> str:
     limit = _block_char_limit()
-    if len(block) <= limit:
+    if limit <= 0 or len(block) <= limit:
         return block
     cut = block[: max(0, limit - len(_TRUNCATION))].rstrip()
     return f"{cut}{_TRUNCATION}"

@@ -12,10 +12,12 @@ RICH_REPORT = {
         "question": "how do I lock a task?",
         "user_id": 7,
         "top_k": 5,
+        "history_messages": 4,
         "history_turns": 2,
         "model": "qwen-test",
         "temperature": 0.2,
         "max_tokens": 512,
+        "finish_reason": "stop",
     },
     "decisions": {
         "guardrail": {
@@ -87,10 +89,12 @@ MINIMAL_REPORT = {
         "question": "q",
         "user_id": 1,
         "top_k": 5,
+        "history_messages": 0,
         "history_turns": 0,
         "model": "m",
         "temperature": 0.0,
         "max_tokens": 512,
+        "finish_reason": None,
     },
     "decisions": {
         "guardrail": {"verdict": "ok", "gate": "scope", "reason": "r"},
@@ -112,8 +116,8 @@ EXPECTED_RICH = """=============================================================
 TMBot turn debug
 ==============================================================================
 question : how do I lock a task?
-user_id  : 7   top_k=5   history_turns=2
-model    : qwen-test   temperature=0.2   max_tokens=512
+user_id  : 7   top_k=5   history_turns=2   history_messages=4
+model    : qwen-test   temperature=0.2   max_tokens=512   finish_reason=stop
 
 -- decisions -----------------------------------------------------------------
 guardrail : ok (scope) — Matched strong scope keyword 'mapping'.
@@ -153,8 +157,8 @@ EXPECTED_SUBSET = """===========================================================
 TMBot turn debug
 ==============================================================================
 question : how do I lock a task?
-user_id  : 7   top_k=5   history_turns=2
-model    : qwen-test   temperature=0.2   max_tokens=512
+user_id  : 7   top_k=5   history_turns=2   history_messages=4
+model    : qwen-test   temperature=0.2   max_tokens=512   finish_reason=stop
 
 -- kb retrieval --------------------------------------------------------------
 mode=hybrid candidates=2 timing_ms={'vector': 12.5, 'bm25': 3.25}
@@ -176,8 +180,8 @@ EXPECTED_MINIMAL = """==========================================================
 TMBot turn debug
 ==============================================================================
 question : q
-user_id  : 1   top_k=5   history_turns=0
-model    : m   temperature=0.0   max_tokens=512
+user_id  : 1   top_k=5   history_turns=0   history_messages=0
+model    : m   temperature=0.0   max_tokens=512   finish_reason=None
 
 -- decisions -----------------------------------------------------------------
 guardrail : ok (scope) — r

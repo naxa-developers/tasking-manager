@@ -344,3 +344,51 @@ def test_router_config_explicit_base_override(monkeypatch):
     monkeypatch.delenv("LITELLM_MODEL", raising=False)
     config = get_router_config()
     assert config.api_base == "https://api.openai.com/v1"
+
+
+def test_build_messages_keeps_last_two_complete_turns():
+    from chat.retrieval.domain.llm_router import _build_messages
+
+    history = [
+        {"role": "user", "content": "first question"},
+        {"role": "assistant", "content": "first answer"},
+        {"role": "user", "content": "second question"},
+        {"role": "assistant", "content": "second answer"},
+        {"role": "user", "content": "third question"},
+        {"role": "assistant", "content": "third answer"},
+    ]
+    contents = [m["content"] for m in _build_messages("current", history)]
+    assert "second question" in contents
+    assert "second answer" in contents
+    assert "third question" in contents
+    assert "third answer" in contents
+    assert "first question" not in contents
+    assert "first answer" not in contents
+
+
+def test_build_messages_does_not_truncate_history_content():
+    from chat.retrieval.domain.llm_router import _build_messages
+
+    long_answer = "x" * 2000
+    history = [
+        {"role": "user", "content": "q"},
+        {"role": "assistant", "content": long_answer},
+    ]
+    contents = [m["content"] for m in _build_messages("next", history)]
+    assert long_answer in contents
+
+
+def test_build_messages_keeps_trailing_user_turn():
+    from chat.retrieval.domain.llm_router import _build_messages
+
+    history = [
+        {"role": "user", "content": "oldest question"},
+        {"role": "assistant", "content": "oldest answer"},
+        {"role": "user", "content": "old question"},
+        {"role": "assistant", "content": "old answer"},
+        {"role": "user", "content": "new question without a reply"},
+    ]
+    contents = [m["content"] for m in _build_messages("current", history)]
+    assert "oldest question" not in contents
+    assert "old question" in contents
+    assert "new question without a reply" in contents

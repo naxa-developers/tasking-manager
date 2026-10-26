@@ -198,7 +198,7 @@ class TestPrepareTurnRouting:
 
         monkeypatch.delenv("RAG_RETRIEVAL_TOP_K", raising=False)
         _prepare("how do I validate a task?", retrieve=capture)
-        assert seen["top_k"] == 10
+        assert seen["top_k"] == 5
 
     def test_retrieval_unavailable_propagates(self):
         def boom(q, top_k=5):

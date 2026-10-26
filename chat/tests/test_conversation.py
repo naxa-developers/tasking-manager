@@ -117,7 +117,7 @@ class TestLLMServiceHistory:
             assert "hi there" in user_msg
             assert answer == "Answer with history"
 
-    def test_history_is_never_truncated(self, scored_nodes):
+    def test_history_keeps_last_six_turns(self, scored_nodes):
         from chat.retrieval.llm_answer import LLMService
 
         history = [{"role": "user", "content": f"msg {i}"} for i in range(10)]
@@ -148,9 +148,11 @@ class TestLLMServiceHistory:
             ):
                 svc.answer("q", scored_nodes, history=history)
             user_content = mock_completion.call_args.kwargs["messages"][1]["content"]
-            # No count cap and no budget trimming: every turn reaches the prompt.
-            for i in range(10):
+            # Newest six turns are kept; older turns are dropped first.
+            for i in range(4, 10):
                 assert f"msg {i}" in user_content
+            for i in range(4):
+                assert f"msg {i}" not in user_content
 
     def test_history_empty_lines_filtered(self, scored_nodes):
         from chat.retrieval.llm_answer import LLMService
@@ -480,7 +482,8 @@ class TestPromptBudgetFitting:
     """_build_messages fitting: caps, first-block truncation, drop order.
 
     Pinned pre-refactor: KB evidence keeps the head (truncating one oversized
-    first block), domain is reserved before KB, history is never trimmed.
+    first block), domain is reserved before KB, history keeps the newest turns
+    that fit.
     """
 
     def _svc(self):
@@ -534,7 +537,7 @@ class TestPromptBudgetFitting:
         assert "chunk 0" in user
         assert "[Evidence 2]" not in user
 
-    def test_history_is_never_trimmed(self, monkeypatch):
+    def test_history_drops_oldest_turn_when_budget_is_tight(self, monkeypatch):
         monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "800")
         history = [
             {"role": "user", "content": "old question " * 400},
@@ -545,7 +548,7 @@ class TestPromptBudgetFitting:
         _, user = self._svc()._build_messages("q", [], history=history)
         assert user is not None
         assert "recent question" in user
-        assert "old question" in user  # no count cap, no budget trimming
+        assert "old question" not in user  # oldest turn dropped to fit
 
     def test_kb_evidence_skipped_when_budget_spent(self, monkeypatch):
         results = [self._node("kb passage")]
@@ -565,3 +568,63 @@ class TestPromptBudgetFitting:
             _, user = svc._build_messages("q", results, domain_evidence=domain)
         assert mock_evidence.call_count == 0
         assert "x x x" in user
+
+
+class TestGenerationParams:
+    @staticmethod
+    def _cfg(max_tokens):
+        cfg = MagicMock()
+        cfg.model = "test-chat-model"
+        cfg.temperature = 0.2
+        cfg.max_tokens = max_tokens
+        cfg.timeout = 30
+        cfg.num_retries = 2
+        cfg.drop_params = True
+        cfg.api_key = None
+        cfg.api_base = None
+        return cfg
+
+    def test_max_tokens_omitted_when_disabled(self):
+        from chat.retrieval.llm_answer import LLMService
+
+        svc = LLMService(model="test-chat-model")
+        with patch(
+            "chat.retrieval.llm_answer.get_generation_config",
+            return_value=self._cfg(None),
+        ):
+            kwargs = svc._litellm_kwargs()
+        assert "max_tokens" not in kwargs
+
+    def test_max_tokens_included_when_set(self):
+        from chat.retrieval.llm_answer import LLMService
+
+        svc = LLMService(model="test-chat-model")
+        with patch(
+            "chat.retrieval.llm_answer.get_generation_config",
+            return_value=self._cfg(1024),
+        ):
+            kwargs = svc._litellm_kwargs()
+        assert kwargs["max_tokens"] == 1024
+
+
+def test_long_history_and_domain_fit_budget(monkeypatch):
+    from types import SimpleNamespace
+
+    from chat.retrieval.llm_answer import LLMService, _count_tokens
+
+    monkeypatch.setenv("RAG_PROMPT_TOKEN_BUDGET", "2000")
+    svc = LLMService(model="test-chat-model")
+    history = []
+    for i in range(8):
+        history.append({"role": "user", "content": f"question {i} " * 100})
+        history.append({"role": "assistant", "content": f"answer {i} " * 400})
+    node = SimpleNamespace(
+        node=SimpleNamespace(id_="kb-1", metadata={}, text="chunk " * 400),
+        fused_score=1.0,
+    )
+    _, user = svc._build_messages(
+        "q", [node], history=history, domain_evidence="domain " * 200
+    )
+    assert user is not None
+    system = svc._build_system_prompt()
+    assert _count_tokens(system) + _count_tokens(user) <= 2000

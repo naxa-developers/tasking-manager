@@ -38,7 +38,7 @@ export const streamRagSessionChat = (token, locale, sessionId, payload, onDelta,
   // Server-Sent Events streaming via fetch (XHR/fetch-based, not EventSource,
   // so we can POST a JSON body).
   const baseURL = typeof API_URL === 'string' ? API_URL : API_URL.toString();
-  const url = `${baseURL}rag/sessions/${sessionId}/chat`;
+  const url = `${baseURL}rag/sessions/${sessionId}/turns`;
   const headers = {
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Token ${token}` }),
