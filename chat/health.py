@@ -1,7 +1,12 @@
 """Deploy-gate health and readiness checks for the RAG stack.
 
-Retrieval modules are imported lazily so a broken RAG stack surfaces as an
-unavailable health payload instead of failing application import.
+Two endpoints, two audiences:
+
+``/health``  diagnostics for a human — is the index loaded, is the config sane.
+``/ready``   strict gate for a probe — all of the above plus reachable providers.
+
+Retrieval modules are imported lazily so a broken stack surfaces as an
+unavailable payload instead of failing application import.
 """
 
 from __future__ import annotations
@@ -10,6 +15,7 @@ import json
 import os
 import re
 import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -18,8 +24,6 @@ from databases import Database
 from loguru import logger
 from starlette.concurrency import run_in_threadpool
 
-from chat.service import RagService
-
 _TABLE_NAME_RE = re.compile(r"^[A-Za-z0-9_]+$")
 
 _READY_PROBE_TTL_DEFAULT = 30.0
@@ -27,9 +31,27 @@ _READY_PROBE_TIMEOUT = 3.0
 _PROBE_CACHE: Dict[str, Tuple[float, str]] = {}
 
 
+@lru_cache(maxsize=1)
+def _component_error() -> Optional[str]:
+    """Import or registry failure, or None when the stack loads.
+
+    Every op is resolved, so a typo in the registry shows up here instead of at
+    turn time — the same guarantee the parity test gives at build time.
+    """
+    try:
+        from chat.domain.registry import OPS
+        from chat.pipeline import run_turn  # noqa: F401
+
+        for op in OPS:
+            op.load()
+    except Exception as error:  # noqa: BLE001 - reported, not raised
+        return f"{type(error).__name__}: {error}"
+    return None
+
+
 def _chunks_path() -> Path:
     """chunks.json location (lazy import: the retrieval stack may be down)."""
-    from chat.retrieval.query_kb import CHUNKS_PATH
+    from chat.retrieval import CHUNKS_PATH
 
     return CHUNKS_PATH
 
@@ -86,7 +108,7 @@ async def _probe_base(base_url: Optional[str], api_key: Optional[str]) -> str:
     try:
         async with httpx.AsyncClient(timeout=_READY_PROBE_TIMEOUT) as client:
             resp = await client.get(base_url.rstrip("/") + "/models", headers=headers)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - a probe failure is a value
         logger.warning(f"RAG readiness probe failed for {base_url}: {exc}")
         return "unreachable"
     return "ok" if resp.status_code < 300 else f"http {resp.status_code}"
@@ -105,29 +127,45 @@ async def _cached_probe(base_url: Optional[str], api_key: Optional[str]) -> str:
 
 
 def _provider_state(cfg_getter: Any, label: str) -> Tuple[str, Optional[str]]:
-    """(health field value, degraded reason) for one LLM provider config."""
+    """(health field value, degraded reason) for one model provider config."""
     try:
         cfg = cfg_getter()
     except Exception:
         return "missing_model", f"{label} model missing"
-    try:
-        cfg.require_api_key()
-    except Exception:
-        return "missing_key", f"{label} key missing"
+    needs_key = getattr(cfg, "require_api_key", None)
+    if callable(needs_key):
+        try:
+            needs_key()
+        except Exception:
+            return "missing_key", f"{label} key missing"
     return "configured", None
+
+
+def _config_getters() -> Tuple[Tuple[str, Any], ...]:
+    from chat.config import (
+        get_embedding_config,
+        get_generation_config,
+        get_router_config,
+    )
+
+    return (
+        ("generation", get_generation_config),
+        ("router", get_router_config),
+        ("embedding", get_embedding_config),
+    )
 
 
 async def rag_health(db: Database) -> Dict[str, Any]:
     """KB health: live pgvector row count + BM25 source (deploy gate)."""
-    if not RagService.is_available():
-        logger.error(
-            f"RAG components failed to import: {RagService.unavailable_reason()}"
-        )
+    error = _component_error()
+    if error is not None:
+        logger.error(f"RAG components failed to load: {error}")
         return {
             "status": "unavailable",
             "reason": "RAG components failed to load; see server logs",
         }
-    # Deploy gate: the pgvector index must be loaded (index_kb.py is manual).
+
+    # Deploy gate: the pgvector index must be loaded (indexing is manual).
     table = _kb_table()
     try:
         row = await db.fetch_one(query=f'SELECT COUNT(*) AS n FROM "{table}"')
@@ -141,26 +179,23 @@ async def rag_health(db: Database) -> Dict[str, Any]:
     if indexed <= 0:
         return {
             "status": "unavailable",
-            "reason": f"KB index empty ({table}, 0 nodes) — run index_kb.py",
+            "reason": f"KB index empty ({table}, 0 nodes) — run the indexer",
             "indexed_nodes": 0,
         }
+
     payload: Dict[str, Any] = {
         "status": "ok",
         "indexed_nodes": indexed,
         "table": os.getenv("PGVECTOR_TABLE", "kb_nodes"),
     }
 
-    from chat.retrieval.config import get_embedding_config, get_generation_config
-
     degraded_reasons: List[str] = []
-    for provider, cfg_getter in (
-        ("generation", get_generation_config),
-        ("embedding", get_embedding_config),
-    ):
+    for provider, cfg_getter in _config_getters():
         state, reason = _provider_state(cfg_getter, provider)
         payload[provider] = state
         if reason:
             degraded_reasons.append(reason)
+
     chunks_count = await run_in_threadpool(_chunks_file_count)
     if chunks_count is not None:
         payload["chunks_file_count"] = chunks_count
@@ -169,6 +204,7 @@ async def rag_health(db: Database) -> Dict[str, Any]:
     if not chunks_path.exists():
         logger.warning(f"BM25 degraded: chunks.json missing at {chunks_path}")
         payload["bm25"] = "unavailable (chunks.json missing)"
+
     if degraded_reasons:
         payload["status"] = "degraded"
         payload["reason"] = "; ".join(degraded_reasons)
@@ -190,11 +226,9 @@ async def rag_readiness(db: Database) -> Dict[str, Any]:
         "embedding_probe": None,
     }
 
-    from chat.retrieval.config import get_embedding_config, get_generation_config
-
     for name, cfg_getter in (
-        ("generation_probe", get_generation_config),
-        ("embedding_probe", get_embedding_config),
+        ("generation_probe", _config_getters()[0][1]),
+        ("embedding_probe", _config_getters()[2][1]),
     ):
         try:
             cfg = cfg_getter()

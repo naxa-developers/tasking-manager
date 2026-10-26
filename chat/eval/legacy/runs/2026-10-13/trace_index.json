@@ -1,0 +1,432 @@
+{
+  "A1": {
+    "qwen": {
+      "trace_id": "0ce04151e712a7e92c2097eac39c646d",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/0ce04151e712a7e92c2097eac39c646d",
+      "session_id": 474
+    },
+    "deepseek": {
+      "trace_id": "1d53202828f26cdb92c5dfbefdc26d41",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/1d53202828f26cdb92c5dfbefdc26d41",
+      "session_id": 513
+    }
+  },
+  "A2": {
+    "qwen": {
+      "trace_id": "604987e04091cedf4e4f9f9ef24d4309",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/604987e04091cedf4e4f9f9ef24d4309",
+      "session_id": 475
+    },
+    "deepseek": {
+      "trace_id": "0ac78f80e3452b7d2a507234a91ff9e2",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/0ac78f80e3452b7d2a507234a91ff9e2",
+      "session_id": 514
+    }
+  },
+  "A3": {
+    "qwen": {
+      "trace_id": "b06fe0cde108a6fe6b917ad536a2e3b8",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/b06fe0cde108a6fe6b917ad536a2e3b8",
+      "session_id": 476
+    },
+    "deepseek": {
+      "trace_id": "936b7c1aa7188d15cef966425afc7558",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/936b7c1aa7188d15cef966425afc7558",
+      "session_id": 515
+    }
+  },
+  "A4": {
+    "qwen": {
+      "trace_id": "ce23e97db7314e8fce3b77070b4376f7",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/ce23e97db7314e8fce3b77070b4376f7",
+      "session_id": 477
+    },
+    "deepseek": {
+      "trace_id": "48f40066bc2d6e520936632fe4ceb17f",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/48f40066bc2d6e520936632fe4ceb17f",
+      "session_id": 516
+    }
+  },
+  "A5": {
+    "qwen": {
+      "trace_id": "570605cdcea98c49d16819a83d968a13",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/570605cdcea98c49d16819a83d968a13",
+      "session_id": 478
+    },
+    "deepseek": {
+      "trace_id": "9ed6b3b6991e260839d6b1c8b4c6a74d",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/9ed6b3b6991e260839d6b1c8b4c6a74d",
+      "session_id": 511
+    }
+  },
+  "A6": {
+    "qwen": {
+      "trace_id": "8645c0f60457acfe0803083f8c82df0d",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/8645c0f60457acfe0803083f8c82df0d",
+      "session_id": 479
+    },
+    "deepseek": {
+      "trace_id": "9348d5cef80f6658030f073a5f7e2b07",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/9348d5cef80f6658030f073a5f7e2b07",
+      "session_id": 517
+    }
+  },
+  "A7": {
+    "qwen": {
+      "trace_id": "79ca79ab4ebed62094be49d739ffd9d1",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/79ca79ab4ebed62094be49d739ffd9d1",
+      "session_id": 480
+    },
+    "deepseek": {
+      "trace_id": "051f71d0f504f6f9a4b236db8dd20b10",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/051f71d0f504f6f9a4b236db8dd20b10",
+      "session_id": 518
+    }
+  },
+  "A8": {
+    "qwen": {
+      "trace_id": "33c6062ba8f9d44b6b213d2f50cfb029",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/33c6062ba8f9d44b6b213d2f50cfb029",
+      "session_id": 481
+    },
+    "deepseek": {
+      "trace_id": "0ab8fe53109260b06ff7207b1eb5920c",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/0ab8fe53109260b06ff7207b1eb5920c",
+      "session_id": 519
+    }
+  },
+  "B1": {
+    "qwen": {
+      "trace_id": "2a5a2639e79a12fc221f30c187b5f88d",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/2a5a2639e79a12fc221f30c187b5f88d",
+      "session_id": 482
+    },
+    "deepseek": {
+      "trace_id": "53ef5a12507343881d4b400eefece5fe",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/53ef5a12507343881d4b400eefece5fe",
+      "session_id": 520
+    }
+  },
+  "B2": {
+    "qwen": {
+      "trace_id": "4ce7e437be3f01165731ef05b8880246",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/4ce7e437be3f01165731ef05b8880246",
+      "session_id": 483
+    },
+    "deepseek": {
+      "trace_id": "16baa4864f874a8c26d63c93c7eb7c44",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/16baa4864f874a8c26d63c93c7eb7c44",
+      "session_id": 521
+    }
+  },
+  "B3": {
+    "qwen": {
+      "trace_id": "14cb27f86982019c99fcd24e8903c9e2",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/14cb27f86982019c99fcd24e8903c9e2",
+      "session_id": 484
+    },
+    "deepseek": {
+      "trace_id": "cf71ca8795f66310d61892c0fad8daef",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/cf71ca8795f66310d61892c0fad8daef",
+      "session_id": 522
+    }
+  },
+  "B4": {
+    "qwen": {
+      "trace_id": "07ca775af4c04d761c7dedd7ae9ccce7",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/07ca775af4c04d761c7dedd7ae9ccce7",
+      "session_id": 485
+    },
+    "deepseek": {
+      "trace_id": "3e67210fb143f9fd772bd733434a7e30",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/3e67210fb143f9fd772bd733434a7e30",
+      "session_id": 523
+    }
+  },
+  "B5": {
+    "qwen": {
+      "trace_id": "6d7564cb1f472d27ad954b71ed9d44e6",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/6d7564cb1f472d27ad954b71ed9d44e6",
+      "session_id": 486
+    },
+    "deepseek": {
+      "trace_id": "1f86c53004a39d58d9c54931c6e3d2e1",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/1f86c53004a39d58d9c54931c6e3d2e1",
+      "session_id": 524
+    }
+  },
+  "B6": {
+    "qwen": {
+      "trace_id": "ed3d6866d618899e04f64ae1e958462a",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/ed3d6866d618899e04f64ae1e958462a",
+      "session_id": 487
+    },
+    "deepseek": {
+      "trace_id": "61d5f3fe93801fed932e96d7eb08ebb0",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/61d5f3fe93801fed932e96d7eb08ebb0",
+      "session_id": 525
+    }
+  },
+  "B7": {
+    "qwen": {
+      "trace_id": "1b0876f5fca871a2ea5169bb60e19597",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/1b0876f5fca871a2ea5169bb60e19597",
+      "session_id": 488
+    },
+    "deepseek": {
+      "trace_id": "c8f0896cd0d7bd1bf0e6071efaeae659",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/c8f0896cd0d7bd1bf0e6071efaeae659",
+      "session_id": 526
+    }
+  },
+  "B8": {
+    "qwen": {
+      "trace_id": "8d4b1d2ee4cdb89f4e04472e97eb0b34",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/8d4b1d2ee4cdb89f4e04472e97eb0b34",
+      "session_id": 489
+    },
+    "deepseek": {
+      "trace_id": "f20c6551a1ddf75c719273ff0a5648b9",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/f20c6551a1ddf75c719273ff0a5648b9",
+      "session_id": 527
+    }
+  },
+  "G8a": {
+    "qwen": {
+      "trace_id": "fcb03e2f555a4f12fcd11b4251b521c7",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/fcb03e2f555a4f12fcd11b4251b521c7",
+      "session_id": 490
+    },
+    "deepseek": {
+      "trace_id": "458bb5c20d94903a846199fd01c3ad8e",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/458bb5c20d94903a846199fd01c3ad8e",
+      "session_id": 528
+    }
+  },
+  "G8lit": {
+    "qwen": {
+      "trace_id": "1b268dead56ae6a47d8a29feb1ab8f9c",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/1b268dead56ae6a47d8a29feb1ab8f9c",
+      "session_id": 491
+    },
+    "qwen-corrected": {
+      "trace_id": "909704d79f36321a31efca6508c79192",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/909704d79f36321a31efca6508c79192",
+      "session_id": 510
+    },
+    "deepseek": {
+      "trace_id": "9a0b3c5aab77b121ba8dd168795cdf3c",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/9a0b3c5aab77b121ba8dd168795cdf3c",
+      "session_id": 529
+    },
+    "deepseek-corrected": {
+      "trace_id": "7a9837c0c80d8ae71ea4c4f182f14e17",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/7a9837c0c80d8ae71ea4c4f182f14e17",
+      "session_id": 512
+    }
+  },
+  "C4": {
+    "qwen": {
+      "trace_id": "74865203355afca6605ff22d1e134132",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/74865203355afca6605ff22d1e134132",
+      "session_id": 492
+    },
+    "deepseek": {
+      "trace_id": "19ee9ce394595e5cd7a78e8a63769523",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/19ee9ce394595e5cd7a78e8a63769523",
+      "session_id": 530
+    }
+  },
+  "G16a": {
+    "qwen": {
+      "trace_id": "51b1d44f54588293bc0d127326036378",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/51b1d44f54588293bc0d127326036378",
+      "session_id": 493
+    },
+    "deepseek": {
+      "trace_id": "219e183d255b8ee0ec505276b3e253b8",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/219e183d255b8ee0ec505276b3e253b8",
+      "session_id": 531
+    }
+  },
+  "G16b": {
+    "qwen": {
+      "trace_id": "fe59444f554d4515830d88cfed0574e3",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/fe59444f554d4515830d88cfed0574e3",
+      "session_id": 494
+    },
+    "deepseek": {
+      "trace_id": "b239b729b0fc925278fad1e272c710ca",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/b239b729b0fc925278fad1e272c710ca",
+      "session_id": 532
+    }
+  },
+  "G16c": {
+    "qwen": {
+      "trace_id": "a56bf0444d750bab915ad3cf5624fdba",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/a56bf0444d750bab915ad3cf5624fdba",
+      "session_id": 495
+    },
+    "deepseek": {
+      "trace_id": "085493588d0eaa9c9161e97a7a9ceed2",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/085493588d0eaa9c9161e97a7a9ceed2",
+      "session_id": 533
+    }
+  },
+  "G16lit": {
+    "qwen": {
+      "trace_id": "b6ecb63376e66f44283df2286af702e3",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/b6ecb63376e66f44283df2286af702e3",
+      "session_id": 496
+    },
+    "deepseek": {
+      "trace_id": "21f6e5557a7f4ad6dd39bed05bc0c508",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/21f6e5557a7f4ad6dd39bed05bc0c508",
+      "session_id": 534
+    }
+  },
+  "B10": {
+    "qwen": {
+      "trace_id": "2d736cf4ad54d42f4a5021f9f07a9e77",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/2d736cf4ad54d42f4a5021f9f07a9e77",
+      "session_id": 497
+    },
+    "deepseek": {
+      "trace_id": "771980f6c456b6e32c975016fa1eff56",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/771980f6c456b6e32c975016fa1eff56",
+      "session_id": 535
+    }
+  },
+  "C1": {
+    "qwen": {
+      "trace_id": "ee23ad15d004283178958c9586ce3d97",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/ee23ad15d004283178958c9586ce3d97",
+      "session_id": 498
+    },
+    "deepseek": {
+      "trace_id": "0fb4a95981acf574fa6090d9ffdc80d7",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/0fb4a95981acf574fa6090d9ffdc80d7",
+      "session_id": 536
+    }
+  },
+  "C2": {
+    "qwen": {
+      "trace_id": "65258ad3dff388d02d5bf115201a04cd",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/65258ad3dff388d02d5bf115201a04cd",
+      "session_id": 499
+    },
+    "deepseek": {
+      "trace_id": "fc628ba3c7afad40f9669d4ae93eb050",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/fc628ba3c7afad40f9669d4ae93eb050",
+      "session_id": 537
+    }
+  },
+  "C3": {
+    "qwen": {
+      "trace_id": "4cfd6742b1d8cbd80bf0f65ffc06198c",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/4cfd6742b1d8cbd80bf0f65ffc06198c",
+      "session_id": 501
+    },
+    "deepseek": {
+      "trace_id": "1d67fd19114c19b291ea6f02613bd94c",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/1d67fd19114c19b291ea6f02613bd94c",
+      "session_id": 538
+    }
+  },
+  "C5": {
+    "qwen": {
+      "trace_id": "6c76b2d991993a6bb61999eebc8b194e",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/6c76b2d991993a6bb61999eebc8b194e",
+      "session_id": 502
+    },
+    "deepseek": {
+      "trace_id": "2f60212b77ab91386fc091d33e2f2489",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/2f60212b77ab91386fc091d33e2f2489",
+      "session_id": 539
+    }
+  },
+  "C6": {
+    "qwen": {
+      "trace_id": "c02cbad0a3125018a99ef74afb355ba8",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/c02cbad0a3125018a99ef74afb355ba8",
+      "session_id": 503
+    },
+    "deepseek": {
+      "trace_id": "204df1e41b8c22885b6458543e1ba413",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/204df1e41b8c22885b6458543e1ba413",
+      "session_id": 540
+    }
+  },
+  "C7": {
+    "qwen": {
+      "trace_id": "50eccdf9eea6f5e83304e4e41dd7c825",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/50eccdf9eea6f5e83304e4e41dd7c825",
+      "session_id": 504
+    },
+    "deepseek": {
+      "trace_id": "606c52f83cf0251f33402082561dc6b7",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/606c52f83cf0251f33402082561dc6b7",
+      "session_id": 541
+    }
+  },
+  "C8": {
+    "qwen": {
+      "trace_id": "218c345ab0bbb7290521c8982e74fa40",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/218c345ab0bbb7290521c8982e74fa40",
+      "session_id": 505
+    },
+    "deepseek": {
+      "trace_id": "6241710edf29644ac8932ff821ce13e4",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/6241710edf29644ac8932ff821ce13e4",
+      "session_id": 542
+    }
+  },
+  "D1": {
+    "qwen": {
+      "trace_id": "4ab87b869c60dcc781aa15b44830f73a",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/4ab87b869c60dcc781aa15b44830f73a",
+      "session_id": 506
+    },
+    "deepseek": {
+      "trace_id": "cc36f8d50c061f5c9bbf1c6da1230101",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/cc36f8d50c061f5c9bbf1c6da1230101",
+      "session_id": 543
+    }
+  },
+  "D2": {
+    "qwen": {
+      "trace_id": "994393e11c6c9628842173d410da64c9",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/994393e11c6c9628842173d410da64c9",
+      "session_id": 507
+    },
+    "deepseek": {
+      "trace_id": "3a78315fc97607e334a111268f89572b",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/3a78315fc97607e334a111268f89572b",
+      "session_id": 544
+    }
+  },
+  "D7": {
+    "qwen": {
+      "trace_id": "971b0eeeb6e0d24f7bd206784154d405",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/971b0eeeb6e0d24f7bd206784154d405",
+      "session_id": 508
+    },
+    "deepseek": {
+      "trace_id": "ffabf0d39905a2e0841122bb8cefec5e",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/ffabf0d39905a2e0841122bb8cefec5e",
+      "session_id": 545
+    }
+  },
+  "D8": {
+    "qwen": {
+      "trace_id": "9700c3e27e7dd259613844e9e3c3c339",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/9700c3e27e7dd259613844e9e3c3c339",
+      "session_id": 509
+    },
+    "deepseek": {
+      "trace_id": "45420fc8498c73b31edea52471865187",
+      "url": "https://cloud.langfuse.com/project/cmue9qyna032wad0dbvfty0ks/traces/45420fc8498c73b31edea52471865187",
+      "session_id": 546
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "n": 50,
+  "overall": {
+    "R@1": 0.64,
+    "R@3": 0.86,
+    "R@5": 0.94,
+    "R@10": 0.98
+  },
+  "by_role": {
+    "general": {
+      "n": 8,
+      "R@1": 0.625,
+      "R@3": 0.875,
+      "R@5": 1.0,
+      "R@10": 1.0
+    },
+    "mapper": {
+      "n": 41,
+      "R@1": 0.6341,
+      "R@3": 0.8537,
+      "R@5": 0.9268,
+      "R@10": 0.9756
+    },
+    "validator": {
+      "n": 1,
+      "R@1": 1.0,
+      "R@3": 1.0,
+      "R@5": 1.0,
+      "R@10": 1.0
+    }
+  },
+  "mrr": 0.7675,
+  "latency_ms": {
+    "mean": 369.4,
+    "p50": 308.5
+  },
+  "misses_at_5": [
+    {
+      "id": "pi-018",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-045",
+      "role": "mapper",
+      "best_rank": 6
+    },
+    {
+      "id": "pi-047",
+      "role": "mapper",
+      "best_rank": 7
+    }
+  ],
+  "note": "AFTER persona hard-drop. Pure hybrid RRF k=60, 53 chunks, no boost. Compare BEFORE 219q hybrid_k50 R@5=0.936 (48 nodes/31 docs, pre-FAQ)."
+}

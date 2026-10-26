@@ -1,0 +1,339 @@
+{
+  "n_prepared": 219,
+  "arms": {
+    "qwen3-1.7b-q4": {
+      "n": 219,
+      "answered": 219,
+      "answered_pct": 100.0,
+      "evidence_present": 193,
+      "no_answer_with_evidence": 0,
+      "no_answer_with_evidence_pct": 0.0,
+      "raw_refusal": 113,
+      "raw_refusal_pct": 51.6,
+      "repair_success": 113,
+      "repair_success_pct_of_refusals": 100.0,
+      "final_refusal": 0,
+      "final_low_conf": 0,
+      "errors": 0,
+      "truncated": 2,
+      "judge_mean": 0.927,
+      "judge_mean_evidence_present": 0.927,
+      "judge_mean_evidence_missing": 0.923,
+      "judge_n": 219,
+      "judge_zero_pct": 27.4,
+      "judge_two_pct": 20.1,
+      "hallucination_rate_pct": 45.2,
+      "latency_mean_ms": 13246.425,
+      "latency_p50_ms": 13122.3,
+      "avg_completion_tokens": 88.904,
+      "avg_prompt_tokens": 2623.443,
+      "gap_ids": [],
+      "by_role": {
+        "administrator": {
+          "n": 10,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "general": {
+          "n": 24,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "mapper": {
+          "n": 159,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "project_manager": {
+          "n": 13,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "validator": {
+          "n": 13,
+          "answered_pct": 100.0,
+          "na_we": 0
+        }
+      },
+      "by_topic": {
+        "account": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "data_export": {
+          "n": 8,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "discovery": {
+          "n": 15,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "general": {
+          "n": 4,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "history": {
+          "n": 8,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "interests_favorites": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "levels": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "mapswipe": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "notifications": {
+          "n": 11,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "organizations": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "permissions": {
+          "n": 39,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "preconditions": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "privacy": {
+          "n": 2,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "project_lifecycle": {
+          "n": 11,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "quality": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "restrictions": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "statistics": {
+          "n": 4,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "task_states": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "teams": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "troubleshooting": {
+          "n": 23,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "workflow": {
+          "n": 46,
+          "answered_pct": 100.0,
+          "na_we": 0
+        }
+      },
+      "audit_agreement": {
+        "n": 219,
+        "exact_pct": 59.8,
+        "within1_pct": 97.3
+      }
+    },
+    "gpt-4o-mini": {
+      "n": 219,
+      "answered": 219,
+      "answered_pct": 100.0,
+      "evidence_present": 193,
+      "no_answer_with_evidence": 0,
+      "no_answer_with_evidence_pct": 0.0,
+      "raw_refusal": 3,
+      "raw_refusal_pct": 1.4,
+      "repair_success": 3,
+      "repair_success_pct_of_refusals": 100.0,
+      "final_refusal": 0,
+      "final_low_conf": 0,
+      "errors": 0,
+      "truncated": 0,
+      "judge_mean": 1.356,
+      "judge_mean_evidence_present": 1.383,
+      "judge_mean_evidence_missing": 1.154,
+      "judge_n": 219,
+      "judge_zero_pct": 10.5,
+      "judge_two_pct": 46.1,
+      "hallucination_rate_pct": 37.0,
+      "latency_mean_ms": 2147.134,
+      "latency_p50_ms": 2049.7,
+      "avg_completion_tokens": 113.626,
+      "avg_prompt_tokens": 2608.963,
+      "gap_ids": [],
+      "by_role": {
+        "administrator": {
+          "n": 10,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "general": {
+          "n": 24,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "mapper": {
+          "n": 159,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "project_manager": {
+          "n": 13,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "validator": {
+          "n": 13,
+          "answered_pct": 100.0,
+          "na_we": 0
+        }
+      },
+      "by_topic": {
+        "account": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "data_export": {
+          "n": 8,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "discovery": {
+          "n": 15,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "general": {
+          "n": 4,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "history": {
+          "n": 8,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "interests_favorites": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "levels": {
+          "n": 5,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "mapswipe": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "notifications": {
+          "n": 11,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "organizations": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "permissions": {
+          "n": 39,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "preconditions": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "privacy": {
+          "n": 2,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "project_lifecycle": {
+          "n": 11,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "quality": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "restrictions": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "statistics": {
+          "n": 4,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "task_states": {
+          "n": 7,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "teams": {
+          "n": 3,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "troubleshooting": {
+          "n": 23,
+          "answered_pct": 100.0,
+          "na_we": 0
+        },
+        "workflow": {
+          "n": 46,
+          "answered_pct": 100.0,
+          "na_we": 0
+        }
+      },
+      "audit_agreement": {
+        "n": 219,
+        "exact_pct": 56.6,
+        "within1_pct": 95.9
+      }
+    }
+  }
+}

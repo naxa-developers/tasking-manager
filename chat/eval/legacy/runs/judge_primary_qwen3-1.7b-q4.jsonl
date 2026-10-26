@@ -1,0 +1,226 @@
+{"id": "pi-001", "score": 2, "hallucination": false, "reason": "The answer directly follows the evidence and correctly explains the process without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-002", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide specific details about bearer token session management.", "judge_model": "gpt-4o"}
+{"id": "pi-003", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-004", "score": 0, "hallucination": true, "reason": "The answer includes details about email alerts and suppressing categories not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-006", "score": 0, "hallucination": true, "reason": "The answer includes details about email verification not supported by the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-005", "score": 1, "hallucination": false, "reason": "Partially answers the question but includes unnecessary details not directly related to setting the default editor preference.", "judge_model": "gpt-4o"}
+{"id": "pi-007", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide information about expert mode.", "judge_model": "gpt-4o"}
+{"id": "pi-008", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and aligns with the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-009", "score": 1, "hallucination": true, "reason": "The answer includes an invented fact about account deletion that is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-010", "score": 2, "hallucination": false, "reason": "The answer correctly explains browsing and searching published projects using the provided evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-011", "score": 1, "hallucination": true, "reason": "The assistant invents details about priority and mapping type filters not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-012", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to search and filter projects using the provided evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-014", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and aligns with the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-015", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide information about the feature.", "judge_model": "gpt-4o"}
+{"id": "pi-016", "score": 2, "hallucination": false, "reason": "The answer is correct and based on the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-017", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide specific details about edit geometry.", "judge_model": "gpt-4o"}
+{"id": "pi-018", "score": 2, "hallucination": false, "reason": "The answer correctly lists the filters available for finding projects as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-019", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about the geometry being valid and the original task no longer existing.", "judge_model": "gpt-4o"}
+{"id": "pi-020", "score": 1, "hallucination": true, "reason": "Includes unsupported details about 'source' and 'brief note' not found in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-021", "score": 1, "hallucination": true, "reason": "The answer incorrectly states that you must be the lock holder to extend a task locked by someone else, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-022", "score": 2, "hallucination": false, "reason": "The answer correctly explains the auto-unlock feature based on the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-024", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and is supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-025", "score": 1, "hallucination": true, "reason": "The answer incorrectly states that the task will be excluded from progress until a manager resets it, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-026", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-027", "score": 2, "hallucination": false, "reason": "The answer correctly explains the leave/resume workflow and adheres to the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-028", "score": 1, "hallucination": false, "reason": "Partially answers the question with correct information but lacks specific details about 'revertown'.", "judge_model": "gpt-4o"}
+{"id": "pi-029", "score": 1, "hallucination": false, "reason": "Partially answers the question but lacks detail on the full lifecycle.", "judge_model": "gpt-4o"}
+{"id": "pi-030", "score": 2, "hallucination": false, "reason": "The answer directly explains the one-lock-per-user invariant correctly based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-032", "score": 1, "hallucination": true, "reason": "Includes unsupported states like 'Split', 'Undo', 'Reset', and 'Deleted'.", "judge_model": "gpt-4o"}
+{"id": "pi-033", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific steps and conditions from the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-031", "score": 2, "hallucination": false, "reason": "The answer correctly describes the task history audit trail and its components as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-035", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about the task returning to states like Ready and conditions for stopping validation.", "judge_model": "gpt-4o"}
+{"id": "pi-036", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-037", "score": 2, "hallucination": false, "reason": "The answer correctly explains the mapping issue annotation process based on the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-038", "score": 2, "hallucination": false, "reason": "The answer is correct and aligns with the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-039", "score": 0, "hallucination": true, "reason": "The answer includes unsupported details about permissions and task states.", "judge_model": "gpt-4o"}
+{"id": "pi-040", "score": 0, "hallucination": true, "reason": "The answer contains information not supported by the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-041", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to create a draft project using the provided methods and includes optional cloning, all supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-042", "score": 2, "hallucination": false, "reason": "The answer directly explains task grid features correctly based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-043", "score": 0, "hallucination": true, "reason": "The answer incorrectly states that the evidence does not mention importing pre-defined tasks, which is false.", "judge_model": "gpt-4o"}
+{"id": "pi-044", "score": 1, "hallucination": true, "reason": "Includes unsupported details about viewing, managing, and deleting projects.", "judge_model": "gpt-4o"}
+{"id": "pi-045", "score": 1, "hallucination": true, "reason": "The format `{default_changeset_comment}-{projectid} {custom}` is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-046", "score": 0, "hallucination": true, "reason": "The answer includes unsupported details about publishing and translation management.", "judge_model": "gpt-4o"}
+{"id": "pi-047", "score": 2, "hallucination": false, "reason": "The answer correctly explains the status system and publishing requirements without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-049", "score": 0, "hallucination": true, "reason": "The answer includes unsupported details about permissions and requirements.", "judge_model": "gpt-4o"}
+{"id": "pi-050", "score": 1, "hallucination": false, "reason": "Partially answers the question with some correct information but lacks detail.", "judge_model": "gpt-4o"}
+{"id": "pi-051", "score": 1, "hallucination": true, "reason": "Includes unsupported details about instructions, favorites, and recommendations.", "judge_model": "gpt-4o"}
+{"id": "pi-052", "score": 2, "hallucination": false, "reason": "The answer directly matches the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-034", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-054", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-055", "score": 2, "hallucination": false, "reason": "The answer correctly explains the configuration of mapping and validation editors as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-056", "score": 2, "hallucination": false, "reason": "Directly answers the question correctly per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-057", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-058", "score": 0, "hallucination": false, "reason": "The assistant incorrectly states that the evidence does not provide details about localization, contradicting the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-059", "score": 1, "hallucination": true, "reason": "Includes unsupported claim about who can delete a project.", "judge_model": "gpt-4o"}
+{"id": "pi-060", "score": 1, "hallucination": true, "reason": "Includes unsupported details about cloning, who can publish, and deletion.", "judge_model": "gpt-4o"}
+{"id": "pi-061", "score": 1, "hallucination": true, "reason": "The assistant invents details about Markdown to HTML conversion and @-aware notifications not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-062", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question by mentioning the feature/unfeature capability but lacks specific details on how it works.", "judge_model": "gpt-4o"}
+{"id": "pi-063", "score": 0, "hallucination": true, "reason": "The answer includes details about transferring ownership not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-064", "score": 0, "hallucination": true, "reason": "The answer contains invented details not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-065", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-066", "score": 0, "hallucination": false, "reason": "The answer does not address the question and provides no relevant information.", "judge_model": "gpt-4o"}
+{"id": "pi-067", "score": 0, "hallucination": true, "reason": "The answer includes details about 'intersecting-tiles' not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-068", "score": 2, "hallucination": false, "reason": "The answer directly matches the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-069", "score": 1, "hallucination": false, "reason": "The answer is mostly correct but includes redundant and slightly incorrect points.", "judge_model": "gpt-4o"}
+{"id": "pi-070", "score": 0, "hallucination": true, "reason": "The answer includes invented details not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-071", "score": 2, "hallucination": false, "reason": "The answer correctly explains the team-gated permission model using the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-072", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about joining teams and managing allowed lists.", "judge_model": "gpt-4o"}
+{"id": "pi-073", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide information about the license gate license_id.", "judge_model": "gpt-4o"}
+{"id": "pi-053", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-074", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes who can view and who is blocked from seeing a private project based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-076", "score": 0, "hallucination": true, "reason": "The assistant's answer contains invented facts not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-077", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide specific details about managing organization managers.", "judge_model": "gpt-4o"}
+{"id": "pi-078", "score": 2, "hallucination": false, "reason": "The answer correctly lists the filters available for finding projects as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-080", "score": 0, "hallucination": true, "reason": "The answer includes invented facts not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-079", "score": 0, "hallucination": true, "reason": "The answer incorrectly states that mappers can create teams, which contradicts the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-082", "score": 1, "hallucination": true, "reason": "The answer includes a 'Read-only' role not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-083", "score": 2, "hallucination": false, "reason": "The answer correctly lists the filters available for finding projects as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-084", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-085", "score": 0, "hallucination": true, "reason": "The answer includes details not supported by the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-086", "score": 1, "hallucination": false, "reason": "Partially answers the question but lacks detail on viewing levels and requirements.", "judge_model": "gpt-4o"}
+{"id": "pi-087", "score": 1, "hallucination": true, "reason": "Mentions joining teams and managing lists, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-081", "score": 0, "hallucination": true, "reason": "The answer includes actions not supported by the evidence, such as activating pending requests and inviting users.", "judge_model": "gpt-4o"}
+{"id": "pi-090", "score": 1, "hallucination": true, "reason": "The answer incorrectly states that the timeline is paginated ten at a time, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-089", "score": 1, "hallucination": true, "reason": "Mentions 'statsservice' counters and user statistics, which are not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-092", "score": 1, "hallucination": true, "reason": "The answer incorrectly states that the leaderboard is not directly accessible by the user, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-093", "score": 1, "hallucination": true, "reason": "Mentions Overpass API, which is not in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-094", "score": 1, "hallucination": true, "reason": "Includes unsupported details about permissions, task history, user statistics, and downloads.", "judge_model": "gpt-4o"}
+{"id": "pi-095", "score": 0, "hallucination": false, "reason": "The answer does not provide specific details about markdown templates per `settings.org_code` as required by the question.", "judge_model": "gpt-4o"}
+{"id": "pi-096", "score": 0, "hallucination": true, "reason": "The answer includes invented details about email verification and notification preferences not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-097", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about where @-mentions are handled.", "judge_model": "gpt-4o"}
+{"id": "pi-098", "score": 0, "hallucination": false, "reason": "The assistant correctly states the lack of specific details in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-099", "score": 2, "hallucination": false, "reason": "The answer correctly describes the process of favoriting and unfavoriting projects as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-100", "score": 0, "hallucination": false, "reason": "The assistant correctly states the evidence lacks specific details on the topic.", "judge_model": "gpt-4o"}
+{"id": "pi-101", "score": 1, "hallucination": true, "reason": "The answer includes invented details about a matrix and caching not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-102", "score": 2, "hallucination": false, "reason": "The answer correctly explains the use of custom imagery and fallback to Bing as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-103", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes imagery settings based on the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-104", "score": 0, "hallucination": true, "reason": "The answer includes unsupported details about editor configuration and validation process.", "judge_model": "gpt-4o"}
+{"id": "pi-105", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about `extra_id_params` and their passthrough to the Tasking Manager.", "judge_model": "gpt-4o"}
+{"id": "pi-106", "score": 1, "hallucination": false, "reason": "Partially answers with some correct information but lacks detail and clarity.", "judge_model": "gpt-4o"}
+{"id": "pi-108", "score": 2, "hallucination": false, "reason": "The answer correctly describes the task history components as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-109", "score": 1, "hallucination": true, "reason": "Includes unsupported details about task actions and validator feedback.", "judge_model": "gpt-4o"}
+{"id": "pi-110", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide specific details about contributions per user.", "judge_model": "gpt-4o"}
+{"id": "pi-091", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-111", "score": 1, "hallucination": true, "reason": "Mentions Overpass API and export failure message, which are not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-113", "score": 2, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide specific details about data license governance for a project.", "judge_model": "gpt-4o"}
+{"id": "pi-114", "score": 0, "hallucination": true, "reason": "The answer includes many unsupported details not found in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-115", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide the requested information.", "judge_model": "gpt-4o"}
+{"id": "pi-112", "score": 1, "hallucination": true, "reason": "The assistant incorrectly states that AOI can be downloaded as an inline preview, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-117", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about specific fallback mechanisms not found in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-118", "score": 2, "hallucination": false, "reason": "The answer directly follows the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-119", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the support process using available evidence without inventing facts.", "judge_model": "gpt-4o"}
+{"id": "pi-120", "score": 1, "hallucination": false, "reason": "The answer is vague and does not provide specific details, but it correctly states the limitations of the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-121", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide the requested information.", "judge_model": "gpt-4o"}
+{"id": "pi-122", "score": 1, "hallucination": true, "reason": "Includes unsupported details like sorting and exporting results.", "judge_model": "gpt-4o"}
+{"id": "pi-123", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide details on database federation for OpenHistoricalMap.", "judge_model": "gpt-4o"}
+{"id": "pi-124", "score": 0, "hallucination": true, "reason": "The answer includes unsupported details about sandbox projects and databases.", "judge_model": "gpt-4o"}
+{"id": "pi-125", "score": 2, "hallucination": false, "reason": "The answer correctly explains visibility enforcement based on the evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-126", "score": 1, "hallucination": false, "reason": "The answer correctly states that the evidence does not cover specific details about OSM OAuth scopes and related concepts, but it does not provide any information from the evidence about how authentic", "judge_model": "gpt-4o"}
+{"id": "pi-127", "score": 1, "hallucination": true, "reason": "The answer includes a 'Read-only' role not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-128", "score": 0, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide information about PII handling for cities or countries.", "judge_model": "gpt-4o"}
+{"id": "pi-129", "score": 1, "hallucination": false, "reason": "Partially answers the question with some correct information but lacks specific details.", "judge_model": "gpt-4o"}
+{"id": "pi-130", "score": 2, "hallucination": false, "reason": "The answer correctly explains the license acceptance process without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-131", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and aligns with the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-132", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about joining teams and managing lists, which are not in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-133", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide specific information about the 'mapping types feature type.'", "judge_model": "gpt-4o"}
+{"id": "pi-134", "score": 1, "hallucination": true, "reason": "Mentions 'Enforce random task selection' toggle, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-135", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about `default_changeset_comment` and user-custom suffix.", "judge_model": "gpt-4o"}
+{"id": "pi-116", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-136", "score": 0, "hallucination": false, "reason": "The assistant did not provide an answer based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-138", "score": 2, "hallucination": false, "reason": "The answer directly addresses how to save edits to OSM using the Tasking Manager, consistent with the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-139", "score": 0, "hallucination": false, "reason": "The answer is off-topic and does not address the question about managing team members.", "judge_model": "gpt-4o"}
+{"id": "pi-140", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the supported languages and fallback mechanism as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-137", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the imagery settings based on the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-142", "score": 2, "hallucination": false, "reason": "The answer directly explains the task grid and priority areas overlay as described in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-141", "score": 2, "hallucination": false, "reason": "The answer directly follows the evidence without adding unsupported information.", "judge_model": "gpt-4o"}
+{"id": "pi-144", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide specific details about 'feature unfeature project highlighted.'", "judge_model": "gpt-4o"}
+{"id": "pi-145", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific steps from the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-147", "score": 2, "hallucination": false, "reason": "The answer correctly describes how to filter projects using the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-148", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-149", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question by mentioning the editing process but lacks specific details about editing geometry in iD.", "judge_model": "gpt-4o"}
+{"id": "pi-150", "score": 2, "hallucination": false, "reason": "The answer correctly lists the filters available for finding projects as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-151", "score": 1, "hallucination": true, "reason": "Mentions error codes and project hashtags, which are not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-152", "score": 0, "hallucination": true, "reason": "The answer incorrectly claims the evidence lacks details about welcome validation messages, which are mentioned in the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-153", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question by explaining public and private project visibility but lacks specific details about 'view project public vs'.", "judge_model": "gpt-4o"}
+{"id": "pi-154", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the imagery settings based on the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-155", "score": 2, "hallucination": false, "reason": "The answer correctly explains the imagery offset and its reset behavior based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-156", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks detail on notification preferences.", "judge_model": "gpt-4o"}
+{"id": "pi-157", "score": 1, "hallucination": false, "reason": "Partially answers the question with correct information from the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-158", "score": 2, "hallucination": false, "reason": "The answer correctly explains the license gate based on the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-159", "score": 0, "hallucination": false, "reason": "The assistant answer is vague and does not address the question using the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-160", "score": 2, "hallucination": false, "reason": "The answer correctly lists the editors allowed and aligns with the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-161", "score": 2, "hallucination": false, "reason": "The answer correctly states that the evidence does not provide information on the mapper's ability to manage users or change profiles.", "judge_model": "gpt-4o"}
+{"id": "pi-162", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and is correct according to the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-163", "score": 0, "hallucination": false, "reason": "The answer incorrectly states that the evidence does not provide information, while it does.", "judge_model": "gpt-4o"}
+{"id": "pi-143", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-164", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-166", "score": 0, "hallucination": true, "reason": "The answer incorrectly states that a task in the Ready state can be locked for validation, which contradicts the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-167", "score": 2, "hallucination": false, "reason": "Correctly states that blocked users cannot map tasks.", "judge_model": "gpt-4o"}
+{"id": "pi-168", "score": 2, "hallucination": false, "reason": "The answer directly states that guests cannot post comments, which is correct according to the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-169", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide the needed information.", "judge_model": "gpt-4o"}
+{"id": "pi-165", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-171", "score": 0, "hallucination": false, "reason": "The assistant incorrectly states that the evidence does not provide specific information, contradicting the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-172", "score": 0, "hallucination": false, "reason": "The answer contradicts the evidence by stating that anonymous users can favorite a project.", "judge_model": "gpt-4o"}
+{"id": "faq-173", "score": 2, "hallucination": false, "reason": "The answer correctly explains the auto-release of a stale lock based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-174", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to see what was wrong by reviewing the invalidation history, as supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-175", "score": 2, "hallucination": false, "reason": "The answer correctly states that a 'Validated' state indicates successful validation.", "judge_model": "gpt-4o"}
+{"id": "faq-176", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to map in JOSM according to the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "faq-178", "score": 2, "hallucination": false, "reason": "The answer directly addresses the error and provides correct steps based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-179", "score": 2, "hallucination": false, "reason": "The answer correctly states that users receive a mention notification when tagged, as supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-170", "score": 2, "hallucination": false, "reason": "The answer directly states that a user cannot edit another user's profile, which is correct according to the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-181", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide information on undoing a mapping submission.", "judge_model": "gpt-4o"}
+{"id": "faq-180", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using evidence without inventing facts.", "judge_model": "gpt-4o"}
+{"id": "faq-183", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to find projects matching interests using filters and setting interests in the profile, as supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-184", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapper levels and their impact on mapping tasks based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-185", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using information from the evidence without introducing any unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "faq-186", "score": 2, "hallucination": false, "reason": "The answer directly uses evidence to correctly answer the question without inventing facts.", "judge_model": "gpt-4o"}
+{"id": "faq-187", "score": 1, "hallucination": true, "reason": "Includes unsupported details about campaigns and OpenStreetMap database.", "judge_model": "gpt-4o"}
+{"id": "faq-188", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to export mapped data using the HOT Export Tool as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-189", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-190", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using evidence from the source.", "judge_model": "gpt-4o"}
+{"id": "pi-173", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-174", "score": 2, "hallucination": false, "reason": "The answer is correct and based on the provided evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-175", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-176", "score": 2, "hallucination": false, "reason": "The answer correctly explains the process based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-177", "score": 1, "hallucination": true, "reason": "The answer includes invented details about duplicate entries and automatic closure, which are not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-178", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question by mentioning OSMCha's use for inspecting changesets but lacks specific instructions on using it for quality checks after validation.", "judge_model": "gpt-4o"}
+{"id": "pi-179", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using information from the evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-180", "score": 2, "hallucination": false, "reason": "The answer directly explains both terms correctly according to the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-181", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to stop validating and revert a lock without marking, consistent with the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-182", "score": 2, "hallucination": false, "reason": "The answer correctly explains how a validator can leave feedback by recording mapping issues during invalidation.", "judge_model": "gpt-4o"}
+{"id": "pi-183", "score": 2, "hallucination": false, "reason": "The answer directly matches the evidence provided and contains no invented facts.", "judge_model": "gpt-4o"}
+{"id": "pi-184", "score": 0, "hallucination": true, "reason": "The answer mentions uploading a file, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-182", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-185", "score": 0, "hallucination": true, "reason": "The answer includes steps and details not supported by the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-187", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and aligns with the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-188", "score": 1, "hallucination": true, "reason": "The answer includes an unsupported claim about the project belonging to an organization.", "judge_model": "gpt-4o"}
+{"id": "pi-189", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to set team restrictions and minimum levels based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-190", "score": 2, "hallucination": false, "reason": "The answer directly explains how to assign a team to a project with the specified roles, consistent with the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-191", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-192", "score": 0, "hallucination": true, "reason": "The answer includes steps and permissions not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-193", "score": 1, "hallucination": true, "reason": "The answer includes managing users and licenses, which is not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-194", "score": 2, "hallucination": false, "reason": "The answer directly matches the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-195", "score": 2, "hallucination": false, "reason": "The answer directly uses the evidence to explain how to use the map with clusters to find projects geographically.", "judge_model": "gpt-4o"}
+{"id": "pi-196", "score": 2, "hallucination": false, "reason": "The answer directly addresses the prerequisites for mapping, correctly referencing the need to be logged in and accept a license, as supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-197", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using the provided evidence without introducing unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-198", "score": 2, "hallucination": false, "reason": "The answer directly matches the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-199", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question and is consistent with the evidence provided.", "judge_model": "gpt-4o"}
+{"id": "pi-200", "score": 0, "hallucination": true, "reason": "The answer does not address the question about task splitting restrictions.", "judge_model": "gpt-4o"}
+{"id": "pi-201", "score": 2, "hallucination": false, "reason": "The answer correctly states the restriction on deleting projects with mapped tasks as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-186", "score": null, "hallucination": null, "reason": "judge error: RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for gpt-4o in organization org-SU5FmBvq4IGn2uXW8U0ZKqDw on tokens per min (TPM): Li", "judge_model": "gpt-4o"}
+{"id": "pi-053", "score": 1, "hallucination": true, "reason": "The answer includes a 'Read-only' role not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-034", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about manager-only actions and duplicate entry handling.", "judge_model": "gpt-4o"}
+{"id": "pi-091", "score": 1, "hallucination": true, "reason": "Mentions 'number of edits' and 'projects you have mapped' which are not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-116", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the error codes and their structure as per the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-143", "score": 2, "hallucination": false, "reason": "The answer is correct and directly supported by the evidence without any invented facts.", "judge_model": "gpt-4o"}
+{"id": "faq-182", "score": 2, "hallucination": false, "reason": "The answer correctly explains private project access based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-186", "score": 1, "hallucination": true, "reason": "The assistant adds steps like 'Save the project' not supported by the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-023", "score": 2, "hallucination": false, "reason": "The answer directly addresses the question using the provided evidence without introducing any unsupported facts.", "judge_model": "gpt-4o"}
+{"id": "pi-013", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide specific information about viewing task grid color.", "judge_model": "gpt-4o"}
+{"id": "pi-048", "score": 0, "hallucination": false, "reason": "The assistant correctly states that the evidence does not provide information about setting metadata priority to 'urgent.'", "judge_model": "gpt-4o"}
+{"id": "pi-075", "score": 2, "hallucination": false, "reason": "The answer correctly describes how to view an organization profile based on the evidence.", "judge_model": "gpt-4o"}
+{"id": "pi-088", "score": 1, "hallucination": false, "reason": "The answer is vague but aligns with the evidence that badges are earned by meeting statistical milestones.", "judge_model": "gpt-4o"}
+{"id": "pi-107", "score": 1, "hallucination": false, "reason": "Partially answers the question with correct information but lacks specific details about the function.", "judge_model": "gpt-4o"}
+{"id": "pi-146", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to search and filter projects using text search, map browsing, and filters, consistent with the evidence.", "judge_model": "gpt-4o"}
+{"id": "faq-177", "score": 2, "hallucination": false, "reason": "The answer correctly explains where to find the changeset comment and includes relevant details from the evidence.", "judge_model": "gpt-4o"}

@@ -1,0 +1,219 @@
+{"id": "pi-003", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to edit the profile name.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-004", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes how to manage notification preferences based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-002", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details on session management.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-001", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to create an OSM account and log in via OAuth.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-005", "score": 2, "hallucination": false, "reason": "The answer correctly explains the default editor preference and how it works.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-007", "score": 0, "hallucination": false, "reason": "The answer does not provide any information about expert mode.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-006", "score": 2, "hallucination": false, "reason": "The answer accurately describes the email verification process and its time limit.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-008", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to delete an account and aligns with the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-009", "score": 2, "hallucination": false, "reason": "The answer correctly explains read-only mode and its implications.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-011", "score": 2, "hallucination": false, "reason": "The answer accurately explains how each filter works based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-010", "score": 2, "hallucination": false, "reason": "The answer accurately describes how to browse and search for published projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-012", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but includes unsupported details about filtering options.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-013", "score": 2, "hallucination": false, "reason": "The answer correctly explains the task grid colors and how to view them.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-014", "score": 2, "hallucination": false, "reason": "The answer correctly explains task selection methods and project rules.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-015", "score": 2, "hallucination": false, "reason": "The answer correctly explains the setting and its function.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-016", "score": 2, "hallucination": false, "reason": "The answer accurately explains the lock task for mapping and its process.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-017", "score": 2, "hallucination": false, "reason": "The answer accurately explains the editors available in Tasking Manager for editing geometry.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-018", "score": 2, "hallucination": false, "reason": "The answer correctly details how to find and filter projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-019", "score": 2, "hallucination": false, "reason": "The answer correctly explains the splitting of tasks while locked for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-020", "score": 2, "hallucination": false, "reason": "The answer correctly explains changesets and includes required information.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-021", "score": 2, "hallucination": false, "reason": "The answer correctly explains lock duration extension and how it works.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-022", "score": 2, "hallucination": false, "reason": "The answer correctly explains the auto-unlock process based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-023", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-024", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to mark bad imagery while mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-025", "score": 2, "hallucination": false, "reason": "The answer correctly explains the 'stop mapping' option and its function.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-026", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to add a comment and the notification mechanism.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-027", "score": 2, "hallucination": false, "reason": "The answer correctly explains the locked-tasks panel and resuming mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-029", "score": 2, "hallucination": false, "reason": "The answer accurately describes the task status lifecycle for validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-028", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to undo the last action based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-030", "score": 2, "hallucination": false, "reason": "The answer correctly explains the one-lock-per-user rule and how it works.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-031", "score": 2, "hallucination": false, "reason": "The answer accurately describes the task history audit trail and its components.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-034", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the validation process based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-033", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-032", "score": 2, "hallucination": false, "reason": "The answer accurately describes the task states and their transitions.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-035", "score": 2, "hallucination": false, "reason": "The answer correctly explains the concept and process of stopping validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-037", "score": 2, "hallucination": false, "reason": "The answer accurately explains the mapping issue annotation process during invalidation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-038", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to validate a task based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-036", "score": 2, "hallucination": false, "reason": "The answer accurately explains the self-validation guard and how it works.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-039", "score": 2, "hallucination": false, "reason": "The answer accurately describes the bulk operations for project managers and administrators.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-042", "score": 2, "hallucination": false, "reason": "The answer accurately explains how to define a task grid in the Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-040", "score": 2, "hallucination": false, "reason": "The answer accurately explains the OSMCha filter linkage and its function.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-041", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to create a draft project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-046", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to edit project info locales with fallback.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-045", "score": 2, "hallucination": false, "reason": "The answer correctly explains the default changeset comment and its format.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-044", "score": 0, "hallucination": true, "reason": "The assistant incorrectly states that the project manager can assign the project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-043", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to import pre-defined tasks.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-047", "score": 2, "hallucination": false, "reason": "The answer accurately explains project statuses and their visibility according to the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-048", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to set metadata priority.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-049", "score": 2, "hallucination": false, "reason": "The answer correctly outlines access, drawing priority areas, and their visibility.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-050", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but includes vague elements and lacks clarity on specific terms.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-051", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapping types and interests as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-052", "score": 2, "hallucination": false, "reason": "The answer accurately lists who can view a private project and who cannot.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-053", "score": 2, "hallucination": false, "reason": "The answer accurately lists team roles and their permissions based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-054", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the key points about allowed users for private projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-055", "score": 2, "hallucination": false, "reason": "The answer accurately explains the editors allowed for mapping and validation as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-056", "score": 2, "hallucination": false, "reason": "The answer correctly explains the function of the toggle.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-057", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to manage a custom editor in Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-059", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the cloning process and requirements.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-061", "score": 2, "hallucination": false, "reason": "The answer accurately describes how messaging works for project managers.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-060", "score": 2, "hallucination": false, "reason": "The answer accurately explains the save, test, and publish process and validation requirements.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-058", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes how projects store information in multiple languages.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-064", "score": 0, "hallucination": true, "reason": "The assistant included actions not supported by the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-062", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to feature and unfeature projects in Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-065", "score": 2, "hallucination": false, "reason": "The answer accurately describes project transitions and aligns with the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-063", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to transfer ownership based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-066", "score": 2, "hallucination": false, "reason": "The answer correctly explains the conditions for deleting a project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-069", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the criteria for mapping permissions.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-068", "score": 2, "hallucination": false, "reason": "The answer correctly identifies who can view a private project and who cannot.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-067", "score": 0, "hallucination": false, "reason": "The assistant refuses to provide an answer and suggests checking other sources.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-070", "score": 0, "hallucination": false, "reason": "The assistant refuses to provide an answer based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-073", "score": 0, "hallucination": false, "reason": "The answer does not address the question and refuses to provide information.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-071", "score": 2, "hallucination": false, "reason": "The answer accurately explains the team-gated permission model based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-074", "score": 2, "hallucination": false, "reason": "The answer correctly identifies who can view a private project and who cannot.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-072", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapper levels and how to level up based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-075", "score": 2, "hallucination": false, "reason": "The answer correctly outlines how to view an organization's profile based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-076", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the process for creating, updating, and deleting an organization based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-077", "score": 2, "hallucination": false, "reason": "The answer correctly explains how managing organization managers works in Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-078", "score": 2, "hallucination": false, "reason": "The answer correctly details how to find and filter projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-079", "score": 2, "hallucination": false, "reason": "The answer correctly explains that mappers cannot create teams and provides guidance on how to proceed.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-080", "score": 2, "hallucination": false, "reason": "The answer accurately describes the three ways to join a team as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-082", "score": 2, "hallucination": false, "reason": "The answer accurately lists team roles and their permissions based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-081", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to manage team members based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-083", "score": 2, "hallucination": false, "reason": "The answer correctly details how to find and filter projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-084", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the user details a project manager can view.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-086", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details on requirements.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-085", "score": 2, "hallucination": false, "reason": "The answer accurately describes admin-only endpoints based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-087", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapper levels, badges, and how to level up.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-088", "score": 2, "hallucination": false, "reason": "The answer correctly explains how badges are earned based on statistical milestones.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-089", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the required project statistics based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-090", "score": 2, "hallucination": false, "reason": "The answer accurately describes the contribution timeline and how it works based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-091", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes user statistics as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-092", "score": 2, "hallucination": false, "reason": "The answer accurately explains the leaderboard and activity feed as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-093", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to download project data as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-094", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the key points about inbox and notifications for project managers.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-095", "score": 0, "hallucination": false, "reason": "The assistant refuses to provide an answer and suggests checking other sources.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-096", "score": 2, "hallucination": false, "reason": "The answer correctly explains email verification and notification emails based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-098", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to post questions and comments on a project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-097", "score": 2, "hallucination": false, "reason": "The answer correctly explains the @-mention functionality in Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-100", "score": 2, "hallucination": false, "reason": "The answer accurately explains user and project interests and their relationship.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-099", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the process to favorite or unfavorite a project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-102", "score": 2, "hallucination": false, "reason": "The answer accurately explains how imagery works in Tasking Manager based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-101", "score": 2, "hallucination": false, "reason": "The answer correctly explains recommended projects and how cosine similarity works based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-103", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the key points about imagery settings based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-104", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details from the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-105", "score": 2, "hallucination": false, "reason": "The answer accurately explains JOSM remote control and `extra_id_params` based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-106", "score": 2, "hallucination": false, "reason": "The answer accurately explains rapid/custom editor injection and related parameters.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-107", "score": 2, "hallucination": false, "reason": "The answer accurately explains preset filtering in Tasking Manager based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-108", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the task history as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-109", "score": 2, "hallucination": false, "reason": "The answer accurately describes the project activity feed and its purpose.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-110", "score": 0, "hallucination": false, "reason": "The answer does not provide any relevant information about contributions per user.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-111", "score": 2, "hallucination": false, "reason": "The answer accurately explains the export process using the HOT Export Tool and Overpass API.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-113", "score": 1, "hallucination": false, "reason": "The answer partially addresses data licenses but lacks specific details from the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-112", "score": 2, "hallucination": false, "reason": "The answer correctly explains the download options for AOI and task grid as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-115", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details about the application key.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-114", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes key points about the REST API v2 based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-116", "score": 2, "hallucination": false, "reason": "The answer accurately explains the canonical error surface and aligns with the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-117", "score": 2, "hallucination": false, "reason": "The answer accurately explains imagery troubleshooting in Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-119", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the support process for validators.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-118", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-121", "score": 0, "hallucination": false, "reason": "The answer does not address the question about partner management.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-120", "score": 2, "hallucination": false, "reason": "The answer accurately explains the MapSwipe project tasks and their creation process.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-122", "score": 1, "hallucination": true, "reason": "The answer includes unsupported details about filtering by mapping types and priority.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-123", "score": 0, "hallucination": false, "reason": "The answer does not address the question about database federation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-124", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes key points about sandbox projects based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-125", "score": 2, "hallucination": false, "reason": "The answer accurately explains private project visibility enforcement based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-126", "score": 0, "hallucination": false, "reason": "The answer does not address the question and suggests checking external sources.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-128", "score": 0, "hallucination": false, "reason": "The answer does not address the question about PII handling for city and country.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-127", "score": 2, "hallucination": false, "reason": "The answer accurately lists roles and their permissions as per the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-129", "score": 2, "hallucination": false, "reason": "The answer accurately describes the learn pathway hub and its resources.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-130", "score": 2, "hallucination": false, "reason": "The answer accurately explains the license acceptance interstitial and its function.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-132", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapper levels, badges, and how to level up.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-131", "score": 2, "hallucination": false, "reason": "The answer accurately explains how the system supports multiple languages and how it works.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-133", "score": 2, "hallucination": false, "reason": "The answer correctly explains mapping types and aligns with the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-134", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes key points about JOSM and iD presets management.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-135", "score": 2, "hallucination": false, "reason": "The answer accurately explains changeset comment templating and its purpose.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-136", "score": 2, "hallucination": false, "reason": "The answer correctly explains the enforced random task selection.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-137", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the key points about imagery settings.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-141", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-140", "score": 2, "hallucination": false, "reason": "The answer correctly explains language support and fallback behavior.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-138", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to save edits to OpenStreetMap.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-139", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to add team members based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-143", "score": 2, "hallucination": false, "reason": "The answer accurately describes mapper levels and their requirements.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-142", "score": 2, "hallucination": false, "reason": "The answer accurately describes the task grid and priority areas based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-145", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-146", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to search and filter projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-147", "score": 2, "hallucination": false, "reason": "The answer correctly outlines how to find projects using filters.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-144", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to feature and unfeature a project.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-150", "score": 2, "hallucination": false, "reason": "The answer correctly details how to find and filter projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-151", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-149", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to edit geometry in the iD editor.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-148", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to lock a task for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-154", "score": 2, "hallucination": false, "reason": "The answer accurately summarizes the key points about imagery settings.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-152", "score": 2, "hallucination": false, "reason": "The answer correctly summarizes the system messages related to welcome and validation notifications.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-153", "score": 2, "hallucination": false, "reason": "The answer accurately explains project visibility based on status.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-155", "score": 2, "hallucination": false, "reason": "The answer correctly explains the imagery offset and its reset behavior.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-156", "score": 1, "hallucination": false, "reason": "The answer provides some correct information but includes unnecessary details and lacks conciseness.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-157", "score": 2, "hallucination": false, "reason": "The answer accurately explains the mapping issue annotation process.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-158", "score": 2, "hallucination": false, "reason": "The answer correctly explains the license gate process in the Tasking Manager.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-159", "score": 2, "hallucination": false, "reason": "The answer correctly explains task selection options based on project requirements.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-160", "score": 2, "hallucination": false, "reason": "The answer correctly lists the allowed editors and their characteristics.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-161", "score": 2, "hallucination": false, "reason": "The answer correctly states that only administrators can manage users.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-162", "score": 2, "hallucination": false, "reason": "The answer correctly states that guests cannot lock tasks for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-164", "score": 2, "hallucination": false, "reason": "The answer correctly states that regular mappers cannot create projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-163", "score": 2, "hallucination": false, "reason": "The answer correctly states that project managers cannot validate their own mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-165", "score": 2, "hallucination": false, "reason": "The answer correctly states that a mapper cannot view a private project if not on the allowed list.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-166", "score": 2, "hallucination": false, "reason": "The answer correctly states that a task in Ready state cannot be locked for validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-168", "score": 2, "hallucination": false, "reason": "The answer correctly states that guests cannot post comments on tasks.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-167", "score": 2, "hallucination": false, "reason": "The answer correctly states that a blocked read-only user cannot map tasks.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-172", "score": 2, "hallucination": false, "reason": "The answer correctly states that only authenticated users can favorite projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-169", "score": 2, "hallucination": false, "reason": "The answer correctly states that a mapper cannot delete a project that has been mapped.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-170", "score": 2, "hallucination": false, "reason": "The answer correctly states that users cannot edit another user's profile.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-171", "score": 2, "hallucination": false, "reason": "The answer correctly states that levels are updated automatically and only administrators can change them.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-173", "score": 2, "hallucination": false, "reason": "The answer correctly explains the automatic release of the task lock due to inactivity.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-175", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to determine if mapping passed validation.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-174", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to check the invalidation history for details.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-176", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to set up JOSM for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-177", "score": 2, "hallucination": false, "reason": "The answer correctly identifies where to find the changeset comment.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-178", "score": 2, "hallucination": false, "reason": "The answer correctly explains the error and provides appropriate steps to resolve it.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-180", "score": 2, "hallucination": false, "reason": "The answer correctly explains the difference between ANY and TEAMS mapping permissions.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-179", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details from the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-181", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but lacks specific details from the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-183", "score": 2, "hallucination": false, "reason": "The answer correctly outlines steps to find projects matching interests.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-182", "score": 2, "hallucination": false, "reason": "The answer correctly explains why the project is private and who can access it.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-184", "score": 2, "hallucination": false, "reason": "The answer accurately explains mapper levels and their impact on mapping eligibility.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-185", "score": 2, "hallucination": false, "reason": "The answer accurately describes the Tasking Manager's role in coordinating mapping efforts in OpenStreetMap.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-186", "score": 2, "hallucination": false, "reason": "The answer correctly identifies where to find mapping statistics and contributions.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-187", "score": 2, "hallucination": false, "reason": "The answer accurately describes MapSwipe and its relation to Tasking Manager tasks.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-188", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to export mapped data using the HOT Export Tool.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-189", "score": 2, "hallucination": false, "reason": "The answer correctly identifies who can create a project based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "faq-190", "score": 2, "hallucination": false, "reason": "The answer correctly explains the 'ProjectNotPublished' error and provides relevant context.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-173", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps and states required to lock tasks for validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-175", "score": 2, "hallucination": false, "reason": "The answer correctly states that a validator cannot validate their own mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-176", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the process for marking a task as invalidated and adding mapping issue categories.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-174", "score": 2, "hallucination": false, "reason": "The answer correctly outlines who can and cannot validate tasks based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-177", "score": 2, "hallucination": false, "reason": "The answer accurately describes the lifecycle of an invalidation history entry.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-179", "score": 2, "hallucination": false, "reason": "The answer correctly explains tagging expectations and the role of presets in validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-178", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to use OSMCha for quality checking after validation.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-180", "score": 2, "hallucination": false, "reason": "The answer accurately explains both error messages based on the provided evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-181", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to stop validating and revert a lock.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-182", "score": 2, "hallucination": false, "reason": "The answer correctly explains how a validator can leave feedback after invalidating a task.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-184", "score": 2, "hallucination": false, "reason": "The answer correctly explains both methods to define the AOI.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-183", "score": 2, "hallucination": false, "reason": "The answer correctly identifies who can create a new project based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-185", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to define the task grid, resize tasks, trim to AOI, and discard tiny tasks.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-186", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to assign an organization and optional campaign.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-187", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to configure general information per language.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-189", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to set team restrictions and minimum levels.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-188", "score": 1, "hallucination": true, "reason": "The answer incorrectly includes 'the project must belong to an organization' as a requirement.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-190", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the steps to assign a team to a project with specified roles.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-192", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to perform bulk operations for project managers and administrators.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-191", "score": 2, "hallucination": false, "reason": "The answer correctly explains the cloning process and the clone's status and author.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-193", "score": 2, "hallucination": false, "reason": "The answer correctly identifies admin capabilities and actions.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-194", "score": 2, "hallucination": false, "reason": "The answer correctly explains how text search works using the identifier.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-197", "score": 2, "hallucination": false, "reason": "The answer correctly outlines the requirements for validation based on the evidence.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-196", "score": 2, "hallucination": false, "reason": "The answer correctly states the prerequisites for mapping.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-195", "score": 2, "hallucination": false, "reason": "The answer correctly explains how to use the map with clusters to find projects.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-198", "score": 1, "hallucination": true, "reason": "The answer incorrectly states that the project must belong to an organization.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-199", "score": 2, "hallucination": false, "reason": "The answer correctly explains the restrictions on locking a second task.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-200", "score": 1, "hallucination": false, "reason": "The answer partially addresses the question but includes some inaccuracies.", "judge_model": "gpt-4o-mini"}
+{"id": "pi-201", "score": 2, "hallucination": false, "reason": "The answer correctly states the conditions for project deletion based on task states.", "judge_model": "gpt-4o-mini"}

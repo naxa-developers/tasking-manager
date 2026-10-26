@@ -68,7 +68,7 @@ _COUNT_TURN = """
 """
 
 
-async def check_chat_rate_limit(user_id: int, db: Database) -> RateLimitDecision:
+async def check_rate_limit(user_id: int, db: Database) -> RateLimitDecision:
     """Count one chat turn for ``user_id`` and report whether it is allowed.
 
     Fails open: a counter-store error logs a warning and allows the turn, so a

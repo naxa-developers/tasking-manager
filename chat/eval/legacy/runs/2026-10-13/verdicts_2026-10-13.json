@@ -1,0 +1,570 @@
+{
+  "generated_at": "2026-10-13T07:03:19.537038+00:00",
+  "run": "2026-10-13-e2e",
+  "legend": {
+    "verdicts": "pass = faithful and complete vs evidence; partial = some facts right but incomplete/misleading; fail = wrong or absent; na = placeholder, not scored",
+    "stages": "first failing stage: routing | retrieval | pipeline (domain evidence) | generation | none"
+  },
+  "cases": {
+    "A1": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "partial",
+        "stage": "generation",
+        "note": "Level ADVANCED correct; next-level explanation garbled/invented ('meet or exceed the project's minimum mapping level') while evidence says user is at the highest level"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "Clean: 'highest mapper level, no next level to reach'"
+      },
+      "conversion": "improved"
+    },
+    "A2": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "A3": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "fail",
+        "stage": "generation",
+        "note": "Evidence has earned_badges=0 / count=0; answer claims data unavailable"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "'No badges yet \u2014 badge count is 0'"
+      },
+      "conversion": "fixed"
+    },
+    "A4": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "fail",
+        "stage": "generation",
+        "note": "Evidence has contributions_this_month=0 / last_month=0; answer claims missing and tells user to check the very fields it was given"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "'No contributions this month or last month \u2014 both zero'"
+      },
+      "conversion": "fixed"
+    },
+    "A5": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "All 27 projects listed"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "27 listed"
+      },
+      "conversion": "same"
+    },
+    "A6": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "A7": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "A8": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "9 teams, duplicate name flagged"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "9 teams numbered"
+      },
+      "conversion": "same"
+    },
+    "B1": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "B2": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "'none' phrased as data gap"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "B3": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "B4": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "partial",
+        "stage": "generation",
+        "note": "Components 507/241 correct but synthesizes misleading 'total = 748'"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "507 mapped / 241 validated reported separately"
+      },
+      "conversion": "improved"
+    },
+    "B5": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "B6": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "#99,#2 with details"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "B7": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "All 4 returned"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "All 4 with context"
+      },
+      "conversion": "same"
+    },
+    "B8": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "ARCHIVED/private/1%/0%"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "G8a": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "MODERATE + iD/JOSM/CUSTOM/RAPID"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "G8lit": {
+      "route": "miss",
+      "kb": null,
+      "evidence": null,
+      "qwen": {
+        "verdict": "fail",
+        "stage": "routing",
+        "note": "Static: answers generically from KB; should ask which project (needs_project_id). Corrected arm -> clarification 'Which project do you mean?'"
+      },
+      "deepseek": {
+        "verdict": "fail",
+        "stage": "routing",
+        "note": "Static: same generic answer; corrected arm identical clarification"
+      },
+      "conversion": "same"
+    },
+    "C4": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "missing_field",
+      "qwen": {
+        "verdict": "fail",
+        "stage": "pipeline",
+        "note": "Summary op carries no contact/author/manager; Qwen presents generic support email AS the project contact"
+      },
+      "deepseek": {
+        "verdict": "partial",
+        "stage": "pipeline",
+        "note": "Correctly reports the data has no contact and routes to support options"
+      },
+      "conversion": "improved"
+    },
+    "G16a": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "#57,#58; stray 'untrusted data' clause"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "G16b": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "capped",
+      "qwen": {
+        "verdict": "partial",
+        "stage": "pipeline",
+        "note": "Lists the 8 rows shown but omits total=27 that was in evidence (no disclosure of truncation)"
+      },
+      "deepseek": {
+        "verdict": "partial",
+        "stage": "pipeline",
+        "note": "Lists 8 but discloses '27 total, more exist \u2014 remaining 19'"
+      },
+      "conversion": "improved"
+    },
+    "G16c": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "wrong",
+      "qwen": {
+        "verdict": "fail",
+        "stage": "pipeline",
+        "note": "Campaign filter 'Test' finds no exact match -> silent text-search fallback -> evidence says 35 (true exact membership: 5). Answer faithfully repeats wrong evidence"
+      },
+      "deepseek": {
+        "verdict": "fail",
+        "stage": "pipeline",
+        "note": "Same; faithfully repeats 35 and discloses partial listing"
+      },
+      "conversion": "same"
+    },
+    "G16lit": {
+      "route": "ok",
+      "kb": null,
+      "evidence": null,
+      "qwen": {
+        "verdict": "na",
+        "stage": "none",
+        "note": "Literal placeholder; generic filter guidance (known weak)"
+      },
+      "deepseek": {
+        "verdict": "na",
+        "stage": "none",
+        "note": "Generic filter guidance"
+      },
+      "conversion": "same"
+    },
+    "B10": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "#104 + #57"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "C1": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "fail",
+        "stage": "generation",
+        "note": "Misreads statuses: calls MAPPED 'validated'; calls READY 'invalidated'"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "'Not yet \u2014 MAPPED=awaiting review, READY=not started, invalidations separate'"
+      },
+      "conversion": "fixed"
+    },
+    "C2": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": null,
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "C3": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "capped",
+      "qwen": {
+        "verdict": "partial",
+        "stage": "pipeline",
+        "note": "Op caps at 3 of 5 managed orgs and reports '3'; answer repeats 3 without disclosure"
+      },
+      "deepseek": {
+        "verdict": "partial",
+        "stage": "pipeline",
+        "note": "Repeats 3 but discloses 'more projects beyond the examples'"
+      },
+      "conversion": "improved"
+    },
+    "C5": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": null,
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "C6": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": null,
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "C7": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": null,
+      "qwen": {
+        "verdict": "partial",
+        "stage": "generation",
+        "note": "'Request PM rights by being an organization manager' \u2014 omits that rights cannot be self-granted"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "Explicitly: no self-service; a manager/admin must assign the role"
+      },
+      "conversion": "improved"
+    },
+    "C8": {
+      "route": "ok",
+      "kb": "miss",
+      "evidence": null,
+      "qwen": {
+        "verdict": "fail",
+        "stage": "retrieval",
+        "note": "Golden chunk not retrieved; declines ('data does not include')"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "retrieval",
+        "note": "Right substance ('only administrators create orgs; ask an admin') but NOT grounded in retrieved chunks \u2014 model knowledge compensating a retrieval miss"
+      },
+      "conversion": "fixed"
+    },
+    "D1": {
+      "route": "ok",
+      "kb": "miss",
+      "evidence": null,
+      "qwen": {
+        "verdict": "partial",
+        "stage": "retrieval",
+        "note": "Golden chunk not in top-5; vague 'official documentation provides...' without locations"
+      },
+      "deepseek": {
+        "verdict": "partial",
+        "stage": "retrieval",
+        "note": "Names the guide family but no concrete locations/links; golden chunk absent"
+      },
+      "conversion": "same"
+    },
+    "D2": {
+      "route": "ok",
+      "kb": null,
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "D7": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": "ok",
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": "date + validator + no comment"
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    },
+    "D8": {
+      "route": "ok",
+      "kb": "hit",
+      "evidence": null,
+      "qwen": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "deepseek": {
+        "verdict": "pass",
+        "stage": "none",
+        "note": ""
+      },
+      "conversion": "same"
+    }
+  }
+}

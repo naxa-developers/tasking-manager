@@ -1,0 +1,281 @@
+{
+  "generated_at": "2026-10-13T09:12:52.595356+00:00",
+  "mode": "separate",
+  "model": "openai/embeddinggemma-2",
+  "dimension": 768,
+  "utterances": 390,
+  "global": {
+    "high": 0.875,
+    "high_tpr": 0.5487,
+    "high_fpr": 0.2949,
+    "low": 0.775,
+    "margin": 0.005
+  },
+  "distributions": {
+    "positive_p05": 0.7653278654375752,
+    "positive_p50": 0.8808183387917917,
+    "positive_p95": 0.9498512435905424,
+    "negative_p50": 0.8535407601127907,
+    "negative_p95": 0.9173872924254033,
+    "margin_p10": -0.043652157817156145,
+    "margin_p50": 0.031163758196267932
+  },
+  "per_route": {
+    "kb": {
+      "threshold": 0.78,
+      "tpr_at_threshold": 0.375,
+      "fpr_at_threshold": 0.0882,
+      "youden": 0.2868,
+      "holdout_top1": 0.3125,
+      "n": 16
+    },
+    "stats": {
+      "threshold": 0.88,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.0238,
+      "youden": 0.8929,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "summary": {
+      "threshold": 0.805,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.3386,
+      "youden": 0.6614,
+      "holdout_top1": 0.5,
+      "n": 12
+    },
+    "teams": {
+      "threshold": 0.87,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.0397,
+      "youden": 0.877,
+      "holdout_top1": 0.6667,
+      "n": 12
+    },
+    "chat": {
+      "threshold": 0.84,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.127,
+      "youden": 0.7897,
+      "holdout_top1": 0.6667,
+      "n": 12
+    },
+    "project_activity": {
+      "threshold": 0.85,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0979,
+      "youden": 0.9021,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "project_annotations": {
+      "threshold": 0.865,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0397,
+      "youden": 0.9603,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "project_contributions": {
+      "threshold": 0.86,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0873,
+      "youden": 0.9127,
+      "holdout_top1": 0.5833,
+      "n": 12
+    },
+    "project_tasks": {
+      "threshold": 0.835,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.1693,
+      "youden": 0.8307,
+      "holdout_top1": 0.4167,
+      "n": 12
+    },
+    "similar_projects": {
+      "threshold": 0.89,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0026,
+      "youden": 0.9974,
+      "holdout_top1": 1.0,
+      "n": 12
+    },
+    "campaigns": {
+      "threshold": 0.85,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0635,
+      "youden": 0.9365,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "organisation_info": {
+      "threshold": 0.76,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.1878,
+      "youden": 0.7288,
+      "holdout_top1": 0.6667,
+      "n": 12
+    },
+    "team_detail": {
+      "threshold": 0.895,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0,
+      "youden": 1.0,
+      "holdout_top1": 1.0,
+      "n": 12
+    },
+    "user_interests": {
+      "threshold": 0.825,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.0503,
+      "youden": 0.8664,
+      "holdout_top1": 0.8333,
+      "n": 12
+    },
+    "user_osm_stats": {
+      "threshold": 0.795,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0132,
+      "youden": 0.9868,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "notifications": {
+      "threshold": 0.75,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0661,
+      "youden": 0.9339,
+      "holdout_top1": 0.8333,
+      "n": 12
+    },
+    "project_partners": {
+      "threshold": 0.86,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0556,
+      "youden": 0.9444,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "featured_projects": {
+      "threshold": 0.8,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.119,
+      "youden": 0.881,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "active_projects": {
+      "threshold": 0.82,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0979,
+      "youden": 0.9021,
+      "holdout_top1": 0.5833,
+      "n": 12
+    },
+    "mywork": {
+      "threshold": 0.79,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.1614,
+      "youden": 0.8386,
+      "holdout_top1": 0.6667,
+      "n": 12
+    },
+    "user_profile": {
+      "threshold": 0.85,
+      "tpr_at_threshold": 0.8333,
+      "fpr_at_threshold": 0.0106,
+      "youden": 0.8228,
+      "holdout_top1": 0.8333,
+      "n": 12
+    },
+    "user_contributions": {
+      "threshold": 0.835,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0741,
+      "youden": 0.9259,
+      "holdout_top1": 0.5833,
+      "n": 12
+    },
+    "user_projects_created": {
+      "threshold": 0.83,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.0767,
+      "youden": 0.8399,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "user_org_projects": {
+      "threshold": 0.86,
+      "tpr_at_threshold": 0.9167,
+      "fpr_at_threshold": 0.0106,
+      "youden": 0.9061,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "user_activity": {
+      "threshold": 0.78,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.1138,
+      "youden": 0.8862,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "user_teams": {
+      "threshold": 0.8,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0265,
+      "youden": 0.9735,
+      "holdout_top1": 0.8333,
+      "n": 12
+    },
+    "user_tasks": {
+      "threshold": 0.81,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.0291,
+      "youden": 0.9709,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "favorites": {
+      "threshold": 0.825,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.1323,
+      "youden": 0.8677,
+      "holdout_top1": 0.9167,
+      "n": 12
+    },
+    "global_stats": {
+      "threshold": 0.775,
+      "tpr_at_threshold": 1.0,
+      "fpr_at_threshold": 0.1746,
+      "youden": 0.8254,
+      "holdout_top1": 0.75,
+      "n": 12
+    },
+    "project_search": {
+      "threshold": 0.78,
+      "tpr_at_threshold": 0.9286,
+      "fpr_at_threshold": 0.3697,
+      "youden": 0.5589,
+      "holdout_top1": 0.5,
+      "n": 14
+    },
+    "trending_projects": {
+      "threshold": 0.825,
+      "tpr_at_threshold": 0.75,
+      "fpr_at_threshold": 0.0661,
+      "youden": 0.6839,
+      "holdout_top1": 0.4167,
+      "n": 12
+    },
+    "user_recommendations": {
+      "threshold": 0.855,
+      "tpr_at_threshold": 0.75,
+      "fpr_at_threshold": 0.0132,
+      "youden": 0.7368,
+      "holdout_top1": 0.6667,
+      "n": 12
+    }
+  }
+}

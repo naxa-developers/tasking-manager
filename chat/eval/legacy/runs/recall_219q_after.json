@@ -1,0 +1,164 @@
+{
+  "n": 219,
+  "overall": {
+    "R@1": 0.5845,
+    "R@3": 0.8174,
+    "R@5": 0.8995,
+    "R@10": 0.9406
+  },
+  "by_role": {
+    "administrator": {
+      "n": 10,
+      "R@1": 0.5,
+      "R@3": 0.7,
+      "R@5": 0.8,
+      "R@10": 0.9
+    },
+    "general": {
+      "n": 24,
+      "R@1": 0.6667,
+      "R@3": 0.75,
+      "R@5": 0.875,
+      "R@10": 0.9167
+    },
+    "mapper": {
+      "n": 159,
+      "R@1": 0.5409,
+      "R@3": 0.8176,
+      "R@5": 0.8931,
+      "R@10": 0.9371
+    },
+    "project_manager": {
+      "n": 13,
+      "R@1": 0.8462,
+      "R@3": 1.0,
+      "R@5": 1.0,
+      "R@10": 1.0
+    },
+    "validator": {
+      "n": 13,
+      "R@1": 0.7692,
+      "R@3": 0.8462,
+      "R@5": 1.0,
+      "R@10": 1.0
+    }
+  },
+  "mrr": 0.7153,
+  "latency_ms": {
+    "mean": 13.0,
+    "p50": 5.3
+  },
+  "misses_at_5": [
+    {
+      "id": "pi-009",
+      "role": "general",
+      "best_rank": 6
+    },
+    {
+      "id": "pi-013",
+      "role": "mapper",
+      "best_rank": 7
+    },
+    {
+      "id": "pi-015",
+      "role": "mapper",
+      "best_rank": 7
+    },
+    {
+      "id": "pi-018",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-029",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-031",
+      "role": "general",
+      "best_rank": null
+    },
+    {
+      "id": "pi-047",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-058",
+      "role": "mapper",
+      "best_rank": 8
+    },
+    {
+      "id": "pi-067",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-083",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-118",
+      "role": "mapper",
+      "best_rank": 8
+    },
+    {
+      "id": "pi-122",
+      "role": "mapper",
+      "best_rank": 6
+    },
+    {
+      "id": "pi-127",
+      "role": "administrator",
+      "best_rank": null
+    },
+    {
+      "id": "pi-128",
+      "role": "administrator",
+      "best_rank": 6
+    },
+    {
+      "id": "pi-130",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-132",
+      "role": "general",
+      "best_rank": null
+    },
+    {
+      "id": "pi-146",
+      "role": "mapper",
+      "best_rank": 8
+    },
+    {
+      "id": "pi-149",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-150",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-151",
+      "role": "mapper",
+      "best_rank": null
+    },
+    {
+      "id": "pi-154",
+      "role": "mapper",
+      "best_rank": 8
+    },
+    {
+      "id": "faq-175",
+      "role": "mapper",
+      "best_rank": null
+    }
+  ],
+  "note": "AFTER persona hard-drop. Pure hybrid RRF k=60, 53 chunks, no boost. Compare BEFORE 219q hybrid_k50 R@5=0.936 (48 nodes/31 docs, pre-FAQ)."
+}
