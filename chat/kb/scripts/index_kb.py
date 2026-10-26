@@ -15,7 +15,7 @@ from chat.config import (
     get_vector_store,
 )
 
-RETRIEVAL_DIR = Path(__file__).resolve().parents[1]
+RETRIEVAL_DIR = Path(__file__).resolve().parents[2]  # chat/kb/scripts -> chat/
 
 _TABLE_NAME_RE = re.compile(r"^[A-Za-z0-9_]+$")
 

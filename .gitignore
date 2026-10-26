@@ -87,3 +87,5 @@ tests/test_db_dump/tm_sample_db.sql
 
 # Local RAG eval outputs (regenerable run artifacts, incl. 1.6MB JSON runs)
 chat/eval/runs/
+# local database dumps (base + post-migration), not part of the tree
+tm_db_*.sql
