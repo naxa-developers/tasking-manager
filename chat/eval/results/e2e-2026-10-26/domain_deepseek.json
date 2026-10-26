@@ -1,0 +1,415 @@
+{
+  "mode": "domain",
+  "rows": [
+    {
+      "id": "d01",
+      "question": "What's my mapper level, and what do I need to reach the next one?",
+      "answer": "You're at **Advanced** \u2014 the highest mapper level, so there's no next level to reach.\n\nYour level is set automatically from your mapping statistics after you complete tasks, and no badges have been earned yet. If you want to track progress, keep an eye on your profile stats after your next mapping session.",
+      "route": "BOTH",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.7
+    },
+    {
+      "id": "d02",
+      "question": "What task do I currently have locked?",
+      "answer": "You currently have no task locked. If you were expecting one, open the project you were working on in the Tasking Manager and check whether your lock expired or was released.",
+      "route": "DOMAIN",
+      "ops": [
+        "mywork"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.19
+    },
+    {
+      "id": "d03",
+      "question": "What badges have I earned?",
+      "answer": "You haven't earned any badges yet \u2014 your badge count is currently zero.\n\nA practical next step: keep mapping and validating on projects; badges are awarded automatically as you hit activity milestones, and your mapping level is already at the highest tier (Advanced), so contributions there still count toward them.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_profile"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.19
+    },
+    {
+      "id": "d04",
+      "question": "How is my contribution this month compared to last month?",
+      "answer": "Both months are the same: zero contributions this month (October 2026) and zero last month (September 2026).\n\nIf you expected activity to show up, make sure you're signed in with the account you mapped under, and check that your edits were saved rather than left as drafts.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.27
+    },
+    {
+      "id": "d05",
+      "question": "What are the projects I have contributed to?",
+      "answer": "You've contributed to 1 project:\n\n- **Home Playground** \u2014 archived (2 tasks mapped, 0 validated)\n\nSince it's archived, it's now read-only. If you'd like to keep contributing, you can browse open projects at tasks.hotosm.org/projects and pick one that interests you.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.9
+    },
+    {
+      "id": "d06",
+      "question": "What's my current mapping streak?",
+      "answer": "Your current mapping streak is 0 days \u2014 no mapping activity is recorded on consecutive recent days.\n\nIf you want to restart it, map at least one task today.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.61
+    },
+    {
+      "id": "d07",
+      "question": "What's my validation-vs-mapping split?",
+      "answer": "Your validation share is **33%**, compared with **67%** for mapping. In all-time task counts, that\u2019s **254 validated** versus **518 mapped**.\n\nNext step: check your profile activity page if you want to compare this with recent contributions.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_activity"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.52
+    },
+    {
+      "id": "d08",
+      "question": "What teams am I part of?",
+      "answer": "I can't tell which of these teams you belong to \u2014 the available data lists teams but doesn't show your membership.\n\nNext step: open your Tasking Manager profile and check the teams section there, or tell me a specific team name and I can look up its details.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_teams"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.13
+    },
+    {
+      "id": "d09",
+      "question": "How many projects are there on Tasking Manager?",
+      "answer": "There are 86 projects on Tasking Manager.\n\nIf you want a breakdown, you can browse them at tasks.hotosm.org/projects.",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.24
+    },
+    {
+      "id": "d10",
+      "question": "How many health-oriented projects are there?",
+      "answer": "I can't tell from the available data \u2014 projects here aren't tagged with a health or sector category, so there's no way to isolate health-oriented ones. There are 38 published projects in total, but nothing distinguishes them by topic.\n\nNext step: filter by keyword on tasks.hotosm.org/projects, or tell me a specific project name and I can check its details.",
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.85
+    },
+    {
+      "id": "d11",
+      "question": "How many users are registered on Tasking Manager?",
+      "answer": "26 users are registered.\n\nNext step: if you need a breakdown by role or activity, tell me what you'd like to see.",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.42
+    },
+    {
+      "id": "d12",
+      "question": "How many tasks have been mapped/validated in total?",
+      "answer": "507 tasks have been mapped and 241 validated so far.\n\nNext step: to track progress on a specific project, share which one you mean and open tasks.hotosm.org/projects/123.",
+      "route": "DOMAIN",
+      "ops": [
+        "global_stats"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.68
+    },
+    {
+      "id": "d13",
+      "question": "What are the most active/trending projects right now?",
+      "answer": "Right now there are no projects showing recent mapping or validation activity, so there's no trending list to point to.\n\nA practical next step: browse tasks.hotosm.org/projects to find projects currently open for mapping, or tell me a specific project and I can check its details.",
+      "route": "DOMAIN",
+      "ops": [
+        "trending_projects"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.82
+    },
+    {
+      "id": "d14",
+      "question": "Which projects are beginner-friendly / match my skill level?",
+      "answer": "Neither of the two recommended projects is beginner-level \u2014 one is rated moderate and the other challenging, so neither is an ideal skill match if you're just starting out.\n\nPractical next step: open tasks.hotosm.org/projects and filter by difficulty \"Easy/Beginner\" to find a better-fitting project.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_recommendations"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.55
+    },
+    {
+      "id": "d15",
+      "question": "Which projects are expiring soon or short on mappers?",
+      "answer": "Here's what the project list shows, though it only covers part of the matching projects:\n\n**With due dates**\n- #15 libya Data quality monitoring test \u2014 due 2024-04-23, mapped 1%, validated 0%\n- #3 Test by manjita \u2014 due 2024-10-31, mapped 100%, validated 87%\n- #14 Test dailekh \u2014 due 2025-08-18, mapped 100%, validated 98%\n\n**Short on mappers**\nNearly all listed projects show 0 active mappers: #15, #11, #3, #62, #104, #27, and #14. Only #19 test project has any activity, with 1 active mapper (mapped 15%, validated -7%).\n\nSince only part of the projects is shown here, you may want to check individual project pages for exact dates and mapper activity \u2014 for example tasks.hotosm.org/projects/15.",
+      "route": "DOMAIN",
+      "ops": [
+        "project_search"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.16
+    },
+    {
+      "id": "d16",
+      "question": "What's project X's difficulty level and required editor (iD/JOSM)?",
+      "answer": "Which project do you mean? Tell me the project number or link, and I can check its details \u2014 you can open it at tasks.hotosm.org/projects/123 (replace 123 with the project ID).\n\nFor reference, projects are set to one of three difficulty levels: Easy, Moderate, or Challenging. I don't see any field for a required editor (iD/JOSM) in the project configuration details available to me, so that may not be something a project specifies.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.8
+    },
+    {
+      "id": "d17",
+      "question": "What's the status of project X (% mapped, % validated)?",
+      "answer": "I don't have a project named \u2014 could you tell me which project you mean? Share the project ID or URL (for example, tasks.hotosm.org/projects/123) and I can look up its mapped and validated progress.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.96
+    },
+    {
+      "id": "d18",
+      "question": "Recommend a project based on what I usually map",
+      "answer": "Based on projects linked to campaigns you\u2019ve contributed to, two published recommendations match:\n\n1. **Test by manjita** \u2014 Nepal, moderate difficulty, 4% mapped and 0% validated; best if you want mapping work still to do.  \n   https://tasks.hotosm.org/projects/104\n\n2. **Rwanda** \u2014 Kenya, challenging difficulty, 100% mapped and 0% validated; best if you prefer validation/QA work.  \n   https://tasks.hotosm.org/projects/57\n\nNext step: open the one that matches whether you want to map or validate.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_recommendations"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.14
+    },
+    {
+      "id": "d19",
+      "question": "Has my submitted task been validated yet?",
+      "answer": "I can't tell which task is yours from here \u2014 you'll need to point me to it first. Which project (and task number) are you asking about? You can find it at tasks.hotosm.org/projects/123.\n\nOnce you name it, I can check whether it's still MAPPED, has been validated, or was invalidated.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_tasks"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.02
+    },
+    {
+      "id": "d20",
+      "question": "How do I request help or a mentor on a task I'm stuck on?",
+      "answer": "Ask in the task's Comments thread by @-mentioning a mapper or manager, or contact the support team directly.\n\n1. Open the task you're stuck on and use its Comments thread, mentioning a mapper or manager with `@` so they're notified.\n2. Email `mapper-support@hotosm.org` if you need broader help.\n3. Or join the HOT Slack `mapper-support` channel (sign in via slack.hotosm.org).\n\nThe evidence doesn't mention a formal \"mentor\" role \u2014 for that, the support channel is your best route.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.28
+    },
+    {
+      "id": "d21",
+      "question": "What projects is my organization currently running?",
+      "answer": "You manage 3 organisations, so it depends which one you mean:\n\n- **Naxa Test ORG** \u2014 27 running projects, including #15 libya Data quality monitoring test, #11 Test project 4, #62 Changunarayan Municipality, #27 bangladesh, and #19 test project.\n- **test** \u2014 1 running project: #120 new test project.\n- **sadasd** \u2014 0 running projects.\n\nTell me which organisation you mean if you want the full project list.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_org_projects"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.11
+    },
+    {
+      "id": "d22",
+      "question": "Who's the contact for project X?",
+      "answer": "Which project do you mean? Share its Tasking Manager link or project number so I can point you to the right contact.\n\nYou can also open the project page directly, for example: tasks.hotosm.org/projects/123",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 5.17
+    },
+    {
+      "id": "d23",
+      "question": "How do I register on Tasking Manager?",
+      "answer": "Sign up on `tasks.hotosm.org` (or your community instance), then authorize through OpenStreetMap. The steps:\n\n1. Click **Sign up** on `tasks.hotosm.org` (or any community instance).\n2. Provide your name and email.\n3. Create an OpenStreetMap account when redirected to `openstreetmap.org`.\n4. Return to the Tasking Manager and click **Log in** to authorize limited access.\n\nHave your OpenStreetMap credentials ready before you start, since step 3 is required.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.66
+    },
+    {
+      "id": "d24",
+      "question": "Whom should I reach out to for support?",
+      "answer": "Contact the HOT mapping support team at `mapper-support@hotosm.org`, or ask in the `mapper-support` channel on HOT Slack (join via `slack.hotosm.org`). You can also post in a project's Comments thread to reach the mapper or manager directly.\n\nNext step: if it's about a specific project, share the project link so the issue can be looked at in context.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.15
+    },
+    {
+      "id": "d25",
+      "question": "How do I request project manager rights / create a new project?",
+      "answer": "The evidence doesn't spell out a request procedure. What it does say: a project manager is a member of a project team with the manager role for that project, or the project author \u2014 and organization managers can create projects under their organization.\n\nPractical next step: ask an administrator (or the organization manager for the organization you'd work under) to add you to the relevant project team as manager, or to set you up as an organization manager if you need to create projects yourself.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.81
+    },
+    {
+      "id": "d26",
+      "question": "How do I get my organization added to Tasking Manager?",
+      "answer": "That detail isn't in the information I have \u2014 it doesn't cover how organizations get added to the Tasking Manager.\n\nA practical next step: email mapper-support@hotosm.org or ask in the HOT Slack `mapper-support` channel, where the team can point you to the right process.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.86
+    },
+    {
+      "id": "d27",
+      "question": "Where are the tutorials/docs for using iD or JOSM with Tasking Manager?",
+      "answer": "The evidence doesn't give a specific location for iD/JOSM tutorials \u2014 it only notes that editor guides and a \"lock \u2192 edit \u2192 save \u2192 submit\" mapping workflow exist alongside the project configuration material, without pointing to where they live.\n\nPractical next step: check the Tasking Manager Learn/documentation pages and the iD and JOSM editors' own help sites, which cover the editing side of the workflow.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.36
+    },
+    {
+      "id": "d28",
+      "question": "How many hours have I contributed to Tasking Manager?",
+      "answer": "You've contributed 225.0 hours in total \u2014 192.7 hours of mapping and 32.3 hours of validation.\n\nIf you want to add to that, you can find a project to work on at tasks.hotosm.org/projects.",
+      "route": "DOMAIN",
+      "ops": [
+        "user_contributions"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 2.47
+    },
+    {
+      "id": "d29",
+      "question": "Which countries or organizations have the most active projects?",
+      "answer": "I can\u2019t identify any countries or organizations with active projects from the available evidence: it shows no projects with recent activity.\n\nA practical next step is to widen the activity timeframe or browse the project list at tasks.hotosm.org/projects to find currently active work.",
+      "route": "DOMAIN",
+      "ops": [
+        "trending_projects"
+      ],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.51
+    },
+    {
+      "id": "d30",
+      "question": "Which projects are in a specific country, org, or campaign?",
+      "answer": "I don\u2019t have evidence listing projects by country, organization, or campaign.\n\nA practical next step is to use the Tasking Manager project search and filter by location, organization, or campaign tag.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 4.1
+    },
+    {
+      "id": "d31",
+      "question": "Why was my last task invalidated, what did the validator say?",
+      "answer": "I don't have that detail \u2014 there's no record here of the specific reason or comments left on your task. Invalidations can be annotated with mapping issues (for example buildings not traced or roads misaligned), and each one creates a history entry showing who mapped it, who invalidated it, and whether it's since been closed, but the actual note isn't available to me.\n\nNext step: open the project's task history in the Tasking Manager and check the invalidation entry for that task, or ask the project manager \u2014 if you tell me which project it was, I can point you to it (tasks.hotosm.org/projects/123).",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": true,
+      "seconds": 6.45
+    },
+    {
+      "id": "d32",
+      "question": "How do I become a validator, not just a mapper?",
+      "answer": "The evidence doesn\u2019t explain how to become a validator. It only describes what validators can do, such as invalidating tasks and recording mapping issues.\n\nA practical next step is to contact the project manager or a Tasking Manager administrator and ask about validator permissions or training for your community.",
+      "route": "KB",
+      "ops": [],
+      "project_id": null,
+      "reason": "ok",
+      "abstained": false,
+      "seconds": 3.44
+    }
+  ],
+  "summary": {
+    "cases": 32,
+    "answered": 32,
+    "abstentions": 1,
+    "errors": 0,
+    "empty_answers": 0,
+    "route_counts": {
+      "BOTH": 1,
+      "DOMAIN": 19,
+      "KB": 12
+    },
+    "latency_mean_s": 3.61,
+    "latency_p50_s": 3.4,
+    "latency_p95_s": 5.2
+  },
+  "model": "deepseek/deepseek-flash",
+  "api_base": "https://api.deepseek.com",
+  "wall_seconds": 117.8
+}

@@ -1,0 +1,521 @@
+{
+  "mode": "kb",
+  "rows": [
+    {
+      "id": "pi-001",
+      "question": "How do I create osm account and log in via osm oauth?",
+      "answer": "To create an OpenStreetMap (OSM) account and log in via OSM OAuth, follow these steps:\n\n1. Go to `tasks.hotosm.org` or any community instance.\n2. Click on \"Sign up\" or \"Log in\" in the header.\n3. You will be redirected to `openstreetmap.org` to create or authorize your OSM account.\n4. Fill in the required information to create your account if you are signing up.\n5. After creating or authorizing your account, return to the Tasking Manager to start mapping.\n\nThis process allows you to authorize the Tasking Manager to access your OSM account.",
+      "reason": "ok",
+      "f1": 0.371,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.02
+    },
+    {
+      "id": "pi-002",
+      "question": "I'm curious about bearer token session management (6-hour session expiry, 120 s validation window) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The evidence does not contain specific details about bearer token session management, including session expiry and validation windows. \n\nA practical next step would be to consult the Tasking Manager documentation or support resources for detailed information on session management.",
+      "reason": "ok",
+      "f1": 0.1639,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.63
+    },
+    {
+      "id": "pi-003",
+      "question": "edit self profile name",
+      "answer": "To edit your profile name, follow these steps:\n\n1. Log in to your account.\n2. Open your user menu.\n3. Choose \"Settings\" or view your profile.\n4. Edit your display name in the appropriate field.\n5. Save your changes.\n\nMake sure you are logged in to access your profile settings.",
+      "reason": "ok",
+      "f1": 0.2286,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.95
+    },
+    {
+      "id": "pi-004",
+      "question": "As a project manager, manage notification preferences (mentions, project activity, broadcast, team broadcast, task comments, validation/invalidation) \u2014 what do I need to know?",
+      "answer": "You can manage your notification preferences by choosing which categories to suppress, such as mentions, project activity, team announcements, and validation notices. Suppressed categories will not be delivered to your inbox or by email.\n\nTo manage your notification preferences, follow these steps:\n\n1. Log in to your account.\n2. Open your user menu.\n3. Choose \"Settings.\"\n4. Locate the notification preferences section.\n5. Select or deselect the categories you wish to manage.\n6. Save your changes.",
+      "reason": "ok",
+      "f1": 0.2474,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.98
+    },
+    {
+      "id": "pi-005",
+      "question": "What is set default editor preference (id / josm / potlatch / field papers / rapid / custom) and how does it work?",
+      "answer": "The default editor preference allows users to select their preferred mapping editor from options like iD, JOSM, Potlatch, Field Papers, Rapid, or Custom where available. This preference is set in the user's profile settings and determines which editor will be used when mapping tasks. \n\nTo set your default editor preference, follow these steps:\n1. Log in to your Tasking Manager account.\n2. Open your user menu.\n3. Choose \"Settings\" or view your profile.\n4. Locate the section for preferred editor.\n5. Select your desired editor from the available options.\n6. Save your changes.",
+      "reason": "ok",
+      "f1": 0.3423,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.86
+    },
+    {
+      "id": "pi-006",
+      "question": "What is verify email address (token-based, 24 h expiry) and how does it work?",
+      "answer": "The verification email process involves sending a verification link to confirm your email address when you add it to your account. If verification is enabled, clicking the link confirms your address. The verification link expires after 24 hours.\n\nA practical next step would be to check your email for the verification link after adding your email address to your account.",
+      "reason": "ok",
+      "f1": 0.2683,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.42
+    },
+    {
+      "id": "pi-007",
+      "question": "I'm curious about enable expert mode \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "You can toggle expert mode in your settings, but it does not grant extra mapping or validation permissions. It simply changes the interface to provide more advanced options for experienced users.\n\nTo enable expert mode, follow these steps:\n\n1. Log in to your Tasking Manager account.\n2. Open your user menu.\n3. Choose \"Settings.\"\n4. Look for the option to toggle expert mode.\n5. Enable expert mode by selecting the appropriate option.\n\nThis will adjust your interface for a more advanced experience.",
+      "reason": "ok",
+      "f1": 0.3093,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.81
+    },
+    {
+      "id": "pi-008",
+      "question": "delete anonymize own account",
+      "answer": "You can request deletion of your account, which will anonymize your profile and clear your personal details. \n\nTo delete your account, follow these steps:\n1. Log in to your Tasking Manager account.\n2. Navigate to your account settings.\n3. Look for the option to request account deletion.\n4. Confirm your request as prompted.\n\nIf you need further assistance, consider contacting the HOT instance administrators for guidance.",
+      "reason": "ok",
+      "f1": 0.2,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.51
+    },
+    {
+      "id": "pi-009",
+      "question": "For my role, how does block user / read-only mode (`userrole.read_only = -1`) work?",
+      "answer": "Only administrators can set a user to read-only mode. A read-only user cannot map or validate tasks, and if they attempt to do so, the system will return the reason for the block. \n\nA practical next step would be to contact an administrator if you need assistance with user blocking or permissions.",
+      "reason": "ok",
+      "f1": 0.4706,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.35
+    },
+    {
+      "id": "pi-010",
+      "question": "What is browse / search all published projects and how does it work?",
+      "answer": "You can browse or search all published projects by accessing the Tasking Manager interface. This allows anyone, including guests, to view projects that are publicly published. \n\nTo do this, follow these steps:\n1. Go to the Tasking Manager website.\n2. Navigate to the projects section.\n3. Use the search bar or filters to find specific projects.\n4. Click on a project to view its details.\n\nThis process enables users to discover available mapping projects easily.",
+      "reason": "ok",
+      "f1": 0.2105,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.65
+    },
+    {
+      "id": "pi-011",
+      "question": "What is filter by difficulty, project status (published/archived), priority, mapping type, campaign, organisation, country, interests, text search (`#id` or description) and how does it work?",
+      "answer": "Filtering in Tasking Manager allows users to narrow down project searches based on various criteria. Here's how it works:\n\n1. **Difficulty**: Projects can be filtered by levels such as beginner, intermediate, or advanced.\n2. **Project Status**: Users can filter projects that are either published or archived.\n3. **Priority**: Projects can be sorted by urgency levels: urgent, high, medium, or low.\n4. **Mapping Type**: Users can select specific feature categories like roads, buildings, waterways, etc.\n5. **Campaign**: Projects can be grouped by specific campaigns.\n6. **Organisation**: Users can filter projects by the organization managing them.\n7. **Country**: Projects can be filtered based on the country they pertain to.\n8. **Interests**: Users can filter projects by specific interest topics.\n9. **Text Search**: Users can search for projects using identifiers (like `#id`) or keywords from the project description.\n\nTo use these filters, navigate to the \"Explore projects\" section and utilize the \"More filters\" option to apply your desired criteria.",
+      "reason": "ok",
+      "f1": 0.1905,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.97
+    },
+    {
+      "id": "pi-012",
+      "question": "I'm looking for a project to map but I don't know where to start \u2014 how do I search and filter available projects?",
+      "answer": "1. Go to the Tasking Manager.\n2. Click on \"Explore projects.\"\n3. Select \"More filters\" to access additional filtering options.\n4. Choose filters based on humanitarian need, difficulty level, interests, priority, campaign, organization, or location.\n5. Apply the filters to view the projects that match your criteria. \n\nThis will help you find a suitable mapping project to start with.",
+      "reason": "ok",
+      "f1": 0.2,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.64
+    },
+    {
+      "id": "pi-013",
+      "question": "view task grid colour",
+      "answer": "The evidence does not contain information about the color of the task grid in the Tasking Manager interface. \n\nA practical next step would be to check the Tasking Manager interface directly or consult the help section for visual details on the task grid.",
+      "reason": "ok",
+      "f1": 0.2418,
+      "abstained": true,
+      "passages": 5,
+      "seconds": 1.13
+    },
+    {
+      "id": "pi-014",
+      "question": "As a mapper, random task selection vs. selecting a specific task on the map \u2014 how does that apply to me?",
+      "answer": "Random task selection allows you to choose any available task without prior knowledge of its details, while selecting a specific task on the map lets you focus on a particular area or type of mapping. This can help you work on tasks that match your interests or expertise.\n\nA practical next step is to explore both methods to see which one suits your mapping style better.",
+      "reason": "ok",
+      "f1": 0.3148,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.63
+    },
+    {
+      "id": "pi-015",
+      "question": "What is `enforce_random_task_selection=true` forces random only and how does it work?",
+      "answer": "The evidence does not provide details on `enforce_random_task_selection=true` or how it works. \n\nA practical next step would be to consult the Tasking Manager documentation or support resources for more information on this feature.",
+      "reason": "ok",
+      "f1": 0.2716,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.23
+    },
+    {
+      "id": "pi-016",
+      "question": "What is lock task for mapping and how does it work?",
+      "answer": "The evidence does not contain information about what a lock task for mapping is or how it works. \n\nA practical next step would be to consult the Tasking Manager documentation or support resources for detailed explanations on lock tasks.",
+      "reason": "ok",
+      "f1": 0.2169,
+      "abstained": true,
+      "passages": 5,
+      "seconds": 1.4
+    },
+    {
+      "id": "pi-017",
+      "question": "I'm curious about edit geometry in id / josm / potlatch2 / field papers / custom / rapid (rapid power-user flag) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The evidence does not provide specific details about editing geometry in iD, JOSM, Potlatch2, Field Papers, Custom, or Rapid within the Tasking Manager. \n\nA practical next step would be to refer to the mapping guides or tutorials available in the Tasking Manager's Learn section for detailed instructions on using these editors.",
+      "reason": "ok",
+      "f1": 0.225,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.56
+    },
+    {
+      "id": "pi-018",
+      "question": "find projects filtering",
+      "answer": "To find projects using filters on Tasking Manager, follow these steps:\n\n1. Go to the Tasking Manager homepage.\n2. Click on \"Explore projects.\"\n3. Select \"More filters.\"\n4. Choose your desired filters based on humanitarian need, difficulty, interests, priority, campaign, organization, or location.\n5. Apply the filters to view the relevant projects.\n\nThis will help you narrow down the projects according to your preferences.",
+      "reason": "ok",
+      "f1": 0.3133,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.89
+    },
+    {
+      "id": "pi-019",
+      "question": "As a mapper, split task (divide into 4 smaller tasks, only while `locked_for_mapping`) \u2014 how does that apply to me?",
+      "answer": "You cannot split a task into smaller tasks unless it is currently locked for mapping. This means you can only perform this action if the task is in a state that allows for it. \n\nA practical next step would be to check the status of the task you are interested in to see if it is locked for mapping.",
+      "reason": "ok",
+      "f1": 0.3556,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.49
+    },
+    {
+      "id": "pi-020",
+      "question": "What is save edits to osm (changeset with `changeset_comment`, source, hashtags) and how does it work?",
+      "answer": "When you save edits to OpenStreetMap (OSM) through the Tasking Manager, a changeset is created that includes a changeset comment, a source, and a project hashtag. The changeset comment should contain the project hashtag (like `#hotosm-project-1234`), which helps the community find the edits related to that project and supports contribution statistics. \n\nTo save your edits correctly, follow these steps:\n\n1. Complete your mapping task in the editor.\n2. Copy the suggested changeset comment from the project Instructions tab.\n3. Add a brief description of what you did.\n4. Include the source you used as requested in the instructions.\n5. Ensure the project hashtag remains in the changeset comment.\n6. Save your changes to create the changeset. \n\nThis process ensures your contributions are properly attributed and can be tracked by the community.",
+      "reason": "ok",
+      "f1": 0.2585,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.36
+    },
+    {
+      "id": "pi-021",
+      "question": "What is lock duration extension (`extendlocktimedto`) and how does it work?",
+      "answer": "Lock duration extension (`extendlocktimedto`) is a feature that allows users to extend the duration of a lock on a task in the Tasking Manager. This is useful for preventing a task from being reassigned or edited by others while the user is still working on it.\n\nTo understand how it works, you would typically follow these steps:\n1. Identify the task you want to lock.\n2. Use the `extendlocktimedto` function to set a new expiration time for the lock.\n3. Confirm that the lock has been successfully extended.\n\nFor more detailed procedures, please refer to the relevant documentation or guidelines.",
+      "reason": "ok",
+      "f1": 0.3741,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.02
+    },
+    {
+      "id": "pi-022",
+      "question": "I'm curious about auto-unlock after lock expiry (cron / on project fetch) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The evidence does not provide specific details about the auto-unlock feature after lock expiry in the Tasking Manager. \n\nA practical next step would be to refer to the official documentation or the project's Questions and Comments thread within the Tasking Manager for more information on this feature.",
+      "reason": "ok",
+      "f1": 0.2169,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.33
+    },
+    {
+      "id": "pi-023",
+      "question": "lock task for mapping",
+      "answer": "I cannot provide information on locking tasks for mapping. Please refer to the Tasking Manager documentation or support resources for guidance on this process.",
+      "reason": "ok",
+      "f1": 0.1538,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.05
+    },
+    {
+      "id": "pi-024",
+      "question": "As a mapper, mark as bad imagery (clouds / fuzzy / no imagery) \u2014 how does that apply to me?",
+      "answer": "As a mapper, if you encounter bad imagery (such as clouds, fuzzy images, or no imagery), you can mark the task as having bad imagery. This action indicates that the imagery is not suitable for mapping and prevents you from making inaccurate contributions.\n\nNext step: If you need to mark a task as bad imagery, locate the task in the Tasking Manager and select the option to mark it as bad imagery.",
+      "reason": "ok",
+      "f1": 0.3434,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.56
+    },
+    {
+      "id": "pi-025",
+      "question": "What is stop mapping (abandon, revert to prior state, optional comment) and how does it work?",
+      "answer": "Stop mapping allows you to abandon your current mapping task, revert to a prior state, and optionally leave a comment explaining your decision. This feature is useful if you encounter issues or decide not to continue with the task.\n\nTo use the stop mapping feature, follow these steps:\n1. Open the mapping task you want to stop.\n2. Click on the \"Stop Mapping\" option.\n3. Choose to abandon the task or revert to a prior state.\n4. Optionally, enter a comment explaining your choice.\n5. Confirm your action to finalize the process.",
+      "reason": "ok",
+      "f1": 0.2385,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.81
+    },
+    {
+      "id": "pi-026",
+      "question": "What is add comment on task (without state change), @-mention triggers notification and how does it work?",
+      "answer": "Adding a comment on a task without changing its state allows users to provide additional information or updates without altering the task's progress. When a user @-mentions another user in the comment, it triggers a notification to that mentioned user, alerting them to the comment.\n\nTo use this feature, follow these steps:\n\n1. Open the task you want to comment on.\n2. Click on the comment section.\n3. Type your comment and include an @ symbol followed by the username of the person you want to notify.\n4. Submit your comment.\n\nThis ensures that the mentioned user receives a notification about your comment.",
+      "reason": "ok",
+      "f1": 0.2769,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.04
+    },
+    {
+      "id": "pi-027",
+      "question": "I'm curious about leave / resume workflow (locked tasks panel, resume mapping) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The evidence does not provide specific details about the leave/resume workflow or the locked tasks panel in the Tasking Manager. \n\nA practical next step would be to check the Learn section in the Tasking Manager for video tutorials and guides related to task management or contact the project manager through the project's Questions and Comments thread for more information.",
+      "reason": "ok",
+      "f1": 0.2247,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.43
+    },
+    {
+      "id": "pi-028",
+      "question": "undo last action revertown",
+      "answer": "The evidence does not provide specific instructions on how to undo the last action in the Tasking Manager interface. \n\nA practical next step would be to check the Tasking Manager interface for an \"undo\" option or consult the help section for guidance on reverting actions.",
+      "reason": "ok",
+      "f1": 0.3171,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.21
+    },
+    {
+      "id": "pi-029",
+      "question": "As a validator, full taskstatus lifecycle \u2014 what's the process?",
+      "answer": "As a validator, the full task status lifecycle involves the following steps:\n\n1. **Mapping**: A mapper completes the task and marks it as mapped.\n2. **Validation**: You, as a validator, check the task. If it meets the criteria, you validate it.\n3. **Invalidation**: If the task has issues, you can mark it as invalidated, recording mapping issues during this transition.\n4. **Invalidation History**: An entry is created that tracks who mapped, invalidated, and later re-validated the task.\n5. **Re-validation**: If the task is corrected, it can be re-validated, closing the invalidation entry.\n\nNext step: Review the specific tasks you need to validate or invalidate.",
+      "reason": "ok",
+      "f1": 0.1884,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.31
+    },
+    {
+      "id": "pi-030",
+      "question": "What is one-lock-per-user invariant (mapping + validation share the same `locked_tasks` budget) and how does it work?",
+      "answer": "The one-lock-per-user invariant means that mapping and validation share the same budget for locked tasks, allowing a user to lock only one task at a time for either action. This ensures that users cannot simultaneously lock multiple tasks across both actions, promoting fair task distribution.\n\nTo understand how it works:\n1. When a user locks a task for mapping, that task counts against their locked tasks budget.\n2. If the user wants to lock a task for validation, they must first unlock the mapping task or vice versa.\n3. This system prevents users from monopolizing tasks and encourages participation in both mapping and validation.\n\nA practical next step would be to review your current locked tasks to see if you need to unlock any before attempting to lock a new task.",
+      "reason": "ok",
+      "f1": 0.3509,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.38
+    },
+    {
+      "id": "pi-031",
+      "question": "What is taskhistory audit trail (`locked_for_mapping`, `locked_for_validation`, `state_change`, `comment`, `auto_unlocked_*`, `extended_*`) and how does it work?",
+      "answer": "The task history audit trail includes various events related to task management, such as when a task is locked for mapping or validation, state changes, comments added, and automatic unlocks. Each event is recorded in chronological order, allowing users to see who performed actions and when they occurred.\n\nTo understand how it works:\n1. Each task has a history that logs actions taken on it.\n2. Events include locking for mapping or validation, state changes, and comments.\n3. Automatic unlocks occur based on specific conditions set by the system.\n4. Users can review this history to track contributions and task progress.\n\nA practical next step would be to check the task history of a specific task to see these events in action.",
+      "reason": "ok",
+      "f1": 0.2133,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.29
+    },
+    {
+      "id": "pi-032",
+      "question": "Can you walk me through what happens to a task from start to finish? What states does it go through?",
+      "answer": "1. An administrator creates and publishes a mapping project for an area.\n2. A mapper selects a task and locks it.\n3. The mapper completes the requested features and marks the task as mapped.\n4. A validator reviews the mapped task.\n5. The validator marks the task as validated or sends it back for more work.\n\nThe task goes through the states of \"Ready,\" \"Mapped,\" and \"Validated.\"",
+      "reason": "ok",
+      "f1": 0.1942,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.52
+    },
+    {
+      "id": "pi-033",
+      "question": "lock task for mapping",
+      "answer": "I cannot provide information on locking tasks for mapping. Please refer to the Tasking Manager documentation or support resources for guidance on this process.",
+      "reason": "ok",
+      "f1": 0.1739,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 0.98
+    },
+    {
+      "id": "pi-034",
+      "question": "As a validator, unlock after validation (mark `validated` or `invalidated` with optional comment + mapping issues) \u2014 what's the process?",
+      "answer": "As a validator, to unlock a task after validation, follow these steps:\n\n1. Review the task to ensure it meets the validation criteria.\n2. Choose to mark the task as either `validated` or `invalidated`.\n3. If marking as `invalidated`, record any mapping issues with counts per category.\n4. Optionally, add a comment to explain your decision.\n5. Submit the validation action.\n\nThis process allows you to provide feedback on the task and helps maintain quality in mapping. A practical next step is to access the task you wish to validate and begin the review process.",
+      "reason": "ok",
+      "f1": 0.2617,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.9
+    },
+    {
+      "id": "pi-035",
+      "question": "What is stop validating (abandon lock, revert to prior state) and how does it work?",
+      "answer": "The evidence does not contain details about \"stop validating (abandon lock, revert to prior state)\" or how it works. \n\nA practical next step would be to consult the relevant documentation or resources that explain this process.",
+      "reason": "ok",
+      "f1": 0.3385,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.05
+    },
+    {
+      "id": "pi-036",
+      "question": "What is self-validation guard (mappers cannot validate own tasks) and how does it work?",
+      "answer": "The self-validation guard prevents mappers from validating tasks they have mapped themselves. This is to ensure objectivity in the validation process. If a mapper tries to validate their own task, they will receive a message stating `CannotValidateMappedTask`. Only administrators can bypass this restriction. After validation, mappers are notified of the result, and tasks that are invalidated return to the mapping queue for remapping.\n\nA practical next step would be to review the validation guide for more details on the validation process.",
+      "reason": "ok",
+      "f1": 0.2617,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.74
+    },
+    {
+      "id": "pi-037",
+      "question": "I'm curious about mapping issue annotation on invalidation (per-issue counts, category fk) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "When a validator marks a task as invalidated, they can record mapping issues with counts per category to explain what needs correction. This is done during the invalidation transition, and only validators can annotate these issues. Each invalidation creates an entry that tracks details such as who mapped the task, who invalidated it, and whether the issue has been closed.\n\nA practical next step would be to review the validation guide for more detailed procedures on how to annotate mapping issues.",
+      "reason": "ok",
+      "f1": 0.3538,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.59
+    },
+    {
+      "id": "pi-038",
+      "question": "validate task",
+      "answer": "You cannot validate a task that you mapped yourself. The system prevents self-validation to ensure quality control. Only administrators can bypass this restriction.\n\nNext step: If you need to validate a task, ask another validator or an administrator to do it for you.",
+      "reason": "ok",
+      "f1": 0.175,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.33
+    },
+    {
+      "id": "pi-039",
+      "question": "As a project manager, admin bulk operations: `invalidate_all_tasks`, `validate_all_tasks`, `reset_all_badimagery`, `map_all_tasks` \u2014 what do I need to know?",
+      "answer": "As a project manager or admin, you can perform bulk operations that affect the validation state of tasks while preserving history. Here\u2019s what you need to know:\n\n1. **Invalidate All Validated Tasks**: This action resets validated counters for all tasks marked as validated.\n2. **Validate All Mapped Tasks**: This promotes all mapped tasks to validated status.\n3. **Reset All Bad Imagery**: This returns tasks marked as having bad imagery to the Ready state and resets the bad imagery counter.\n4. **Reset All Tasks**: This action preserves history but returns all tasks to the Ready state and zeros progress counters.\n\nThese operations are exclusive to managers and cannot be performed by regular mappers. \n\nNext step: Ensure you have the necessary permissions and understand the implications of each operation before proceeding.",
+      "reason": "ok",
+      "f1": 0.3614,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.66
+    },
+    {
+      "id": "pi-040",
+      "question": "What is osmcha filter linkage (`osmcha_filter_id` on project, validator qa via external tool) and how does it work?",
+      "answer": "The OSMCha filter linkage allows project managers to configure a specific filter ID for a project, which can be used to inspect changesets related to that project. This filter ID is linked directly on the project page, providing validators with a button that takes them to the relevant OSMCha view. This setup helps in quality assurance by enabling validators to easily review changesets filtered by the project's changeset hashtag.\n\nA practical next step would be to check the project page for any available OSMCha filter links to utilize for quality assurance.",
+      "reason": "ok",
+      "f1": 0.2657,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.79
+    },
+    {
+      "id": "pi-041",
+      "question": "How do I create draft project (draw aoi polygon or upload geojson/kml/zipped shapefile; optional clone from existing project)?",
+      "answer": "To create a draft project, follow these steps:\n\n1. Go to the Project Creation section.\n2. Choose to draw an Area of Interest (AOI) polygon or upload a geojson, KML, or zipped shapefile.\n3. Optionally, select an existing project to clone.\n4. Fill in the required fields: name, short description, description, and instructions in the project's default language.\n5. Configure additional settings such as status, priority, difficulty, and mapping types.\n6. Save the project as a draft.\n\nOnce completed, you can publish the draft project when ready.",
+      "reason": "ok",
+      "f1": 0.352,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.97
+    },
+    {
+      "id": "pi-042",
+      "question": "I'm curious about define task grid (grid vs arbitrary mode, resize larger/smaller, selective split/draw-area-to-split, trim to aoi with sharp-clip option, discard tiny tasks < 2000 m\u00b2) \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "The evidence does not provide specific details about the task grid features such as grid vs arbitrary mode, resizing, selective splitting, trimming to AOI, or discarding tiny tasks. \n\nA practical next step would be to refer to the Tasking Manager's official documentation or the Learn section within the application for detailed explanations on these features.",
+      "reason": "ok",
+      "f1": 0.1818,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.92
+    },
+    {
+      "id": "pi-043",
+      "question": "import pre defined tasks",
+      "answer": "The evidence does not provide specific instructions on how to import predefined tasks. \n\nA practical next step would be to check the Tasking Manager documentation or help section for guidance on importing tasks.",
+      "reason": "ok",
+      "f1": 0.2571,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.11
+    },
+    {
+      "id": "pi-044",
+      "question": "As a project manager, assign project to organisation + optional campaign(s) \u2014 what do I need to know?",
+      "answer": "To assign a project to an organization and optional campaign(s), you need to know the following:\n\n1. Only project authors, organization managers for the owning organization, assigned team managers with the Project Manager role, and administrators can edit project settings.\n2. You must select a data license that mappers must accept before mapping.\n3. Campaign and location tags are optional but help with project discovery.\n4. Ensure that at least one mapping type is selected for the project.\n\nA practical next step would be to review the project settings and ensure you have the necessary permissions to make these changes.",
+      "reason": "ok",
+      "f1": 0.3077,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.87
+    },
+    {
+      "id": "pi-045",
+      "question": "What is set default changeset comment (`{default_changeset_comment}-{projectid} {custom}`) and how does it work?",
+      "answer": "The default changeset comment is a structured format used when saving edits in OpenStreetMap through the Tasking Manager. It consists of a project-specific hashtag followed by a custom description of the edits made. This format helps the community find the edits related to a specific project and supports contribution tracking.\n\nTo use it effectively:\n1. Include the project hashtag (e.g., `#hotosm-project-1234`) in your changeset comment.\n2. Add a short description of what you did.\n3. Ensure you do not remove the hashtag.\n\nA practical next step is to check the project's Instructions tab for the suggested comment format to use when saving your changes.",
+      "reason": "ok",
+      "f1": 0.3158,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.66
+    },
+    {
+      "id": "pi-046",
+      "question": "How do I edit project info locales (`name`, `shortdescription`, `description`, `instructions`, optional `pertaskinstructions`) with per-locale fallback?",
+      "answer": "1. Go to the Project Edit view for the project you want to edit.\n2. Ensure you have the necessary permissions (project author, organization manager, assigned team manager, or administrator).\n3. Locate the fields for `name`, `short description`, `description`, and `instructions` for the default language.\n4. Fill in the required fields for the default language.\n5. If needed, add optional `per-task instructions` for specific tasks.\n6. If you want to provide information for additional locales, repeat the process for each locale.\n7. Save your changes to publish the updated project information.\n\nMake sure all required fields are completed before attempting to publish, as incomplete information will prevent publishing.",
+      "reason": "ok",
+      "f1": 0.3624,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 2.0
+    },
+    {
+      "id": "pi-047",
+      "question": "I'm curious about set status (`draft`/`published`/`archived`) \u2014 publish triggers locale validation; draft visibility restricted \u2014 can you explain how it works in Tasking Manager?",
+      "answer": "In Tasking Manager, project status can be one of three types: Draft, Published, or Archived. \n\n- **Draft**: Only the author, organization managers, assigned team managers, and administrators can view it. It does not appear in public searches for regular mappers.\n- **Published**: This is the normal working state where the project is visible to mappers according to its access rules. A project must meet specific requirements to be published, including having all default language information filled out and belonging to an organization.\n- **Archived**: This status keeps the project for historical reference but marks it as no longer active. Tasks remain unchanged.\n\nTo publish a project, ensure all required fields are completed; otherwise, the publish action will fail. \n\nA practical next step would be to review the project you are interested in and check if it meets the publishing requirements.",
+      "reason": "ok",
+      "f1": 0.1635,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 3.05
+    },
+    {
+      "id": "pi-048",
+      "question": "set metadata priority urgent",
+      "answer": "Only project authors, organization managers, assigned team managers with the Project Manager role, and administrators can edit project metadata, including setting the priority to urgent. \n\nA practical next step would be to contact one of these individuals to request the change.",
+      "reason": "ok",
+      "f1": 0.1205,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.28
+    },
+    {
+      "id": "pi-049",
+      "question": "As a project manager, configure priority areas (draw geojson polygons, highlighted on mapper map) \u2014 what do I need to know?",
+      "answer": "To configure priority areas as a project manager, you need to draw polygons that highlight higher-priority sub-areas within the overall Area of Interest (AOI). These polygons will appear as a distinct overlay on the mapper's task grid.\n\nNext step: Access the Project Edit view to start configuring the priority areas.",
+      "reason": "ok",
+      "f1": 0.4719,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.54
+    },
+    {
+      "id": "pi-050",
+      "question": "What is configure imagery: bing/custom url, `imagery` string, `id_presets`, `josm_preset`, `extra_id_params` and how does it work?",
+      "answer": "The evidence does not provide specific details about configuring imagery, including the terms `imagery` string, `id_presets`, `josm_preset`, and `extra_id_params`. \n\nA practical next step would be to consult the Administrator Guide or relevant documentation for detailed information on configuring imagery in Tasking Manager.",
+      "reason": "ok",
+      "f1": 0.2941,
+      "abstained": false,
+      "passages": 5,
+      "seconds": 1.43
+    }
+  ],
+  "summary": {
+    "cases": 50,
+    "answered": 50,
+    "answered_pct": 100.0,
+    "abstentions": 2,
+    "abstention_pct": 4.0,
+    "f1_mean": 0.2702,
+    "f1_median": 0.2617,
+    "latency_mean_s": 1.79,
+    "latency_p50_s": 1.6,
+    "latency_p95_s": 3.0,
+    "errors": 0
+  },
+  "model": "openai/gpt-4o-mini",
+  "api_base": null,
+  "wall_seconds": 91.1
+}

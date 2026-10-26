@@ -1,0 +1,989 @@
+{
+  "mode": "router",
+  "rows": [
+    {
+      "id": "A1",
+      "family": "A-personal-dashboard",
+      "question": "What's my mapper level, and what do I need to reach the next one?",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "user_profile"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_profile"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": false,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 1.95
+    },
+    {
+      "id": "A2",
+      "family": "A-personal-dashboard",
+      "question": "What task do I currently have locked?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "mywork"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "mywork"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.64
+    },
+    {
+      "id": "A3",
+      "family": "A-personal-dashboard",
+      "question": "What badges have I earned?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_profile"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_profile"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.55
+    },
+    {
+      "id": "A4",
+      "family": "A-personal-dashboard",
+      "question": "How is my contribution this month compared to last month?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_contributions"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_activity"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.59
+    },
+    {
+      "id": "A5",
+      "family": "A-personal-dashboard",
+      "question": "What are the projects I have contributed to?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_contributions"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_projects_created"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.62
+    },
+    {
+      "id": "A6",
+      "family": "A-personal-dashboard",
+      "question": "What's my current mapping streak?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_activity"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_activity"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.55
+    },
+    {
+      "id": "A7",
+      "family": "A-personal-dashboard",
+      "question": "What's my validation-vs-mapping split?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_activity"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_activity"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.55
+    },
+    {
+      "id": "A8",
+      "family": "A-personal-dashboard",
+      "question": "What teams am I part of?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_teams"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_teams"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.56
+    },
+    {
+      "id": "B1",
+      "family": "B-platform-discovery",
+      "question": "How many projects are there on Tasking Manager?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.6
+    },
+    {
+      "id": "B2",
+      "family": "B-platform-discovery",
+      "question": "How many health-oriented projects are there?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": false,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.55
+    },
+    {
+      "id": "B3",
+      "family": "B-platform-discovery",
+      "question": "How many users are registered on Tasking Manager?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.59
+    },
+    {
+      "id": "B4",
+      "family": "B-platform-discovery",
+      "question": "How many tasks have been mapped/validated in total?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.6
+    },
+    {
+      "id": "B5",
+      "family": "B-platform-discovery",
+      "question": "What are the most active/trending projects right now?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "trending_projects"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "trending_projects"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.61
+    },
+    {
+      "id": "B6",
+      "family": "B-platform-discovery",
+      "question": "Which projects are beginner-friendly / match my skill level?",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "BOTH",
+        "ops": [
+          "user_interests",
+          "user_profile",
+          "user_contributions",
+          "user_tasks"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": false,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 1.32
+    },
+    {
+      "id": "B7",
+      "family": "B-platform-discovery",
+      "question": "Which projects are expiring soon or short on mappers?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": false,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.79
+    },
+    {
+      "id": "B8",
+      "family": "B-platform-discovery",
+      "question": "What's the status of project 42 (% mapped, % validated)?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.59
+    },
+    {
+      "id": "B9",
+      "family": "B-platform-discovery",
+      "question": "What's project 42's difficulty level and required editor (iD or JOSM)?",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42
+      },
+      "actual": {
+        "route": "BOTH",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.62
+    },
+    {
+      "id": "B10",
+      "family": "B-platform-discovery",
+      "question": "Recommend a project based on what I usually map",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "user_recommendations"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_recommendations"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": false,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.62
+    },
+    {
+      "id": "C1",
+      "family": "C-task-support-org",
+      "question": "Has my submitted task been validated yet?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_tasks"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_tasks"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.59
+    },
+    {
+      "id": "C2",
+      "family": "C-task-support-org",
+      "question": "How do I request help or a mentor on a task I'm stuck on?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.53
+    },
+    {
+      "id": "C3",
+      "family": "C-task-support-org",
+      "question": "What projects is my organization currently running?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_org_projects"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_org_projects"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.62
+    },
+    {
+      "id": "C4",
+      "family": "C-task-support-org",
+      "question": "Who's the contact for project 42?",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "summary"
+        ],
+        "project_id": 42,
+        "degraded": false
+      },
+      "metrics": {
+        "route": false,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.59
+    },
+    {
+      "id": "C5",
+      "family": "C-task-support-org",
+      "question": "How do I register on Tasking Manager?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.54
+    },
+    {
+      "id": "C6",
+      "family": "C-task-support-org",
+      "question": "Whom should I reach out to for support?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "notifications"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": false,
+        "ops": false,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.57
+    },
+    {
+      "id": "C7",
+      "family": "C-task-support-org",
+      "question": "How do I request project manager rights / create a new project?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.54
+    },
+    {
+      "id": "C8",
+      "family": "C-task-support-org",
+      "question": "How do I get my organization added to Tasking Manager?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.54
+    },
+    {
+      "id": "D1",
+      "family": "D-resources-stats-advanced",
+      "question": "Where are the tutorials/docs for using iD or JOSM with Tasking Manager?",
+      "expected": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.54
+    },
+    {
+      "id": "D2",
+      "family": "D-resources-stats-advanced",
+      "question": "How many hours have I contributed to Tasking Manager?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_contributions"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "user_contributions"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.61
+    },
+    {
+      "id": "D3",
+      "family": "D-resources-stats-advanced",
+      "question": "Which countries or organizations have the most active projects?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "global_stats"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.59
+    },
+    {
+      "id": "D4",
+      "family": "D-resources-stats-advanced",
+      "question": "Which projects are in Kenya?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": true,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": true
+      },
+      "pass": true,
+      "seconds": 0.63
+    },
+    {
+      "id": "D5",
+      "family": "D-resources-stats-advanced",
+      "question": "Which projects are run by HOT?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "organisation_info"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.63
+    },
+    {
+      "id": "D6",
+      "family": "D-resources-stats-advanced",
+      "question": "Which projects are in the Test campaign?",
+      "expected": {
+        "route": "DOMAIN",
+        "ops": [
+          "project_search"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "DOMAIN",
+        "ops": [
+          "campaigns"
+        ],
+        "project_id": null,
+        "degraded": false
+      },
+      "metrics": {
+        "route": true,
+        "ops": false,
+        "filters": false,
+        "project_id": true,
+        "needs_project_id": true,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.6
+    },
+    {
+      "id": "D7",
+      "family": "D-resources-stats-advanced",
+      "question": "Why was my last task invalidated, what did the validator say?",
+      "expected": {
+        "route": "BOTH",
+        "ops": [
+          "user_tasks"
+        ],
+        "project_id": null
+      },
+      "actual": {
+        "route": "KB",
+        "ops": [],
+        "project_id": null,
+        "degraded": true
+      },
+      "metrics": {
+        "route": false,
+        "ops": false,
+        "filters": true,
+        "project_id": true,
+        "needs_project_id": false,
+        "pass": false
+      },
+      "pass": false,
+      "seconds": 0.59
+    }
+  ],
+  "summary": {
+    "cases": 33,
+    "pass_all": 0.636,
+    "route": 0.848,
+    "ops": 0.758,
+    "filters": 0.879,
+    "project_id": 1.0,
+    "needs_project_id": 0.97,
+    "latency_p50_s": 0.6,
+    "latency_p95_s": 0.8,
+    "errors": 0
+  },
+  "model": "openai/ggml-org/Qwen3-1.7B-GGUF",
+  "api_base": "http://host.docker.internal:8002/v1",
+  "wall_seconds": 24.3
+}

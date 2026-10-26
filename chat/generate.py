@@ -295,9 +295,18 @@ class Generator:
         history: Optional[Sequence[Dict[str, str]]] = None,
     ) -> Answer:
         system, user = build_prompt(question, chunks, domain_block, history)
+        kwargs = self._kwargs(system, user)
         try:
-            response = litellm.completion(**self._kwargs(system, user))
+            response = litellm.completion(**kwargs)
             content = (response.choices[0].message.content or "").strip()  # type: ignore[attr-defined]
+            if not content and "extra_body" in kwargs:
+                # Qwen3 with thinking disabled can end the turn immediately and
+                # return nothing. One retry with the provider defaults (thinking
+                # on) costs latency only for the prompts that need it.
+                logger.info("empty answer with extra_body set; retrying without it")
+                retry = {k: v for k, v in kwargs.items() if k != "extra_body"}
+                response = litellm.completion(**retry)
+                content = (response.choices[0].message.content or "").strip()  # type: ignore[attr-defined]
         except Exception:
             logger.exception("generation failed")
             return Answer(text="", model=self.model, reason="error")
