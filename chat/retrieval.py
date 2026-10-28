@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
+from chat.env import env_int
+
 if TYPE_CHECKING:  # annotations only; runtime imports stay lazy (see from_chunks)
     from llama_index.core.schema import TextNode
     from llama_index.retrievers.bm25 import BM25Retriever
@@ -316,8 +318,10 @@ class Retriever:
             nodes, node_map, bm25, embed_model, vector_store, load_error, vector_error
         )
 
-    def vector_candidates(self, question: str) -> RankedCandidates:
-        """Rank nodes by cosine similarity. Ids best-first, uncapped."""
+    def vector_candidates(
+        self, question: str, limit: Optional[int] = None
+    ) -> RankedCandidates:
+        """Rank nodes by cosine similarity. Ids best-first, capped by ``limit``."""
         if self.vector_store is None or self.embed_model is None:
             return RankedCandidates(
                 [], {}, self.vector_error or "vector store unavailable"
@@ -328,10 +332,12 @@ class Retriever:
 
             from llama_index.core.vector_stores.types import VectorStoreQuery  # type: ignore
 
+            available = max(1, len(self.node_map))
+            candidate_limit = max(1, min(available, limit or available))
             res = self.vector_store.query(
                 VectorStoreQuery(
                     query_embedding=q_emb,
-                    similarity_top_k=max(1, len(self.node_map)),
+                    similarity_top_k=candidate_limit,
                     mode="default",
                 )
             )
@@ -355,13 +361,17 @@ class Retriever:
         except Exception as exc:
             return RankedCandidates([], {}, str(exc))
 
-    def bm25_candidates(self, question: str) -> RankedCandidates:
-        """Rank active nodes with BM25. Ids best-first, uncapped."""
+    def bm25_candidates(
+        self, question: str, limit: Optional[int] = None
+    ) -> RankedCandidates:
+        """Rank active nodes with BM25. Ids best-first, capped by ``limit``."""
         if self.bm25 is None:
             return RankedCandidates([], {}, None)
 
         try:
-            hits = self.bm25.retrieve(question)
+            hits = self.bm25.retrieve(
+                question, similarity_top_k=limit or len(self.node_map)
+            )
             ids: List[str] = []
             scores: Dict[str, float] = {}
             for item in hits:
@@ -385,12 +395,13 @@ class Retriever:
         when either arm fails or the index is empty.
         """
         t0 = time.perf_counter()
+        arm_top_k = max(1, env_int("RAG_RETRIEVAL_ARM_TOP_K", 30))
 
         t_arm = time.perf_counter()
-        vec = self.vector_candidates(question)
+        vec = self.vector_candidates(question, limit=arm_top_k)
         vec_ms = (time.perf_counter() - t_arm) * 1000
         t_arm = time.perf_counter()
-        bm25 = self.bm25_candidates(question)
+        bm25 = self.bm25_candidates(question, limit=arm_top_k)
         bm25_ms = (time.perf_counter() - t_arm) * 1000
 
         if self.load_error:
@@ -404,7 +415,7 @@ class Retriever:
                 )
             # One transient retry: an embedding blip must not fail the turn.
             t_arm = time.perf_counter()
-            vec = self.vector_candidates(question)
+            vec = self.vector_candidates(question, limit=arm_top_k)
             vec_ms = (time.perf_counter() - t_arm) * 1000
             if vec.error:
                 raise RetrievalUnavailable(f"vector search failed: {vec.error}")

@@ -39,6 +39,15 @@ def _response(count: int = 1) -> RetrievalResponse:
     )
 
 
+def _scored_response(score, text: str = "passage about validation") -> RetrievalResponse:
+    return RetrievalResponse(
+        results=[ScoredNode(node=_FakeNode("n1", text), vector_score=score)],
+        candidate_count=1,
+        mode="hybrid",
+        query="q",
+    )
+
+
 class _FakeGenerator:
     model = "fake-model"
 
@@ -236,4 +245,63 @@ async def test_out_of_scope_returns_canned_without_retrieval_or_generation(
     assert turn.reason == "out_of_scope"
     assert turn.answer == copy.OUT_OF_SCOPE_ANSWER
     assert calls == {"retrieve": 0, "domain": 0}
+    assert generator.calls == []
+
+
+@pytest.mark.asyncio
+async def test_kb_low_relevance_returns_canned_without_generation(monkeypatch) -> None:
+    generator = _FakeGenerator()
+    _patch(
+        monkeypatch,
+        decision=RouteDecision(route="KB"),
+        response=_scored_response(0.01),
+    )
+    turn = await pipeline.run_turn("what is the weather?", generator=generator)
+    assert turn.reason == "low_confidence"
+    assert turn.answer == copy.LOW_CONFIDENCE_ANSWER
+    assert generator.calls == []
+
+
+@pytest.mark.asyncio
+async def test_both_low_kb_still_generates_from_domain(monkeypatch) -> None:
+    generator = _FakeGenerator()
+    domain = DomainOutcome(
+        status="OK",
+        block="project_id: 42 | mapped: 10",
+        citations=({"id": "tm:project:42:stats", "title": "Project 42"},),
+    )
+    _patch(
+        monkeypatch,
+        decision=RouteDecision(route="BOTH", ops=("stats",), project_id=42),
+        response=_scored_response(0.01),
+        domain=domain,
+    )
+    turn = await pipeline.run_turn(
+        "what is the weather and how many tasks in project 42?",
+        user_id=7,
+        db=object(),
+        generator=generator,
+    )
+    assert turn.route == "BOTH"
+    assert turn.answer == "generated answer"
+    assert generator.calls[0]["domain"] == domain.block
+    assert turn.citations == list(domain.citations)
+
+
+@pytest.mark.asyncio
+async def test_both_with_low_kb_and_no_domain_returns_canned(monkeypatch) -> None:
+    generator = _FakeGenerator()
+    _patch(
+        monkeypatch,
+        decision=RouteDecision(route="BOTH", ops=("stats",), project_id=42),
+        response=_scored_response(0.01),
+        domain=None,
+    )
+    turn = await pipeline.run_turn(
+        "what is the weather and how many tasks in project 42?",
+        user_id=7,
+        db=object(),
+        generator=generator,
+    )
+    assert turn.reason == "low_confidence"
     assert generator.calls == []

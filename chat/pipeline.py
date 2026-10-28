@@ -26,6 +26,7 @@ from chat.env import env_int
 from chat.generate import Answer, Generator
 from chat.guard import detect_injection
 from chat.retrieval import RetrievalResponse, ScoredNode, retrieve
+from chat.retrieval_gate import gate_decision
 from chat.router import RouteDecision, route_question
 
 _TEMPORARY_STATUSES = frozenset({"TIMEOUT", "UNAVAILABLE"})
@@ -208,8 +209,18 @@ async def prepare_turn(
         _domain(decision, user_id, db),
     )
 
-    chunks = kb_response.results
+    kb_gate = gate_decision(kb_response, text)
+    kb_ok = kb_gate.allow
+    chunks = kb_response.results if kb_ok else ()
     domain_block = domain_outcome.block if domain_outcome is not None else ""
+    if decision.wants_kb and not kb_ok:
+        logger.info(
+            "kb gate rejected: reason={} dense={} coverage={} threshold={}",
+            kb_gate.reason,
+            kb_gate.dense_top1,
+            round(kb_gate.coverage, 3),
+            kb_gate.dense_threshold,
+        )
 
     # A DOMAIN turn with no usable evidence has a precise answer; don't ask the
     # model to invent one from an empty prompt.
@@ -235,9 +246,10 @@ async def prepare_turn(
             history=history_list,
             canned=copy.LOW_CONFIDENCE_ANSWER,
             reason="low_confidence",
+            candidate_count=kb_response.candidate_count,
         )
 
-    citations = kb_citations(kb_response)
+    citations = kb_citations(kb_response) if kb_ok else []
     if domain_outcome is not None:
         citations.extend(domain_outcome.citations)
 
@@ -251,7 +263,8 @@ async def prepare_turn(
         citations=citations,
         candidate_count=kb_response.candidate_count,
         history=history_list,
-        degraded=decision.degraded,
+        degraded=decision.degraded
+        or (decision.route == "BOTH" and not kb_ok),
     )
 
 
