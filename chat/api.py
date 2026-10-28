@@ -24,6 +24,7 @@ from backend.db import db_connection, get_db
 from backend.models.dtos.user_dto import AuthUserDTO
 from backend.services.users.authentication_service import login_required
 from chat import sessions
+from chat.config import validate_chat_config
 from chat.health import rag_health, rag_readiness
 from chat.pipeline import Delta, Finished, Turn as TurnResult
 from chat.pipeline import run_turn, stream_turn
@@ -152,6 +153,19 @@ def _rate_limited(retry_after: int) -> JSONResponse:
         status_code=429,
         headers={"Retry-After": str(retry_after)},
     )
+
+
+def _require_chat_config() -> None:
+    """Return HTTP 500 when the deployment's chat model config is incomplete."""
+    try:
+        validate_chat_config()
+    except Exception as exc:
+        # Do not leak configuration values or provider details.
+        logger.error("chat configuration invalid: {}", type(exc).__name__)
+        raise HTTPException(
+            status_code=500,
+            detail="Chat model configuration is incomplete",
+        ) from exc
 
 
 # --- health -------------------------------------------------------------------
@@ -415,6 +429,7 @@ async def send_turn(
     ``stream: true`` returns SSE instead of JSON — the same endpoint, same
     persistence, one protocol for canned and generated answers alike.
     """
+    _require_chat_config()
     try:
         await sessions.get_session(session_id, user.id, db)
         prior = await sessions.list_turns(
@@ -456,6 +471,7 @@ async def ask(
     db: Database = Depends(get_db),
 ):
     """Answer one question with no session and no persistence."""
+    _require_chat_config()
     decision = await check_rate_limit(user.id, db)
     if not decision.allowed:
         return _rate_limited(decision.retry_after)

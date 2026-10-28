@@ -366,3 +366,15 @@ def get_db_connection():  # type: ignore[no-untyped-def]
         )
     except ImportError as e:
         raise ImportError("psycopg or psycopg2 required (psycopg[binary])") from e
+
+
+def validate_chat_config() -> None:
+    """Fail fast when the chat model configuration is incomplete.
+
+    This is deliberately a preflight check, not a best-effort probe: a missing
+    deployment setting is an operator error and must surface as HTTP 500 rather
+    than as a canned answer or a silent KB fallback.
+    """
+    get_generation_config()
+    get_router_config()
+    get_embedding_config()
