@@ -23,14 +23,35 @@ _UNSAFE_PATTERNS: list[re.Pattern] = [
     # classic instruction override
     re.compile(r"ignore\s+(all\s+)?(previous|above|system)\s+instructions", re.I),
     re.compile(r"disregard\s+(all\s+)?(previous|above|system)", re.I),
-    re.compile(r"reveal.*prompt", re.I),
-    re.compile(r"show\s+me\s+your\s+(system\s+)?prompt", re.I),
+    re.compile(r"forget\s+(all\s+)?(previous|above)\s+(instructions|prompts|rules)", re.I),
+    # system-prompt extraction
+    re.compile(r"\bsystem\s+prompt\b", re.I),
+    re.compile(r"\bhidden\s+prompt\b", re.I),
+    re.compile(
+        r"(show|print|reveal|repeat|give|tell|dump)\b.{0,60}\bprompt\b", re.I
+    ),
     re.compile(r"\bjailbreak\b", re.I),
     re.compile(r"do\s+anything\s+now\b", re.I),
     re.compile(r"\bDAN\b.*\bmode\b", re.I),
-    re.compile(r"you\s+are\s+now\s+(a|an)\s+", re.I),
+    re.compile(r"you\s+are\s+now\s+(dan|jailbroken|in\s+developer\s+mode)\b", re.I),
     re.compile(r"pretend\s+you\s+are", re.I),
     re.compile(r"act\s+as\s+if\s+you\s+are\s+not", re.I),
+    # Secret exfil bait
+    re.compile(
+        r"(show|print|reveal|give|tell|dump|leak)\b.{0,60}"
+        r"\b(database|db)\s*(password|credentials)\b",
+        re.I,
+    ),
+    re.compile(
+        r"(show|print|reveal|give|tell|dump|leak)\b.{0,60}"
+        r"\b(api|secret|access)\s*key\b",
+        re.I,
+    ),
+    re.compile(
+        r"(show|print|reveal|give|tell|dump|leak)\b.{0,60}"
+        r"\benvironment\s+variables\b",
+        re.I,
+    ),
     # RBAC escape / exfil bait (mapper asking to see restricted docs by social engineering the LLM)
     re.compile(r"show\s+me\s+restricted", re.I),
     re.compile(r"bypass.*\brbac\b", re.I),
