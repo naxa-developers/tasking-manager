@@ -45,8 +45,9 @@ messages.
 `POST /rag/sessions` starts a conversation. `POST /rag/sessions/{id}/turns` sends
 one turn — the body is `{"question": "...", "client_message_id": "..."}` and the
 response is the completed turn with its answer, route, ops, and citations.
-`client_message_id` is optional; when supplied, a retried non-stream POST returns
-the already-stored turn instead of generating again. History is read from the
+`client_message_id` is optional; when supplied, a retried POST (streaming or not)
+returns the already-stored turn instead of generating again. A streaming replay
+is one SSE delta followed by `meta` and `done`. History is read from the
 session's stored turns; the client never sends message history.
 
 Ownership lives in the store. Every public function in `sessions.py` resolves the

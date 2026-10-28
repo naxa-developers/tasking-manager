@@ -393,6 +393,36 @@ def _meta_payload(
     }
 
 
+def _stream_replay(saved: Dict[str, Any]) -> StreamingResponse:
+    """Replay a stored turn as one SSE delta, then meta and done.
+
+    A retried streaming POST must not call the model again or return a different
+    answer than the one stored for its client_message_id.
+    """
+    turn = TurnResult(
+        answer=str(saved.get("answer") or ""),
+        route=str(saved.get("route") or ""),
+        ops=tuple(saved.get("ops") or ()),
+        project_id=saved.get("project_id"),
+        citations=list(saved.get("citations") or []),
+        candidate_count=int(saved.get("candidate_count") or 0),
+        model=saved.get("model"),
+        reason=str(saved.get("reason") or "ok"),
+    )
+
+    async def events():
+        yield _frame("message", {"delta": turn.answer})
+        yield _frame(
+            "meta",
+            _meta_payload(turn, saved.get("session_id"), saved),
+        )
+        yield _frame("done", {})
+
+    return StreamingResponse(
+        events(), media_type="text/event-stream", headers=_STREAM_HEADERS
+    )
+
+
 def _stream_response(
     session_id: Optional[int],
     question: str,
@@ -485,11 +515,13 @@ async def send_turn(
     except sessions.SessionNotFound:
         raise HTTPException(status_code=404, detail="Session not found") from None
 
-    if body.client_message_id and not body.stream:
+    if body.client_message_id:
         existing = await sessions.get_turn_by_client_id(
             session_id, user.id, body.client_message_id, db
         )
         if existing is not None:
+            if body.stream:
+                return _stream_replay(existing)
             return _turn_dto(existing)
 
     decision = await check_rate_limit(user.id, db)
