@@ -1,27 +1,25 @@
 # Model comparison evals
 
-Compares generation models across three question sets. The model is passed by
+Compares generation models across four question sets. The model is passed by
 environment, so this exercises the production code path.
 
 ## Question sets
 
 | Set | File | Cases | What it measures |
 |---|---|---|---|
-| `kb` | `data/kb.jsonl` | 219 | retrieval + answer quality on documentation questions |
-| `router` | `data/router.jsonl` | 80 scorable | route / ops / project-id decisions (7 guardrail rows excluded) |
+| `kb` | `data/kb.jsonl` | 219 | retrieval Recall@k/MRR + answer quality on documentation questions |
+| `router` | `data/router.jsonl` | 91 total, 86 scorable | route / ops / project-id decisions, including `OUT_OF_SCOPE` |
 | `domain` | `data/domain.jsonl` | 32 | full turn against the live database: route, ops, abstention, latency |
+| `refusal` | `data/refusal.jsonl` | 10 | canned OOD/no-answer/injection turns end to end |
 
 `data/kb.jsonl` came from `chat/eval/runs/prepared_219q.json`; `router.jsonl` is
 `chat/eval/routing_corpus.jsonl`; `domain.jsonl` is the 32 questions from
-`chat/eval/runs/32q_manjita_deploy-rag-dev_2026-10-08.json`.
+`chat/eval/runs/32q_manjita_deploy-rag-dev_2026-10-08.json`; `refusal.jsonl`
+is the OOD/no-answer gate set.
 
-**Known scoring caveat.** The `kb` set's `expected_docs` were written against a
-knowledge-base layout that no longer exists (0 of 258 still resolve), so the set
-scores answer overlap with the reference answer, not retrieval recall. The
-`router` `ops` metric also penalises this package slightly: `chat/` kept the
-requested ops in its decision when a project id was missing (route KB +
-`needs_project_id`), while `rag/` drops them. The behaviour is equivalent; the
-ops set comparison is not.
+**Scoring note.** The `kb` set's `expected_docs` now resolve against the current
+83-chunk index (258/258), so `run_kb` reports Recall@k and MRR as well as answer
+overlap. The old caveat about 0/258 is obsolete.
 
 ## Running against Ollama
 
@@ -75,11 +73,16 @@ docker run --rm --network tm-net --add-host=host.docker.internal:host-gateway \
     --api-base http://host.docker.internal:11434 --out /out/router_4b.json
 ```
 
-Modes: `kb`, `router`, `domain`, `compare`. `domain` needs `--user-id`.
+Modes: `kb`, `router`, `domain`, `refusal`, `compare`. `domain` needs
+`--user-id`; `refusal` uses the same database for KB retrieval but can run
+without a user id for OOD/injection cases.
 
 ## Results so far (2026-10-25)
 
-Router, 80 scorable cases:
+These numbers predate the `OUT_OF_SCOPE` route and the relevance gate; rerun
+before using them as a baseline.
+
+Router, 86 scorable cases:
 
 | | qwen3:1.7b | qwen3:4b |
 |---|---|---|
@@ -113,8 +116,9 @@ abstentions, routes KB 16 / DOMAIN 13 / BOTH 3, 2.05 s mean). Needs a re-run.
 2. **Re-run `domain` for both models** after the `user_tasks` scope fix
    (registry said `optional_project`, handler takes `(user_id, db)`).
 3. **Run `kb` for 4B** (219 cases, ~15–25 min).
-4. Router families that fail for both models: `E-deictic-followups` 2/8 and
-   `G-adversarial-bounds` 9/15. The follow-up failures are mostly over-selection
-   (DOMAIN→BOTH) plus the ops-in-KB convention above; the adversarial ones are
-   partly expectations that `chat/`'s scope classifier answered, which this
-   package deliberately dropped.
+4. Re-run `router` and `refusal` for both models. `G-adversarial-bounds` now
+   includes `OUT_OF_SCOPE` rows and the summary reports
+   `out_of_scope_route`; the previous results predate that route.
+5. Run `refusal` after any prompt or gate-threshold change. It is the direct
+   check that OOD, no-answer, and injection turns return canned copy without a
+   generation call.

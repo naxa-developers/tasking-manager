@@ -1,11 +1,11 @@
-"""The turn pipeline: five stages, one path.
+"""The turn pipeline: six stages, one path.
 
-    question -> injection guard -> route -> retrieve and/or fetch evidence -> generate
+    question -> injection guard -> route -> retrieve -> gate -> generate
 
-The decision (guard, route, fetch) is separated from the emission (generate or
-canned copy) so that both kinds of answer reach the client through the same
-protocol. ``run_turn`` returns a finished turn; ``stream_turn`` yields deltas and
-then the finished turn.
+The decision (guard, route, retrieve, gate) is separated from the emission
+(generate or canned copy) so that both kinds of answer reach the client through
+the same protocol. ``run_turn`` returns a finished turn; ``stream_turn`` yields
+deltas and then the finished turn.
 
 There is no session machinery here. Callers pass the conversation history they
 want considered.

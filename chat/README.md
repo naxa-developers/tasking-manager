@@ -1,16 +1,21 @@
 # chat — the minimal Tasking Manager assistant
 
-Five stages, one path. Everything semantic is the model's decision; only the
-injection guard and the response contract are deterministic.
+Six stages, one path. The router decides the route; the injection guard, the
+retrieval gate, and the canned responses are deterministic.
 
 ```
 question
-  → chat.guard       deterministic injection check (the only non-LLM step)
-  → chat.router      one LLM call → route: KB | DOMAIN | BOTH (+ ops, project_id, filters)
-  → chat.retrieval   cosine + BM25, fused with RRF      (KB, BOTH)
-  → chat.domain      read-only service calls            (DOMAIN, BOTH)
-  → chat.generate    one LLM call → answer + citations
+  → chat.guard        deterministic injection check (the only non-LLM input gate)
+  → chat.router       one LLM call → route: KB | DOMAIN | BOTH | OUT_OF_SCOPE
+  → chat.retrieval    cosine + BM25, fused with RRF      (KB, BOTH)
+  → chat.retrieval_gate  dense/lexical relevance gate    (KB, BOTH)
+  → chat.domain       read-only service calls            (DOMAIN, BOTH)
+  → chat.generate     one LLM call → answer + citations
 ```
+
+`OUT_OF_SCOPE` and a failed retrieval gate never reach generation; they return
+canned copy. A `BOTH` turn whose KB arm fails the gate can still answer from
+the domain evidence.
 
 A **turn** is one question and its answer, stored as a single row and exchanged
 as a single object. A session is a list of turns — not a stream of role-tagged
@@ -21,8 +26,9 @@ messages.
 | File | Role |
 |---|---|
 | `pipeline.py` | `run_turn()` — the five stages, `Turn` result |
-| `router.py` | router prompt, JSON contract, validation, KB fallback |
+| `router.py` | router prompt, JSON contract, validation, `OUT_OF_SCOPE`, KB fallback |
 | `retrieval.py` | hybrid pgvector + BM25 retriever (RRF) |
+| `retrieval_gate.py` | dense/lexical relevance gate before generation |
 | `generate.py` | passage cleaning, prompt fitting, generation (one-shot and stream) |
 | `guard.py` | injection detection and untrusted-text neutralization |
 | `sessions.py` | session + turn store; ownership enforced here |
@@ -162,10 +168,14 @@ docker run --rm --network tm-net -e PYTHONPATH=/usr/src/app \
 | Variable | Default | Meaning |
 |---|---|---|
 | `RAG_RETRIEVAL_TOP_K` | 5 | fused passages handed to the prompt (0 = all) |
+| `RAG_RETRIEVAL_ARM_TOP_K` | 30 | candidates fetched from each retrieval arm before RRF |
+| `RAG_DENSE_SCORE_THRESHOLD` | 0.35 | top-1 dense similarity accepted without lexical rescue |
+| `RAG_DENSE_SCORE_FLOOR` | 0.20 | minimum dense similarity for lexical rescue |
+| `RAG_TERM_COVERAGE_THRESHOLD` | 0.75 | query-term coverage required for lexical rescue |
 | `RAG_PROMPT_TOKEN_BUDGET` | 11776 | generation prompt budget (set for a 16k context) |
 | `RAG_HISTORY_MAX_TURNS` | 6 | prior turns fitted into the generation prompt |
 | `RAG_DOMAIN_TIMEOUT` | 5 | per-operation seconds |
-| `RAG_CHUNKS_PATH` | `../chat/retrieval/data/chunks.json` | KB chunk build |
+| `RAG_CHUNKS_PATH` | `chat/data/chunks.json` | KB chunk build |
 | `RAG_ROUTER_MODEL` | generation model | set only to route with a different model |
 | `RAG_GENERATION_EXTRA_BODY` | `{}` | provider body for generation, e.g. `{"chat_template_kwargs":{"enable_thinking":false}}` |
 | `RAG_ROUTER_EXTRA_BODY` | `{}` | same for the routing call |

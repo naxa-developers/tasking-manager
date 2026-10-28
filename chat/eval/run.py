@@ -1,16 +1,17 @@
-"""Compare generation models across the three eval sets.
+"""Compare generation models across the four eval sets.
 
-    python -m chat.eval.run kb     --model ollama/qwen3:4b --api-base http://localhost:11434
-    python -m chat.eval.run router --model ollama/qwen3:4b --api-base http://localhost:11434
-    python -m chat.eval.run domain --model ollama/qwen3:4b --api-base http://localhost:11434 --user-id 10250456
+    python -m chat.eval.run kb      --model ollama/qwen3:4b --api-base http://localhost:11434
+    python -m chat.eval.run router  --model ollama/qwen3:4b --api-base http://localhost:11434
+    python -m chat.eval.run domain  --model ollama/qwen3:4b --api-base http://localhost:11434 --user-id 10250456
+    python -m chat.eval.run refusal --model ollama/qwen3:4b --api-base http://localhost:11434
     python -m chat.eval.run compare --a kb-1.7b.json --b kb-4b.json
 
 The model is passed by environment to the package (``LITELLM_MODEL`` /
 ``LLM_API_BASE``), so the code under test is exactly the production path.
 
-Note on the KB set: its ``expected_docs`` were written against a knowledge-base
-layout that no longer exists in the index, so this scores answer quality against
-the reference answer, not retrieval recall.
+The KB set's ``expected_docs`` resolve against the current index, so ``kb``
+reports retrieval Recall@k and MRR alongside answer overlap. ``refusal`` is the
+end-to-end canned-answer check for OOD, no-answer, and injection turns.
 """
 
 from __future__ import annotations
@@ -45,30 +46,45 @@ def load(name: str) -> List[Dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def configure(model: str, api_base: Optional[str], router_model: Optional[str]) -> None:
+def configure(
+    model: str,
+    api_base: Optional[str],
+    router_model: Optional[str],
+    api_key: Optional[str] = None,
+    thinking_off: bool = False,
+) -> None:
     """Point the package at the model under test before anything imports config.
 
-    ``GENERATION_API_BASE`` is set explicitly because it outranks ``LLM_API_BASE``
-    in the config lookup, and the deployment env file already defines it.
+    ``GENERATION_API_BASE`` outranks ``LLM_API_BASE`` in the config lookup and the
+    deployment env file already defines it, so it is always set or cleared here.
     """
     os.environ["LITELLM_MODEL"] = model
+    if api_key:
+        os.environ["LLM_API_KEY"] = api_key
+        os.environ["RAG_ROUTER_API_KEY"] = api_key
     if api_base:
         os.environ["LLM_API_BASE"] = api_base
         os.environ["GENERATION_API_BASE"] = api_base
         os.environ["RAG_ROUTER_API_BASE"] = api_base
-    if router_model:
-        os.environ["RAG_ROUTER_MODEL"] = router_model
     else:
-        os.environ.pop("RAG_ROUTER_MODEL", None)
+        # Blank rather than pop: load_dotenv(override=False) re-sets any variable
+        # that is absent, so popping would restore the local llama.cpp base URL.
+        for name in ("GENERATION_API_BASE", "LLM_API_BASE", "RAG_ROUTER_API_BASE"):
+            os.environ[name] = ""
+    os.environ["RAG_ROUTER_MODEL"] = router_model or ""
     if model.startswith("ollama"):
-        # Asymmetric on purpose.
-        # Router: thinking off. Its budget is 512 tokens and a reasoning block
-        # consumes all of it, leaving empty or truncated JSON.
         os.environ["RAG_ROUTER_EXTRA_BODY"] = '{"think": false}'
-        # Generation: thinking ON. think=false removes the separate thinking
-        # channel, so Qwen3 emits its reasoning as the answer itself. Left on,
-        # Ollama reports thinking separately and `content` stays clean.
         os.environ.pop("RAG_GENERATION_EXTRA_BODY", None)
+    elif thinking_off:
+        body = '{"chat_template_kwargs": {"enable_thinking": false}}'
+        os.environ["RAG_ROUTER_EXTRA_BODY"] = body
+        os.environ["RAG_GENERATION_EXTRA_BODY"] = body
+    else:
+        # The deployment env file sets the llama.cpp thinking switch; hosted
+        # providers reject unknown body keys, so blank it rather than pop it
+        # (load_dotenv would only re-set an absent variable).
+        os.environ["RAG_ROUTER_EXTRA_BODY"] = ""
+        os.environ["RAG_GENERATION_EXTRA_BODY"] = ""
 
 
 def is_abstention(text: str) -> bool:
@@ -114,8 +130,25 @@ async def run_kb(args) -> Dict[str, Any]:
     rows: List[Dict[str, Any]] = []
     for index, case in enumerate(questions, start=1):
         started = time.monotonic()
+        response = None
+        retrieved_docs: List[str] = []
+        retrieval_rr = 0.0
         try:
             response = retrieve(case["question"], args.top_k)
+            retrieved_docs = [
+                str((scored.node.metadata or {}).get("doc_id") or "")
+                for scored in response.results
+            ]
+            expected_docs = set(case.get("expected_docs") or [])
+            hit_rank = next(
+                (
+                    rank
+                    for rank, doc_id in enumerate(retrieved_docs, start=1)
+                    if doc_id in expected_docs
+                ),
+                None,
+            )
+            retrieval_rr = (1.0 / hit_rank) if hit_rank else 0.0
             result = generator.answer(case["question"], response.results)
             answer, reason = result.text, result.reason
         except Exception as error:  # noqa: BLE001 - eval: record, never crash
@@ -129,7 +162,11 @@ async def run_kb(args) -> Dict[str, Any]:
                 "reason": reason,
                 "f1": answer_f1(answer, case.get("reference") or ""),
                 "abstained": is_abstention(answer),
-                "passages": len(response.results) if "response" in dir() else 0,
+                "passages": len(response.results) if response is not None else 0,
+                "retrieved_docs": retrieved_docs,
+                "retrieval_hit": retrieval_rr > 0.0,
+                "retrieval_rr": round(retrieval_rr, 4),
+                "has_expected_docs": bool(case.get("expected_docs")),
                 "seconds": round(elapsed, 2),
             }
         )
@@ -140,6 +177,7 @@ async def run_kb(args) -> Dict[str, Any]:
 
 def _summarise_kb(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     ok = [r for r in rows if r["answer"]]
+    retrieval_rows = [r for r in rows if r["has_expected_docs"]]
     return {
         "cases": len(rows),
         "answered": len(ok),
@@ -150,6 +188,18 @@ def _summarise_kb(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         ),
         "f1_mean": round(statistics.mean([r["f1"] for r in ok]) if ok else 0.0, 4),
         "f1_median": round(statistics.median([r["f1"] for r in ok]) if ok else 0.0, 4),
+        "retrieval_cases": len(retrieval_rows),
+        "retrieval_recall_at_k": round(
+            sum(1 for r in retrieval_rows if r["retrieval_hit"])
+            / max(1, len(retrieval_rows)),
+            4,
+        ),
+        "retrieval_mrr": round(
+            statistics.mean([r["retrieval_rr"] for r in retrieval_rows])
+            if retrieval_rows
+            else 0.0,
+            4,
+        ),
         "latency_mean_s": round(
             statistics.mean([r["seconds"] for r in rows]) if rows else 0.0, 2
         ),
@@ -221,6 +271,7 @@ def _summarise_router(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         )
         return round(passed / len(rows), 3)
 
+    ood = [r for r in rows if r["expected"]["route"] == "OUT_OF_SCOPE"]
     return {
         "cases": len(rows),
         "pass_all": rate(),
@@ -229,6 +280,10 @@ def _summarise_router(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         "filters": rate("filters"),
         "project_id": rate("project_id"),
         "needs_project_id": rate("needs_project_id"),
+        "out_of_scope_cases": len(ood),
+        "out_of_scope_route": round(
+            sum(1 for r in ood if r["metrics"].get("route")) / max(1, len(ood)), 3
+        ),
         "latency_p50_s": pct([r["seconds"] for r in rows], 0.5),
         "latency_p95_s": pct([r["seconds"] for r in rows], 0.95),
         "errors": sum(1 for r in rows if r["actual"]["route"] is None),
@@ -299,6 +354,79 @@ def _summarise_domain(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 # --- compare ------------------------------------------------------------------
 
 
+async def run_refusal(args) -> Dict[str, Any]:
+    """End-to-end check that weak/out-of-scope turns never reach generation."""
+    from databases import Database
+
+    from backend.config import settings
+    from chat.pipeline import run_turn
+
+    cases = load("refusal.jsonl")[: args.limit or None]
+    db = Database(settings.SQLALCHEMY_DATABASE_URI.unicode_string())
+    await db.connect()
+    rows: List[Dict[str, Any]] = []
+    try:
+        for index, case in enumerate(cases, start=1):
+            started = time.monotonic()
+            try:
+                turn = await run_turn(
+                    case["question"], user_id=args.user_id, db=db
+                )
+                route, reason = turn.route, turn.reason
+                canned = turn.model is None
+                answer, model = turn.answer, turn.model
+            except Exception as error:  # noqa: BLE001
+                route, reason, canned = "ERROR", f"exception:{type(error).__name__}", False
+                answer, model = "", None
+            elapsed = time.monotonic() - started
+            metrics = {
+                "route": route == case["expected_route"],
+                "reason": reason == case["expected_reason"],
+                "canned": canned == bool(case["canned"]),
+            }
+            metrics["pass"] = all(metrics.values())
+            rows.append(
+                {
+                    "id": case["id"],
+                    "question": case["question"],
+                    "answer": answer,
+                    "route": route,
+                    "reason": reason,
+                    "canned": canned,
+                    "model": model,
+                    "metrics": metrics,
+                    "pass": metrics["pass"],
+                    "seconds": round(elapsed, 2),
+                }
+            )
+            if index % 10 == 0:
+                print(f"  refusal {index}/{len(cases)}", flush=True)
+    finally:
+        await db.disconnect()
+    return {"mode": "refusal", "rows": rows, "summary": _summarise_refusal(rows)}
+
+
+def _summarise_refusal(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def rate(key: str) -> float:
+        if not rows:
+            return 0.0
+        return round(sum(1 for r in rows if r["metrics"].get(key)) / len(rows), 3)
+
+    return {
+        "cases": len(rows),
+        "pass_all": rate("pass"),
+        "route": rate("route"),
+        "reason": rate("reason"),
+        "canned": rate("canned"),
+        "generated": sum(1 for r in rows if not r["canned"]),
+        "latency_p50_s": pct([r["seconds"] for r in rows], 0.5),
+        "latency_p95_s": pct([r["seconds"] for r in rows], 0.95),
+    }
+
+
+# --- compare ------------------------------------------------------------------
+
+
 def compare(a_path: str, b_path: str) -> None:
     a = json.loads(Path(a_path).read_text())
     b = json.loads(Path(b_path).read_text())
@@ -315,10 +443,14 @@ def compare(a_path: str, b_path: str) -> None:
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("kb", "router", "domain", "compare"))
+    parser.add_argument(
+        "mode", choices=("kb", "router", "domain", "refusal", "compare")
+    )
     parser.add_argument("--model", default="ollama/qwen3:4b")
     parser.add_argument("--router-model", default=None)
     parser.add_argument("--api-base", default=None)
+    parser.add_argument("--api-key", default=None)
+    parser.add_argument("--thinking-off", action="store_true")
     parser.add_argument("--out", default=None)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--top-k", type=int, default=5)
@@ -331,10 +463,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         compare(args.a, args.b)
         return 0
 
-    configure(args.model, args.api_base, args.router_model)
+    configure(
+        args.model, args.api_base, args.router_model,
+        api_key=args.api_key, thinking_off=args.thinking_off,
+    )
     started = time.monotonic()
     result = asyncio.run(
-        {"kb": run_kb, "router": run_router, "domain": run_domain}[args.mode](args)
+        {
+            "kb": run_kb,
+            "router": run_router,
+            "domain": run_domain,
+            "refusal": run_refusal,
+        }[args.mode](args)
     )
     result["model"] = args.model
     result["api_base"] = args.api_base
