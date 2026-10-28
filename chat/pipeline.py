@@ -42,8 +42,8 @@ class Turn:
     citations: List[Dict[str, Any]] = field(default_factory=list)
     candidate_count: int = 0
     model: Optional[str] = None
-    # "ok" | "blocked" | "low_confidence" | "domain_unavailable"
-    # | "domain_temporary" | "error"
+    # "ok" | "blocked" | "out_of_scope" | "low_confidence"
+    # | "domain_unavailable" | "domain_temporary" | "error"
     reason: str = "ok"
     degraded: bool = False
 
@@ -188,6 +188,16 @@ async def prepare_turn(
 
     # Stage 2 — the model decides how to answer.
     decision = await route_question(text, history=history_list)
+    if decision.is_out_of_scope:
+        # A question outside the Tasking Manager is answered deterministically
+        # and never reaches retrieval, a domain op, or generation.
+        return Prepared(
+            question=text,
+            route=decision.route,
+            history=history_list,
+            canned=copy.OUT_OF_SCOPE_ANSWER,
+            reason="out_of_scope",
+        )
     if user_id is None and decision.wants_domain:
         # Personal and project evidence both need an authenticated asker.
         decision = RouteDecision(route="KB")

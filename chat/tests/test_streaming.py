@@ -154,6 +154,21 @@ async def test_empty_stream_is_a_failure(monkeypatch) -> None:
     assert len(deltas) == 1
 
 
+@pytest.mark.asyncio
+async def test_out_of_scope_streams_canned_without_model(monkeypatch) -> None:
+    generator = _Generator(["never used"])
+    _patch(monkeypatch, decision=RouteDecision(route="OUT_OF_SCOPE"))
+    deltas, final = await _collect(
+        stream_turn("what is the weather in Kathmandu?", generator=generator)
+    )
+    assert len(deltas) == 1
+    assert final is not None
+    assert final.route == "OUT_OF_SCOPE"
+    assert final.reason == "out_of_scope"
+    assert deltas[0] == final.answer
+    assert generator.streamed == []
+
+
 def test_delta_frame_is_an_unnamed_sse_message() -> None:
     assert _frame("message", {"delta": "hi"}) == 'data: {"delta": "hi"}\n\n'
 

@@ -153,5 +153,32 @@
       "project_id": null,
       "filters": {}
     }
+  },
+  {
+    "question": "What's the weather in Kathmandu?",
+    "route": {
+      "route": "OUT_OF_SCOPE",
+      "ops": [],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "Write a Python function to sort a list.",
+    "route": {
+      "route": "OUT_OF_SCOPE",
+      "ops": [],
+      "project_id": null,
+      "filters": {}
+    }
+  },
+  {
+    "question": "What is the capital of Kathmandu??",
+    "route": {
+      "route": "OUT_OF_SCOPE",
+      "ops": [],
+      "project_id": null,
+      "filters": {}
+    }
   }
 ]

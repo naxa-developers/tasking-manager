@@ -18,6 +18,14 @@ DOMAIN_TEMPORARY_ANSWER = "I couldn't reach live Tasking Manager data right now.
 
 BLOCKED_ANSWER = "I can't help with that."
 
+OUT_OF_SCOPE_ANSWER = (
+    "I can help with Tasking Manager questions — projects, tasks, mapping, "
+    "validation, teams, and organisations. I can't answer general knowledge "
+    "questions. If you meant a Tasking Manager project, give me the project ID "
+    "or a country."
+)
+
+
 MISSING_DETAIL_ANSWER = (
     "I don't have that detail in the available data. Asking about a specific "
     "project ID (for example tasks.hotosm.org/projects/123) usually helps."

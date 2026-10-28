@@ -38,8 +38,8 @@ from chat.domain.registry import (
     prompt_catalogue,
 )
 
-Route = Literal["KB", "DOMAIN", "BOTH"]
-_ROUTES = frozenset({"KB", "DOMAIN", "BOTH"})
+Route = Literal["KB", "DOMAIN", "BOTH", "OUT_OF_SCOPE"]
+_ROUTES = frozenset({"KB", "DOMAIN", "BOTH", "OUT_OF_SCOPE"})
 
 MAX_HISTORY_TURNS = 3
 MAX_QUESTION_CHARS = 2000
@@ -60,7 +60,7 @@ Decide how the question should be answered. Return one JSON object only, and
 never answer the question yourself.
 
 JSON shape:
-{{"route": "KB" | "DOMAIN" | "BOTH",
+{{"route": "KB" | "DOMAIN" | "BOTH" | "OUT_OF_SCOPE",
   "ops": ["<operation>"],
   "project_id": <integer or null>,
   "filters": {{<string: string>}}}}
@@ -70,10 +70,17 @@ Routes:
 - "DOMAIN": live Tasking Manager data answers it — counts, status, people,
   activity, the asker's own account data.
 - "BOTH": it needs documentation and live data together.
+- "OUT_OF_SCOPE": the question is not about the Tasking Manager — general
+  knowledge, chit-chat, other software, or an ill-posed question that is not
+  asking about TM.
 
 Rules:
-- "ops" lists operations from the catalogue below. Use [] for a KB route.
+- "ops" lists operations from the catalogue below. Use [] for a KB route and
+  for an OUT_OF_SCOPE route.
 - Choose the smallest set of operations that answers the question.
+- Use OUT_OF_SCOPE whenever the question is not asking about the Tasking
+  Manager, even if it mentions a place or a word that also appears in TM docs.
+  Do not answer general knowledge with a KB route.
 - "project_id" is an integer only when the question or the conversation names
   one. Never invent an id. If the question is about a project but no project is
   named, still return the operations with a null id.
@@ -118,6 +125,10 @@ class RouteDecision:
     @property
     def wants_kb(self) -> bool:
         return self.route in ("KB", "BOTH")
+
+    @property
+    def is_out_of_scope(self) -> bool:
+        return self.route == "OUT_OF_SCOPE"
 
 
 def _coerce_project_id(value: Any) -> Optional[int]:
@@ -236,6 +247,9 @@ def _drop_unrunnable(
 def _validate_output(output: RouterOutput) -> RouteDecision:
     """Turn the model payload into a decision that is safe to execute."""
     route = _normalize_route(output.route)
+    if route == "OUT_OF_SCOPE":
+        # OOD is terminal: no operation or project id may turn it into live data.
+        return RouteDecision(route="OUT_OF_SCOPE")
     ops = _validate_ops(output.ops)
     if route == "KB" or not ops:
         return RouteDecision(route="KB")

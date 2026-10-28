@@ -98,3 +98,13 @@ def test_route_is_uppercased() -> None:
 def test_garbage_route_is_kb() -> None:
     decision = decide(route="SQL", ops=["stats"])
     assert decision.route == "KB"
+
+
+def test_out_of_scope_is_terminal() -> None:
+    decision = decide(route="OUT_OF_SCOPE", ops=["stats"], project_id=42)
+    assert decision.route == "OUT_OF_SCOPE"
+    assert decision.ops == ()
+    assert decision.project_id is None
+    assert decision.is_out_of_scope is True
+    assert decision.wants_kb is False
+    assert decision.wants_domain is False

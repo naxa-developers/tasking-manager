@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 import pytest
 
 import chat.pipeline as pipeline
+from chat import copy
 from chat.domain.dispatch import DomainOutcome
 from chat.generate import Answer
 from chat.retrieval import RetrievalResponse, ScoredNode
@@ -205,4 +206,34 @@ async def test_empty_question_is_not_routed(monkeypatch) -> None:
     _patch(monkeypatch, decision=RouteDecision(route="KB"))
     turn = await pipeline.run_turn("   ", generator=generator)
     assert turn.reason == "low_confidence"
+    assert generator.calls == []
+
+
+@pytest.mark.asyncio
+async def test_out_of_scope_returns_canned_without_retrieval_or_generation(
+    monkeypatch,
+) -> None:
+    generator = _FakeGenerator()
+    calls = {"retrieve": 0, "domain": 0}
+
+    async def fake_route(question, history=None):
+        return RouteDecision(route="OUT_OF_SCOPE")
+
+    async def fake_collect(*args, **kwargs):
+        calls["domain"] += 1
+        return None
+
+    async def fake_retrieve(question):
+        calls["retrieve"] += 1
+        return _response()
+
+    monkeypatch.setattr(pipeline, "route_question", fake_route)
+    monkeypatch.setattr(pipeline, "collect", fake_collect)
+    monkeypatch.setattr(pipeline, "_retrieve", fake_retrieve)
+
+    turn = await pipeline.run_turn("what is the weather?", generator=generator)
+    assert turn.route == "OUT_OF_SCOPE"
+    assert turn.reason == "out_of_scope"
+    assert turn.answer == copy.OUT_OF_SCOPE_ANSWER
+    assert calls == {"retrieve": 0, "domain": 0}
     assert generator.calls == []
