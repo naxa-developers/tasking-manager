@@ -198,25 +198,45 @@ async def append_turn(
     citations: Optional[List[Dict[str, Any]]] = None,
     model: Optional[str] = None,
     candidate_count: Optional[int] = None,
+    client_message_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Persist one completed turn and mark the session active."""
+    """Persist one completed turn and mark the session active.
+
+    ``client_message_id`` makes a retried client POST idempotent. The unique
+    index is the final guard; the pre-check also avoids a second insert in the
+    common retry path.
+    """
     session_id = _session_id(session_id)
     await _owned(session_id, user_id, db)
+    client_id = (client_message_id or "")[:64] or None
+    if client_id:
+        existing = await db.fetch_one(
+            query="""
+                SELECT id, session_id, question, answer, route, ops, project_id,
+                       reason, citations, model, candidate_count, created_at
+                FROM rag_turns
+                WHERE session_id = :session_id AND client_message_id = :client_message_id
+            """,
+            values={"session_id": session_id, "client_message_id": client_id},
+        )
+        if existing is not None:
+            return _turn_from_row(existing)
     now = timestamp()
     async with db.transaction():
         row = await db.fetch_one(
             query="""
                 INSERT INTO rag_turns
                     (session_id, question, answer, route, ops, project_id, reason,
-                     citations, model, candidate_count, created_at)
+                     citations, model, candidate_count, client_message_id, created_at)
                 VALUES
                     (:session_id, :question, :answer, :route, :ops, :project_id,
-                     :reason, :citations, :model, :candidate_count, :created_at)
+                     :reason, :citations, :model, :candidate_count, :client_message_id,
+                     :created_at)
                 RETURNING id, session_id, question, answer, route, ops, project_id,
                           reason, citations, model, candidate_count, created_at
             """,
             values={
-                "session_id": _session_id(session_id),
+                "session_id": session_id,
                 "question": question,
                 "answer": answer,
                 "route": (route or "")[:16] or None,
@@ -226,6 +246,7 @@ async def append_turn(
                 "citations": json.dumps(citations or []),
                 "model": (model or None) and str(model)[:64],
                 "candidate_count": candidate_count,
+                "client_message_id": client_id,
                 "created_at": now,
             },
         )
@@ -239,6 +260,30 @@ async def append_turn(
         )
     logger.debug(f"rag turn appended to session {session_id}")
     return _turn_from_row(row) if row else {}
+
+
+async def get_turn_by_client_id(
+    session_id: int,
+    user_id: int,
+    client_message_id: str,
+    db: Database,
+) -> Optional[Dict[str, Any]]:
+    """An owned turn for a client retry key, or None."""
+    session_id = _session_id(session_id)
+    await _owned(session_id, user_id, db)
+    client_id = (client_message_id or "")[:64]
+    if not client_id:
+        return None
+    row = await db.fetch_one(
+        query="""
+            SELECT id, session_id, question, answer, route, ops, project_id,
+                   reason, citations, model, candidate_count, created_at
+            FROM rag_turns
+            WHERE session_id = :session_id AND client_message_id = :client_message_id
+        """,
+        values={"session_id": session_id, "client_message_id": client_id},
+    )
+    return _turn_from_row(row) if row is not None else None
 
 
 def history_from_turns(turns: Sequence[Dict[str, Any]]) -> List[Dict[str, str]]:

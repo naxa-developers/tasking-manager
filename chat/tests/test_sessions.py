@@ -160,3 +160,22 @@ def test_turn_dto_tolerates_missing_fields() -> None:
     dto = _turn_dto({"question": "q", "answer": "a"})
     assert dto.ops == []
     assert dto.session_id is None
+
+
+@pytest.mark.asyncio
+async def test_get_turn_by_client_id_returns_owned_turn() -> None:
+    db = FakeDB(
+        owned_row=ROW,
+        inserted_row={
+            "id": 11,
+            "session_id": 5,
+            "question": "q",
+            "answer": "a",
+            "ops": [],
+            "citations": [],
+        },
+    )
+    turn = await sessions.get_turn_by_client_id(5, 7, "client-1", db)
+    assert turn is not None
+    assert turn["id"] == 11
+    assert turn["question"] == "q"

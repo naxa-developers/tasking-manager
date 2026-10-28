@@ -43,9 +43,11 @@ messages.
 ## Sessions, turns, ownership
 
 `POST /rag/sessions` starts a conversation. `POST /rag/sessions/{id}/turns` sends
-one turn — the body is just `{"question": "..."}` and the response is the
-completed turn with its answer, route, ops, and citations. History is read from
-the session's stored turns; the client never sends message history.
+one turn — the body is `{"question": "...", "client_message_id": "..."}` and the
+response is the completed turn with its answer, route, ops, and citations.
+`client_message_id` is optional; when supplied, a retried non-stream POST returns
+the already-stored turn instead of generating again. History is read from the
+session's stored turns; the client never sends message history.
 
 Ownership lives in the store. Every public function in `sessions.py` resolves the
 session through `_owned(session_id, user_id, db)`, which raises `SessionNotFound`
@@ -53,8 +55,8 @@ for an unknown id **or** an id owned by someone else — the two are deliberatel
 indistinguishable. A new endpoint gets the 404 rule by construction.
 
 The table is `rag_turns` (question and answer in one row), created by migration
-`c4a9e2f17b83`. `rag_sessions.message_count` now counts turns; the API exposes it
-as `turn_count`.
+`c4a9e2f17b83`; `9e7c1a4b2d6f` adds the idempotency key. `rag_sessions.message_count`
+now counts turns; the API exposes it as `turn_count`.
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -167,6 +169,7 @@ docker run --rm --network tm-net -e PYTHONPATH=/usr/src/app \
 
 | Variable | Default | Meaning |
 |---|---|---|
+| `CHAT_ENABLED` | 1 | set 0 to disable `/rag` routes (health/readiness stay up) |
 | `RAG_RETRIEVAL_TOP_K` | 5 | fused passages handed to the prompt (0 = all) |
 | `RAG_RETRIEVAL_ARM_TOP_K` | 30 | candidates fetched from each retrieval arm before RRF |
 | `RAG_DENSE_SCORE_THRESHOLD` | 0.35 | top-1 dense similarity accepted without lexical rescue |

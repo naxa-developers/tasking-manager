@@ -80,3 +80,12 @@ async def test_streaming_ask_returns_500_before_sse(monkeypatch) -> None:
         )
     assert response.status_code == 500
     assert "text/event-stream" not in response.headers.get("content-type", "")
+
+
+@pytest.mark.asyncio
+async def test_chat_disabled_returns_404(monkeypatch) -> None:
+    monkeypatch.setenv("CHAT_ENABLED", "0")
+    transport = ASGITransport(app=_app())
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post("/rag/ask", json={"question": "hello"})
+    assert response.status_code == 404

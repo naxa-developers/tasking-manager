@@ -12,6 +12,7 @@ place rather than at each handler.
 from __future__ import annotations
 
 import json
+import os
 from typing import Any, Dict, List, Optional
 
 from databases import Database
@@ -84,6 +85,7 @@ class SessionTurnsDTO(BaseModel):
 class AskTurnDTO(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARS)
     stream: bool = False
+    client_message_id: Optional[str] = Field(default=None, max_length=64)
 
 
 class AskRequest(BaseModel):
@@ -168,6 +170,17 @@ def _require_chat_config() -> None:
         ) from exc
 
 
+def _chat_enabled() -> bool:
+    """Feature flag; defaults to enabled for the existing deployment."""
+    raw = (os.getenv("CHAT_ENABLED") or "1").strip().lower()
+    return raw not in {"0", "false", "no", "off"}
+
+
+def _require_chat_enabled() -> None:
+    if not _chat_enabled():
+        raise HTTPException(status_code=404, detail="Chat is disabled")
+
+
 # --- health -------------------------------------------------------------------
 
 
@@ -197,6 +210,7 @@ async def create_session(
     db: Database = Depends(get_db),
 ):
     """Start a conversation."""
+    _require_chat_enabled()
     row = await sessions.create_session(user.id, body.title, db)
     return _session_dto(row)
 
@@ -209,6 +223,7 @@ async def list_sessions(
     offset: int = 0,
 ):
     """The caller's conversations, most recently active first."""
+    _require_chat_enabled()
     rows = await sessions.list_sessions(user.id, limit, offset, db)
     return {"sessions": [_session_dto(row) for row in rows]}
 
@@ -225,6 +240,7 @@ async def get_session(
     The turns travel with the session so a client can open a conversation in
     one request — the same reason a chat UI wants history and title together.
     """
+    _require_chat_enabled()
     try:
         row = await sessions.get_session(session_id, user.id, db)
         turns = await sessions.list_turns(session_id, user.id, db, limit=limit)
@@ -243,6 +259,7 @@ async def rename_session(
     db: Database = Depends(get_db),
 ):
     """Rename a conversation."""
+    _require_chat_enabled()
     try:
         row = await sessions.rename_session(session_id, user.id, body.title, db)
     except sessions.SessionNotFound:
@@ -257,6 +274,7 @@ async def delete_session(
     db: Database = Depends(get_db),
 ):
     """Delete a conversation and its turns (cascade)."""
+    _require_chat_enabled()
     try:
         deleted = await sessions.delete_session(session_id, user.id, db)
     except sessions.SessionNotFound:
@@ -277,6 +295,7 @@ async def list_turns(
     limit: int = sessions.MAX_PAGE_SIZE,
 ):
     """The conversation as turns, oldest first."""
+    _require_chat_enabled()
     try:
         session = await sessions.get_session(session_id, user.id, db)
         turns = await sessions.list_turns(session_id, user.id, db, limit=limit)
@@ -293,6 +312,7 @@ async def _append(
     user_id: int,
     question: str,
     turn: TurnResult,
+    client_message_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     return await sessions.append_turn(
         session_id,
@@ -307,6 +327,7 @@ async def _append(
         citations=turn.citations,
         model=turn.model,
         candidate_count=turn.candidate_count,
+        client_message_id=client_message_id,
     )
 
 
@@ -316,6 +337,7 @@ async def _persist_turn(
     question: str,
     turn: TurnResult,
     db: Any = None,
+    client_message_id: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
     """Write the turn; mid-stream callers use a fresh pooled connection.
 
@@ -325,8 +347,22 @@ async def _persist_turn(
     try:
         if db is None:
             async with db_connection.database.connection() as fresh:
-                return await _append(fresh, session_id, user_id, question, turn)
-        return await _append(db, session_id, user_id, question, turn)
+                return await _append(
+                    fresh,
+                    session_id,
+                    user_id,
+                    question,
+                    turn,
+                    client_message_id=client_message_id,
+                )
+        return await _append(
+            db,
+            session_id,
+            user_id,
+            question,
+            turn,
+            client_message_id=client_message_id,
+        )
     except Exception:
         logger.exception(f"failed to persist turn for session {session_id}")
         return None
@@ -363,6 +399,7 @@ def _stream_response(
     user_id: int,
     db: Any,
     history: List[Dict[str, str]],
+    client_message_id: Optional[str] = None,
 ) -> StreamingResponse:
     """SSE: ``data`` deltas, then ``meta``, then ``done`` (``error`` on failure)."""
 
@@ -389,7 +426,12 @@ def _stream_response(
                 ):
                     try:
                         saved = await _append(
-                            conn, session_id, user_id, question, final
+                            conn,
+                            session_id,
+                            user_id,
+                            question,
+                            final,
+                            client_message_id=client_message_id,
                         )
                     except Exception:
                         # Losing the audit row must not lose the answer.
@@ -429,6 +471,7 @@ async def send_turn(
     ``stream: true`` returns SSE instead of JSON — the same endpoint, same
     persistence, one protocol for canned and generated answers alike.
     """
+    _require_chat_enabled()
     _require_chat_config()
     try:
         await sessions.get_session(session_id, user.id, db)
@@ -442,6 +485,13 @@ async def send_turn(
     except sessions.SessionNotFound:
         raise HTTPException(status_code=404, detail="Session not found") from None
 
+    if body.client_message_id and not body.stream:
+        existing = await sessions.get_turn_by_client_id(
+            session_id, user.id, body.client_message_id, db
+        )
+        if existing is not None:
+            return _turn_dto(existing)
+
     decision = await check_rate_limit(user.id, db)
     if not decision.allowed:
         return _rate_limited(decision.retry_after)
@@ -450,13 +500,27 @@ async def send_turn(
     history = sessions.history_from_turns(list(reversed(prior)))
 
     if body.stream:
-        return _stream_response(session_id, question, user.id, db, history)
+        return _stream_response(
+            session_id,
+            question,
+            user.id,
+            db,
+            history,
+            client_message_id=body.client_message_id,
+        )
 
     result = await run_turn(question, user_id=user.id, db=db, history=history)
 
     saved: Optional[Dict[str, Any]] = None
     if result.reason != "error":
-        saved = await _persist_turn(session_id, user.id, question, result, db)
+        saved = await _persist_turn(
+            session_id,
+            user.id,
+            question,
+            result,
+            db,
+            client_message_id=body.client_message_id,
+        )
 
     return _turn_dto(saved) if saved else _from_result(result, question, session_id)
 
@@ -471,6 +535,7 @@ async def ask(
     db: Database = Depends(get_db),
 ):
     """Answer one question with no session and no persistence."""
+    _require_chat_enabled()
     _require_chat_config()
     decision = await check_rate_limit(user.id, db)
     if not decision.allowed:
