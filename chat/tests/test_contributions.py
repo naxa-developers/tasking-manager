@@ -1,5 +1,3 @@
-"""The contribution evidence answers "how many" before it mentions hours."""
-
 from __future__ import annotations
 
 from chat.domain.user_contributions import UserContributionEvidence

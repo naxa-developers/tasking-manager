@@ -1,10 +1,3 @@
-"""Execute the router's chosen operations and merge their evidence.
-
-Fail-soft by design: one slow or broken operation must not sink the turn. Each
-op runs inside its own timeout and render boundary, and only authorized
-evidence reaches the prompt.
-"""
-
 from __future__ import annotations
 
 import asyncio

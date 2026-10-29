@@ -1,5 +1,3 @@
-"""Project visibility is the boundary the domain tools must not bypass."""
-
 from __future__ import annotations
 
 import pytest

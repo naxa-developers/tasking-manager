@@ -1,11 +1,3 @@
-"""Answer generation: assemble the prompt, make one model call, return text.
-
-Prompt fitting order is deliberate — live domain evidence first (it is the
-answer to "what is happening now"), then recent conversation, then retrieved
-passages. Whatever does not fit is dropped from the oldest/least specific end,
-never mid-sentence.
-"""
-
 from __future__ import annotations
 
 import re
@@ -125,13 +117,7 @@ def escape_fence(text: str) -> str:
 
 
 def clean_passage(text: str) -> str:
-    """Strip internal representation from one retrieved passage.
-
-    Titles, paths, sub-codes and chunk ids are useful in citations and useless
-    (or leaky) in a prompt. Formatting markers are removed too, because the model
-    otherwise repeats them back to the user. This is the single place that
-    decides what a passage looks like inside the prompt.
-    """
+    """Strip internal representation from one retrieved passage."""
     t = (text or "").strip()
     # Internal annotations the knowledge base carries for maintainers.
     t = re.sub(r"\s*\*\*Needs verification[^*]*\*\*[^\n]*", " ", t, flags=re.I)
@@ -301,8 +287,7 @@ class Generator:
             content = (response.choices[0].message.content or "").strip()  # type: ignore[attr-defined]
             if not content and "extra_body" in kwargs:
                 # Qwen3 with thinking disabled can end the turn immediately and
-                # return nothing. One retry with the provider defaults (thinking
-                # on) costs latency only for the prompts that need it.
+                # return nothing. One retry with provider defaults, when needed.
                 logger.info("empty answer with extra_body set; retrying without it")
                 retry = {k: v for k, v in kwargs.items() if k != "extra_body"}
                 response = litellm.completion(**retry)
@@ -322,11 +307,7 @@ class Generator:
         domain_block: str = "",
         history: Optional[Sequence[Dict[str, str]]] = None,
     ) -> Iterator[str]:
-        """Yield answer text as the model produces it.
-
-        Raises on a transport failure so the caller can decide between a canned
-        answer and finishing with whatever already reached the client.
-        """
+        """Yield answer text as the model produces it."""
         system, user = build_prompt(question, chunks, domain_block, history)
         kwargs = self._kwargs(system, user)
         kwargs["stream"] = True

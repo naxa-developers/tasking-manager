@@ -1,5 +1,3 @@
-"""Ask one question from the terminal — the fastest way to inspect a turn."""
-
 from __future__ import annotations
 
 import argparse
@@ -88,7 +86,9 @@ async def _run(
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="Ask one question from the terminal."
+    )
     parser.add_argument("question", help="Question to ask")
     parser.add_argument(
         "--user-id", type=int, default=None, help="Authenticated user id"

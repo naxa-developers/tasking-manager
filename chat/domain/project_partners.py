@@ -28,12 +28,7 @@ class PartnerEntry:
 
 @dataclass(frozen=True)
 class ProjectPartnersEvidence(EvidenceBase):
-    """Partnerships recorded on one project.
-
-    Mirrors the partners endpoints: ``get_partnerships_by_project`` for the
-    links plus ``get_partner_by_id`` to resolve partner names. The by-id
-    partnership endpoint returns the same fields.
-    """
+    """Partnerships recorded on one project."""
 
     status: DomainStatus
     project_id: int

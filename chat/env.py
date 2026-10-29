@@ -1,5 +1,3 @@
-"""Env parsing helpers — one place for getenv/convert/fallback."""
-
 from __future__ import annotations
 
 import os

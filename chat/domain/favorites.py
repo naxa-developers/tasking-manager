@@ -25,12 +25,7 @@ class FavoriteProject:
 
 @dataclass(frozen=True)
 class FavoritesEvidence(EvidenceBase):
-    """The asker's favorite (saved) projects — asker-only by design.
-
-    Mirrors ``UserService.get_projects_favorited`` for the list and
-    ``ProjectService.is_favorited`` for the per-project status when the
-    question names one project id.
-    """
+    """The asker's favorite (saved) projects — asker-only by design."""
 
     status: DomainStatus
     user_id: int

@@ -21,11 +21,7 @@ _SIMILAR_LIMIT = 5
 
 @dataclass(frozen=True)
 class SimilarProjectsEvidence(EvidenceBase):
-    """Projects similar to one project, ranked by the recommendation service.
-
-    Mirrors ``ProjectRecommendationService.get_similar_projects``: the
-    endpoint's target gate (published project only) surfaces as NOT_FOUND.
-    """
+    """Projects similar to one project, ranked by the recommendation service."""
 
     status: DomainStatus
     project_id: int

@@ -10,25 +10,17 @@ from chat.domain._rows import _attr, _iso_day
 from chat.domain.evidence import DomainStatus, EvidenceBase, safe_value
 
 CREATED_PROJECTS_OPERATION = "get_user_projects_created"
-# Authorship is read straight from ``projects.author_id`` — the same column the
-# backend's createdByMe project-search filter resolves to. Not
-# ProjectSearchService.get_managed_projects: "managed" also covers org-manager
-# and team-project-manager projects and returns bare ids.
+# ``projects.author_id`` is what the backend's createdByMe filter resolves to.
+# Not get_managed_projects: "managed" also covers org and team managers.
 CREATED_PROJECTS_PROVENANCE = "projects.author_id (createdByMe search filter)"
 
-# The authored-projects list renders completely by default; set
-# RAG_MAX_USER_PROJECTS=N (N > 0) to cap it for very long answers. The stated
-# total always covers every project the backend records; the list is disclosed
-# as partial when it exceeds the cap.
+# RAG_MAX_USER_PROJECTS=N (N > 0) caps the authored-projects list. The stated
+# total still covers every project; the list is marked partial.
 _PREFERRED_LOCALE = "en"
 
 
 def _max_projects() -> Optional[int]:
-    """Optional render cap for the authored-projects list.
-
-    ``RAG_MAX_USER_PROJECTS`` unset, 0, or invalid means no cap: render every
-    authored project.
-    """
+    """Optional render cap for the authored-projects list."""
     cap = env_int("RAG_MAX_USER_PROJECTS", 0)
     return cap if cap > 0 else None
 
@@ -53,11 +45,7 @@ class CreatedProject:
 
 @dataclass(frozen=True)
 class UserCreatedProjectsEvidence(EvidenceBase):
-    """Projects authored by the asker (``projects.author_id``).
-
-    Authorship is a distinct capability from contribution: this evidence is
-    never derived from ``task_history`` mapping/validation activity.
-    """
+    """Projects authored by the asker (``projects.author_id``)."""
 
     status: DomainStatus
     user_id: int

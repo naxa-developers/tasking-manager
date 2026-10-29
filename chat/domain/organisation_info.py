@@ -17,13 +17,7 @@ _MAX_DESCRIPTION = 200
 
 @dataclass(frozen=True)
 class OrganisationInfoEvidence(EvidenceBase):
-    """One organisation's public profile plus project stats and campaigns.
-
-    Mirrors the organisation endpoints: name lookup
-    (``get_organisation_by_name``), the organisation DTO, the statistics
-    endpoint (draft/published/archived project counts) and the organisation
-    campaigns list. The name comes from the route's ``organisation`` filter.
-    """
+    """One organisation's public profile plus project stats and campaigns."""
 
     status: DomainStatus
     organisation_name: str

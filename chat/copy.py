@@ -1,5 +1,3 @@
-"""Canned copy — the only strings returned without asking the model."""
-
 from __future__ import annotations
 
 LOW_CONFIDENCE_ANSWER = (

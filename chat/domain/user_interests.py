@@ -19,12 +19,7 @@ _MAX_INTERESTS = 20
 
 @dataclass(frozen=True)
 class UserInterestsEvidence(EvidenceBase):
-    """The asker's interest mix, weighted by their contributed projects.
-
-    Mirrors the interests endpoints: ``compute_contributions_rate`` gives each
-    interest's share of the asker's contributed projects,
-    ``get_all_interests`` the interest catalog.
-    """
+    """The asker's interest mix, weighted by their contributed projects."""
 
     status: DomainStatus
     user_id: int

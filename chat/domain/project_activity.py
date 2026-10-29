@@ -31,12 +31,7 @@ class ActivityEvent:
 
 @dataclass(frozen=True)
 class ProjectActivityEvidence(EvidenceBase):
-    """Latest task activity in a project (recent events + per-status rollup).
-
-    Mirrors the two activity endpoints: ``get_latest_activity`` (recent
-    task-history events, COMMENT actions excluded) for the event feed, and
-    ``get_last_activity`` (per-task latest status) rolled into counts.
-    """
+    """Latest task activity in a project (recent events + per-status rollup)."""
 
     status: DomainStatus
     project_id: int

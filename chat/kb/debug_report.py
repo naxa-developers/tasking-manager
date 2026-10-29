@@ -1,12 +1,3 @@
-"""Build a full audit report for one TMBot turn.
-
-Mirrors the branch selection in ``chat/service.py`` (guardrails -> routing ->
-domain/KB evidence -> canned vs LLM) so a debugging run reproduces production
-decisions without persisting a session. Used by
-``chat/retrieval/scripts/debug_turn.py`` and covered by
-``chat/tests/test_debug_report.py``.
-"""
-
 from __future__ import annotations
 
 import time
@@ -166,11 +157,7 @@ def canned_answer(
     outcome: Any,
     resp: Optional[RetrievalResponse],
 ) -> Optional[str]:
-    """The deterministic answer production would return, if any (no LLM).
-
-    Delegates to the production turn decisions (``decide_early_turn`` /
-    ``decide_turn``) so a debugging run cannot drift from the service path.
-    """
+    """The deterministic answer production would return, if any (no LLM)."""
     early = decide_early_turn(guard, question)
     if early is not None:
         return early.answer

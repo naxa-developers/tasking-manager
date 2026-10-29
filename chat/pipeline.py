@@ -1,16 +1,3 @@
-"""The turn pipeline: six stages, one path.
-
-    question -> injection guard -> route -> retrieve -> gate -> generate
-
-The decision (guard, route, retrieve, gate) is separated from the emission
-(generate or canned copy) so that both kinds of answer reach the client through
-the same protocol. ``run_turn`` returns a finished turn; ``stream_turn`` yields
-deltas and then the finished turn.
-
-There is no session machinery here. Callers pass the conversation history they
-want considered.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -51,11 +38,7 @@ class Turn:
 
 @dataclass(frozen=True)
 class Prepared:
-    """A routed, fetched turn with no answer yet.
-
-    ``canned`` is set when the turn must not call the model at all — a blocked
-    input, or a route whose evidence never arrived.
-    """
+    """A routed, fetched turn with no answer yet."""
 
     question: str
     route: str
@@ -329,11 +312,7 @@ async def stream_turn(
     history: Optional[Sequence[Dict[str, str]]] = None,
     generator: Optional[Generator] = None,
 ) -> AsyncIterator[StreamEvent]:
-    """Run one turn, yielding deltas and then the finished turn.
-
-    A canned answer is yielded as a single delta, so the client needs one code
-    path whether or not the model was called.
-    """
+    """Run one turn, yielding deltas and then the finished turn."""
     prepared = await prepare_turn(question, user_id=user_id, db=db, history=history)
 
     if prepared.canned is not None:

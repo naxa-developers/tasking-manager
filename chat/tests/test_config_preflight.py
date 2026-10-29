@@ -1,5 +1,3 @@
-"""Missing model configuration is a deployment error, not a canned answer."""
-
 from __future__ import annotations
 
 import pytest

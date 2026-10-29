@@ -20,11 +20,7 @@ _MAX_FEATURED = 8
 
 @dataclass(frozen=True)
 class FeaturedProjectsEvidence(EvidenceBase):
-    """Site-wide featured projects.
-
-    Mirrors ``ProjectService.get_featured_projects`` (search-shaped results,
-    rendered with the shared project-entry lines).
-    """
+    """Site-wide featured projects."""
 
     status: DomainStatus
     user_id: int

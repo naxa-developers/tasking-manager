@@ -56,8 +56,7 @@ class MyWorkEvidence(EvidenceBase):
 
     def _body_lines(self) -> List[str]:
         # Lead with a direct second-person answer: small models copy a plain
-        # statement ("you currently have task #11 locked") far more reliably
-        # than they attribute a structured line to the asker (r02).
+        # statement far more reliably than they attribute a structured line (r02).
         if not self.groups:
             return ["you currently have no task locked right now"]
         lines: List[str] = []

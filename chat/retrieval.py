@@ -141,13 +141,7 @@ def _reciprocal_rank_fusion(
     bm25: RankedCandidates,
     node_map: Dict[str, "TextNode"],
 ) -> List[ScoredNode]:
-    """Fuse the two ranked arms by reciprocal rank, best-first.
-
-    Each arm is ranked by score (stable), nodes are keyed by content hash (so
-    duplicate content collapses, last occurrence winning), and scores sum
-    ``1 / (rank + 60)`` across arms — the recipe llama-index's reciprocal-rank
-    fusion applied here before.
-    """
+    """Fuse the two ranked arms by reciprocal rank, best-first."""
     fused_scores: Dict[str, float] = {}
     hash_to_ranked: Dict[str, Tuple[str, "TextNode"]] = {}
     for arm in (vec, bm25):
@@ -345,10 +339,8 @@ class Retriever:
 
             ids, sims, store_nodes = _ids_from_store_result(res)
             if not ids:
-                # A configured store querying a loaded index always returns
-                # rows (no filter is applied): zero rows with zero error means
-                # the table is empty. Flag it instead of silently serving
-                # BM25-only results as healthy.
+                # No filter is applied, so zero rows with zero error means the
+                # table is empty. Flag it instead of serving BM25-only results.
                 if self.node_map:
                     return RankedCandidates(
                         [], {}, "vector store returned no candidates (index empty?)"
@@ -371,9 +363,7 @@ class Retriever:
 
         try:
             # llama-index-retrievers-bm25 0.4.0 reads the cap from
-            # ``self.similarity_top_k`` inside retrieve() and rejects it as a
-            # keyword argument. Copy the retriever so a per-call cap cannot
-            # mutate the instance shared by concurrent turns.
+            # ``self.similarity_top_k``. Copy it so a per-call cap cannot leak.
             retriever = copy.copy(self.bm25)
             retriever.similarity_top_k = limit or len(self.node_map)
             hits = retriever.retrieve(question)
@@ -393,12 +383,7 @@ class Retriever:
             return RankedCandidates([], {}, str(exc))
 
     def retrieve(self, question: str, top_k: Optional[int] = None) -> RetrievalResponse:
-        """Run hybrid retrieval: BM25 + vector, fused by fused score.
-
-        ``top_k`` slices the fused list when given; the default is uncapped.
-        Strict: raises RetrievalUnavailable instead of serving partial results
-        when either arm fails or the index is empty.
-        """
+        """Run hybrid retrieval: BM25 + vector, fused by fused score."""
         t0 = time.perf_counter()
         arm_top_k = max(1, env_int("RAG_RETRIEVAL_ARM_TOP_K", 30))
 
@@ -448,9 +433,8 @@ class Retriever:
         )
 
 
-# The single process-lifetime instance behind the module-level retrieve() seam.
-# It snapshots chunks.json text/BM25 state at first use: after re-indexing the
-# KB, restart RAG workers/processes to pick up the new index.
+# The process-lifetime instance behind the module-level retrieve() seam.
+# It snapshots chunks.json at first use: restart workers after re-indexing.
 _DEFAULT: Optional["Retriever"] = None
 _DEFAULT_LOCK = threading.Lock()
 
@@ -468,8 +452,5 @@ def retrieve(
     question: str,
     top_k: Optional[int] = None,
 ) -> RetrievalResponse:
-    """Run hybrid RRF retrieval on the default instance (see _default).
-
-    ``top_k`` slices the fused results when given; the default is uncapped.
-    """
+    """Run hybrid RRF retrieval on the default instance (see _default)."""
     return _default().retrieve(question, top_k=top_k)

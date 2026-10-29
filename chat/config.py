@@ -104,9 +104,8 @@ class GenerationConfig:
     timeout: float
     drop_params: bool = True
     num_retries: int = 2
-    # Provider body merged into every generation request. Used to disable
-    # Qwen3's thinking mode on Ollama (``{"think": false}``), which otherwise
-    # spends the whole token budget before writing an answer.
+    # Provider body merged into every generation request. Disables Qwen3's
+    # thinking mode on Ollama, which otherwise spends the budget before answering.
     extra_body: Dict[str, object] = field(default_factory=dict)
 
     def require_api_key(self) -> str:
@@ -184,12 +183,7 @@ def _router_extra_body() -> Dict[str, object]:
 
 
 def get_router_config() -> RouterConfig:
-    """Routing settings defaulting to the generation model and endpoint.
-
-    Set ``RAG_ROUTER_MODEL`` only when routing should use a different model;
-    ``RAG_ROUTER_API_BASE`` / ``RAG_ROUTER_API_KEY`` are needed only when that
-    model lives on another provider.
-    """
+    """Routing settings defaulting to the generation model and endpoint."""
     try:
         generation = get_generation_config()
     except RuntimeError:
@@ -268,13 +262,7 @@ def get_pgvector_config(embed_dim: Optional[int] = None) -> PGVectorConfig:
 
 
 class LiteLLMEmbeddingAdapter(LiteLLMEmbedding):
-    """Official LlamaIndex LiteLLMEmbedding plus instruction prefixes.
-
-    Instruction-tuned embedders (e.g. Qwen3-Embedding) need a prefix; models
-    without an instruction schema do not. Prefixes are applied here — right
-    before the provider call — so the configured values stay empty by default
-    and any LiteLLM-routed embedder keeps working.
-    """
+    """Official LlamaIndex LiteLLMEmbedding plus instruction prefixes."""
 
     api_base: Optional[str] = None
     query_prefix: str = ""
@@ -369,12 +357,7 @@ def get_db_connection():  # type: ignore[no-untyped-def]
 
 
 def validate_chat_config() -> None:
-    """Fail fast when the chat model configuration is incomplete.
-
-    This is deliberately a preflight check, not a best-effort probe: a missing
-    deployment setting is an operator error and must surface as HTTP 500 rather
-    than as a canned answer or a silent KB fallback.
-    """
+    """Fail fast when the chat model configuration is incomplete."""
     get_generation_config()
     get_router_config()
     get_embedding_config()

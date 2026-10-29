@@ -64,11 +64,7 @@ def _flush_banner_block(block: List[str], out: List[Dict[str, str]]) -> None:
 
 
 def needs_verification_node_meta(text: str) -> Dict[str, Any]:
-    """Per-chunk ``Needs verification`` metadata (README §8.1).
-
-    A chunk is flagged only when the banner text lies in that chunk; clean
-    chunks of a flagged document stay unflagged.
-    """
+    """Per-chunk ``Needs verification`` metadata (README §8.1)."""
     banners = extract_banners(text)
     ids = sorted({b["id"] for b in banners})
     return {
@@ -185,10 +181,7 @@ def _section_parts(section: Tuple[Any, ...]) -> Tuple[Optional[int], str, str, s
 
 
 def _is_question_section(level: Optional[int], heading: str) -> bool:
-    """Atomic Q&A sections: question headings at section depth (### or deeper).
-
-    Legacy 3-tuple callers pass no level; those are treated as section depth.
-    """
+    """Atomic Q&A sections: question headings at section depth (### or deeper)."""
     if not heading or not heading.rstrip().endswith("?"):
         return False
     return level is None or level >= 3
@@ -198,14 +191,7 @@ def _pack_sections_to_chunks(
     sections: List[Tuple],
     chunk_budget: int = CHUNK_TOKENS,
 ) -> List[Dict[str, Any]]:
-    """Pack sections into tiktoken-budget chunks; question sections stay atomic.
-
-    Accepted section shapes: (heading, heading_path, text) or
-    (level, heading, heading_path, text). A question heading (``?``, level >= 3)
-    is emitted with its answer as its own chunk: it is never merged with other
-    sections and never carries a trailing buffer into the next section.
-    Non-question sections still pack together.
-    """
+    """Pack sections into tiktoken-budget chunks; question sections stay atomic."""
     chunks: List[Dict[str, Any]] = []
     cur_heading = ""
     cur_text = ""

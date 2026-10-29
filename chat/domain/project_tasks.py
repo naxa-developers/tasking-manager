@@ -34,14 +34,7 @@ class InvalidatedTask:
 
 @dataclass(frozen=True)
 class ProjectTasksEvidence(EvidenceBase):
-    """Task-level status for one project: mapped-by-user + invalidations.
-
-    Mirrors the task endpoints that are chat-appropriate: mapped tasks grouped
-    by user (``get_mapped_tasks_by_user``) and the invalidated-counts query
-    from the project statistics endpoint (tasks with ``count > 0`` only). The
-    full task GeoJSON dump and single-task detail stay out of prompt evidence
-    (payload size / no task-id route).
-    """
+    """Task-level status for one project: mapped-by-user + invalidations."""
 
     status: DomainStatus
     project_id: int

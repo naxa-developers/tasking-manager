@@ -158,13 +158,71 @@ Inside Docker (the containers live on `tm-net`):
 ```bash
 docker run --rm --network tm-net -e PYTHONPATH=/usr/src/app \
   -e RAG_CHUNKS_PATH=/data/chunks.json \
-  -v "$PWD/rag:/usr/src/app/rag:ro" \
+  -v "$PWD/chat:/usr/src/app/chat:ro" \
   -v "$PWD/tasking-manager.env:/usr/src/app/tasking-manager.env:ro" \
   -v "$PWD/backend:/usr/src/app/backend:ro" \
-  -v "$PWD/chat/retrieval/data/chunks.json:/data/chunks.json:ro" \
+  -v "$PWD/chat/data/chunks.json:/data/chunks.json:ro" \
   ghcr.io/hotosm/tasking-manager/backend:main \
   python -m chat.smoke --user-id 10250456 --project 6
 ```
+
+## Scripts
+
+Run from the repo root. The KB tools need `python-frontmatter` and a reachable
+pgvector table; the eval tools need a configured model.
+
+### Evaluation
+
+`build_core.py` rebuilds the compact suite (40 router, 32 KB, 16 domain, 12
+canned) from the full sets and writes `chat/eval/data/core_*.jsonl`:
+
+```bash
+python chat/eval/build_core.py
+```
+
+`run.py` scores one model across that suite. `core` is the headline comparison;
+the single-mode runs exist for debugging one arm:
+
+```bash
+python -m chat.eval.run core    --model ollama/qwen3:4b --api-base http://localhost:11434 --user-id 10250456
+python -m chat.eval.run kb      --model ollama/qwen3:4b --api-base http://localhost:11434
+python -m chat.eval.run router  --model ollama/qwen3:4b --api-base http://localhost:11434
+python -m chat.eval.run domain  --model ollama/qwen3:4b --api-base http://localhost:11434 --user-id 10250456
+python -m chat.eval.run refusal --model ollama/qwen3:4b --api-base http://localhost:11434
+python -m chat.eval.run compare --a core-1.7b.json --b core-4b.json
+```
+
+The model reaches the code under test through `LITELLM_MODEL` / `LLM_API_BASE`,
+so this exercises the production path rather than a test harness.
+
+Live-evidence tools, not part of the offline suite:
+
+```bash
+python -m chat.kb.scripts.dump_bm25 --questions questions.jsonl --out bm25.json
+python -m chat.kb.scripts.eval_router --dry-run
+python -m chat.kb.scripts.eval_router --out /tmp/router.json
+```
+
+### Knowledge base
+
+```bash
+python -m chat.kb.chunk --kb chat/knowledge-base --write chat/data/chunks.json
+python -m chat.kb.scripts.import_tm_kb --chunks ~/tm-kb/chunks.jsonl --out-chunks chat/data/chunks.json
+python -m chat.kb.scripts.index_kb --chunks chat/data/chunks.json --truncate
+python -m chat.kb.scripts.index_qwen_npy --npy emb.npy --ids ids.json --chunks chat/data/chunks.json
+```
+
+Add `--dry-run` to `chunk.py`, `import_tm_kb.py`, or `index_kb.py` to inspect
+without writing. With `--embedding-cache`, `import_tm_kb.py` also writes an
+`.npz`, which `index_kb.py --embeddings` indexes without re-embedding.
+
+```bash
+python -m chat.kb.scripts.debug_turn --user-id 24358865 \
+  --question "how many projects have i created?" --show all
+```
+
+Both `debug_turn.py` and `eval_router.py` still import names from the old
+pipeline API and fail at import; see "After consolidation" below.
 
 ## Environment
 

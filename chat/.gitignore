@@ -9,13 +9,13 @@ retrieval/.env
 .env
 
 # Built sparse source — generate via chunk.py flat 51; keep sample but git-ignore artifact
-retrieval/data/chunks.json
+data/chunks.json
 
 # Precomputed vectors for index_kb --embeddings (large; generate via import_tm_kb)
-retrieval/data/*.npz
+data/*.npz
 
 # Qwen3 tokenizer artifact — scp like chunks.json, never commit
-retrieval/tokenizers/qwen3-1.7b.json
+tokenizers/qwen3-1.7b.json
 
 # HF cache warm (1.2GB) — not committed
 # ~/.cache/huggingface/Qwen--Qwen3-Reranker-0.6B

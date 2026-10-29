@@ -38,13 +38,7 @@ class ContributionDay:
 
 @dataclass(frozen=True)
 class ProjectContributionsEvidence(EvidenceBase):
-    """Contributors to one project plus per-day contribution increments.
-
-    Mirrors the contribution endpoints: per-user totals from
-    ``get_user_contributions`` (top contributors first, as the backend orders
-    them) and per-day mapped/validated increments from ``get_contribs_by_day``.
-    The asker's own row is singled out when they contributed.
-    """
+    """Contributors to one project plus per-day contribution increments."""
 
     status: DomainStatus
     project_id: int

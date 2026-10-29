@@ -18,8 +18,7 @@ SUMMARY_OPERATION = "get_project_summary"
 SUMMARY_PROVENANCE = "ProjectService.get_project_summary"
 
 # Short-TTL aggregate cache; auth is checked before the cache on every request.
-# Note: answers may lag live counts by up to the TTL (30s default);
-# set RAG_STATS_CACHE_TTL=0 in tests to disable.
+# Answers may lag live counts by up to the TTL. RAG_STATS_CACHE_TTL=0 disables.
 _STATS_CACHE_TTL_DEFAULT = 30.0
 _STATS_CACHE = SimpleMemoryCache(namespace="rag_stats")
 

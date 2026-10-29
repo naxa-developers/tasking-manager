@@ -1,5 +1,3 @@
-"""The op catalogue must be executable end to end."""
-
 from __future__ import annotations
 
 from chat.domain.registry import (
@@ -48,12 +46,7 @@ def test_unknown_op_raises() -> None:
 
 
 def test_each_handler_accepts_the_arguments_its_scope_passes() -> None:
-    """Dispatch calls by scope; a mismatch is a TypeError at turn time.
-
-    ``personal`` → (user_id, db), ``project``/``optional_project`` →
-    (user_id, project_id, db), ``filter`` → (user_id, project_id, db, filters).
-    A handler may have extra *optional* parameters (progress chat's ``limit``).
-    """
+    """Dispatch calls by scope; a mismatch is a TypeError at turn time."""
     import inspect
 
     expected = {"personal": 2, "project": 3, "optional_project": 3, "filter": 4}

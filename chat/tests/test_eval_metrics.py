@@ -1,5 +1,3 @@
-"""The eval summaries expose the metrics the gate/OOD work is judged on."""
-
 from __future__ import annotations
 
 from chat.eval.run import _summarise_kb, _summarise_refusal, _summarise_router

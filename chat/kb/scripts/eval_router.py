@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-"""Score the LLM router against the labeled routing corpus.
-
-This is live evidence, not part of the offline test suite. It needs the routing
-model configured (``RAG_ROUTER_MODEL`` or ``LITELLM_MODEL``) and a reachable
-endpoint.
-
-Usage::
-
-    PYTHONPATH=. .venv/bin/python chat/retrieval/scripts/eval_router.py --dry-run
-    PYTHONPATH=. .venv/bin/python chat/retrieval/scripts/eval_router.py --out /tmp/router.json
-"""
 
 from __future__ import annotations
 
@@ -212,7 +201,9 @@ def dry_run(cases: List[Dict[str, Any]]) -> None:
 
 
 async def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="Score the LLM router against the labeled routing corpus."
+    )
     parser.add_argument("--corpus", type=Path, default=CORPUS_PATH)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--out", type=Path, default=None)

@@ -1,13 +1,3 @@
-"""Smoke test for the whole pipeline against live services.
-
-Runs one question per route and fails when a turn ends in an error state, or
-when a route does not match what the question obviously needs. This is the
-"is it working right now" check — it exercises the real model, the real
-database, and the real vector index.
-
-    python -m chat.smoke --user-id 10250456 --project 6
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -77,7 +67,9 @@ async def _run(user_id: Optional[int], project: int, as_json: bool) -> int:
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="Smoke test the whole pipeline against live services."
+    )
     parser.add_argument("--user-id", type=int, default=None)
     parser.add_argument("--project", type=int, default=6)
     args = parser.parse_args(argv)

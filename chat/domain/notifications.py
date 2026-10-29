@@ -28,12 +28,7 @@ class NotificationEntry:
 
 @dataclass(frozen=True)
 class NotificationsEvidence(EvidenceBase):
-    """The asker's own notifications (unread count + recent messages).
-
-    Mirrors the notifications endpoints: the unread count
-    (``has_user_new_messages``) and the asker's message list
-    (``get_all_messages``, newest first). Asker-only by design.
-    """
+    """The asker's own notifications (unread count + recent messages)."""
 
     status: DomainStatus
     user_id: int

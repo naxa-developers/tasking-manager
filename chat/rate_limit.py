@@ -1,12 +1,3 @@
-"""Per-user rate limiting for RAG chat turns.
-
-Counters live in Postgres (``rag_rate_limits``) so every API worker shares the
-same window: the backend runs multiple uvicorn workers, and an in-process
-counter would let each worker grant the full budget on its own. A fixed window
-of ``RAG_CHAT_RATE_WINDOW_SECONDS`` accepts at most ``RAG_CHAT_RATE_LIMIT``
-turns per user; set the limit to 0 to disable limiting.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -42,9 +33,8 @@ def get_rate_limit_config() -> RateLimitConfig:
     )
 
 
-# One atomic upsert: reset the window when it has expired, otherwise count the
-# turn. RETURNING reports the post-increment count and the seconds left in the
-# window, computed from database time so workers cannot disagree on the clock.
+# One atomic upsert: reset an expired window, otherwise count the turn.
+# RETURNING gives the new count and seconds left, from database time.
 _COUNT_TURN = """
     INSERT INTO rag_rate_limits (user_id, window_start, count)
     VALUES (:user_id, NOW(), 1)
@@ -69,11 +59,7 @@ _COUNT_TURN = """
 
 
 async def check_rate_limit(user_id: int, db: Database) -> RateLimitDecision:
-    """Count one chat turn for ``user_id`` and report whether it is allowed.
-
-    Fails open: a counter-store error logs a warning and allows the turn, so a
-    database hiccup cannot take chat down.
-    """
+    """Count one chat turn for ``user_id`` and report whether it is allowed."""
     cfg = get_rate_limit_config()
     if cfg.limit <= 0:
         return RateLimitDecision(allowed=True, retry_after=0, remaining=0)

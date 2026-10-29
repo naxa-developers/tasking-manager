@@ -15,20 +15,14 @@ CONTRIBUTION_OPERATION = "get_user_contributions"
 CONTRIBUTION_PROVENANCE = "UserService.get_detailed_stats"
 
 _MAX_MONTHS = 6
-# The contributed-projects list renders completely by default; set
-# RAG_MAX_USER_PROJECTS=N (N > 0) to cap it for very long answers. The stated
-# total and status breakdown always cover every project the backend records;
-# the list is disclosed as partial when it exceeds the cap.
+# RAG_MAX_USER_PROJECTS=N (N > 0) caps the contributed-projects list. The
+# stated total always covers every project; the list is marked partial.
 _PREFERRED_LOCALE = "en"
 _STATUS_ORDER = ("PUBLISHED", "ARCHIVED", "DRAFT")
 
 
 def _max_projects() -> Optional[int]:
-    """Optional render cap for the contributed-projects list.
-
-    ``RAG_MAX_USER_PROJECTS`` unset, 0, or invalid means no cap: render every
-    contributed project.
-    """
+    """Optional render cap for the contributed-projects list."""
     cap = env_int("RAG_MAX_USER_PROJECTS", 0)
     return cap if cap > 0 else None
 
@@ -119,12 +113,7 @@ class UserContributionEvidence(EvidenceBase):
 
     @property
     def contributions_total(self) -> Optional[int]:
-        """Task actions performed, all time.
-
-        The backend has no single "contributions" figure, so this is the sum of
-        the three action counts it does record. A task mapped and later
-        validated by the same person counts twice — it is two contributions.
-        """
+        """Task actions performed, all time."""
         parts = [
             value
             for value in (
@@ -222,14 +211,7 @@ class UserContributionEvidence(EvidenceBase):
 async def get_user_contribution_evidence(
     user_id: int, db: Any
 ) -> UserContributionEvidence:
-    """Read-only lifetime + monthly contribution summary for the asker.
-
-    The contributed-projects list comes from the backend's canonical
-    ``users.projects_mapped`` array — the append-only record the backend writes
-    when a user maps a project — not from current task state, so history stays
-    visible after tasks are reset. Per-project mapped/validated counts merge in
-    from the tasks query where the tasks still exist.
-    """
+    """Read-only lifetime + monthly contribution summary for the asker."""
     try:
         from backend.models.postgis.user import User as UserModel
         from backend.services.users.user_service import UserService

@@ -1,5 +1,3 @@
-"""The KB relevance gate: dense threshold plus lexical rescue."""
-
 from __future__ import annotations
 
 from chat.retrieval import RetrievalResponse, ScoredNode

@@ -1,13 +1,3 @@
-"""Qwen3 tokenizer for RAG prompt fitting (runtime-only).
-
-Loads the official ``Qwen/Qwen3-1.7B`` ``tokenizer.json`` vendored at
-``chat/retrieval/tokenizers/qwen3-1.7b.json`` (gitignored, scp like
-``chunks.json``) or overridden via ``RAG_TOKENIZER_PATH``.
-
-No tiktoken import, no fallback: a missing artifact fails loudly so a
-mis-deployed host never silently mis-budgets prompts.
-"""
-
 from __future__ import annotations
 
 import os

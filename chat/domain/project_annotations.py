@@ -27,13 +27,7 @@ class AnnotationEntry:
 
 @dataclass(frozen=True)
 class ProjectAnnotationsEvidence(EvidenceBase):
-    """Task annotations (issues flagged on tasks) for one project.
-
-    Mirrors ``TaskAnnotation.get_task_annotations_by_project_id``: per-type
-    counts plus a bounded list with task id, type, source, and a markdown
-    excerpt. The per-type endpoint is the same data filtered, so one op
-    carries both; per-task comments stay out (no task-id route).
-    """
+    """Task annotations (issues flagged on tasks) for one project."""
 
     status: DomainStatus
     project_id: int

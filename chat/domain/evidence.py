@@ -24,11 +24,7 @@ def _block_char_limit() -> int:
 
 
 def safe_value(value: Any, limit: int = 0) -> str:
-    """Neutralize one rendered value: no injection text, no newlines.
-
-    ``limit`` is accepted for call-site compatibility and ignored; the prompt
-    budget is the only length bound.
-    """
+    """Neutralize one rendered value: no injection text, no newlines."""
     del limit
     return neutralize_untrusted(str(value if value is not None else ""))
 
@@ -71,13 +67,7 @@ class EvidenceBase:
         return []
 
     def to_prompt_block(self) -> str:
-        """Small structured block for the LLM. Empty unless authorized.
-
-        A ``user_id`` subject is audit metadata, never prompt content: it is
-        masked here and stays available in citations and span metadata. Any
-        other context field (e.g. ``project_id``) is still rendered, since
-        the LLM needs it to attribute the numbers.
-        """
+        """Small structured block for the LLM. Empty unless authorized."""
         if not self.authorized:
             return ""
         lines = [_HEADER]

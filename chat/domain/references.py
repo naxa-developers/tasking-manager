@@ -1,9 +1,3 @@
-"""Deterministic project-reference and third-party-subject extraction.
-
-These are parsing and privacy helpers, not intent routing. Intent is owned by
-``chat.router``.
-"""
-
 from __future__ import annotations
 
 import re
@@ -54,12 +48,8 @@ def extract_bare_project_id(query: str) -> Optional[int]:
     return project_id if project_id > 0 else None
 
 
-# Third-party user queries ----------------------------------------------------
-#
 # Profile/activity questions about someone other than the asker are never
-# answered from live evidence and never consolidated through the LLM: the
-# service short-circuits them with a canned pointer at the public web profile
-# (data minimisation; the web surface is the intended access path).
+# answered from live evidence: data minimisation, and the web is the path.
 
 _PERSONAL_DATA_RE = re.compile(
     r"\b(?:profiles?|contributions?|hours|streak|badges?|activity|statistics|stats)\b"
@@ -140,12 +130,7 @@ _SUBJECT_STOPWORDS: frozenset[str] = frozenset(
 
 
 def is_third_party_user_query(query: str) -> bool:
-    """True when the question asks for another person's profile/activity data.
-
-    Deterministic, LLM-free detection: the service uses it to redirect the
-    asker to the public web profile instead of consolidating somebody else's
-    personal data in a generation prompt.
-    """
+    """True when the question asks for another person's profile/activity data."""
     text = query or ""
     if not text.strip() or not _PERSONAL_DATA_RE.search(text):
         return False

@@ -1,14 +1,3 @@
-"""HTTP surface: sessions, turns, and a stateless one-shot.
-
-A turn is the unit here — you post a question, you get back that turn (question
-and answer together). History for routing and generation is read from the
-session's stored turns, not sent by the client.
-
-Both the store and these routes take the authenticated user's id, and the store
-raises ``SessionNotFound`` for a foreign id, so ownership is enforced in one
-place rather than at each handler.
-"""
-
 from __future__ import annotations
 
 import json
@@ -40,9 +29,6 @@ _STREAM_HEADERS = {
     "Connection": "keep-alive",
     "X-Accel-Buffering": "no",
 }
-
-
-# --- request / response shapes ------------------------------------------------
 
 
 class CreateSessionDTO(BaseModel):
@@ -92,9 +78,6 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARS)
     history: List[Dict[str, str]] = Field(default_factory=list)
     stream: bool = False
-
-
-# --- mapping ------------------------------------------------------------------
 
 
 def _session_dto(row: Dict[str, Any]) -> SessionDTO:
@@ -181,9 +164,6 @@ def _require_chat_enabled() -> None:
         raise HTTPException(status_code=404, detail="Chat is disabled")
 
 
-# --- health -------------------------------------------------------------------
-
-
 @router.get("/health")
 async def health(db: Database = Depends(get_db)):
     """Deployment diagnostics. 503 when the KB index itself is unavailable."""
@@ -198,9 +178,6 @@ async def ready(db: Database = Depends(get_db)):
     payload = await rag_readiness(db)
     status_code = 200 if payload.get("status") == "ready" else 503
     return JSONResponse(content=payload, status_code=status_code)
-
-
-# --- sessions -----------------------------------------------------------------
 
 
 @router.post("/sessions", response_model=SessionDTO)
@@ -235,11 +212,7 @@ async def get_session(
     db: Database = Depends(get_db),
     limit: int = sessions.MAX_PAGE_SIZE,
 ):
-    """One conversation with its turns; 404 when it is unknown or not yours.
-
-    The turns travel with the session so a client can open a conversation in
-    one request — the same reason a chat UI wants history and title together.
-    """
+    """One conversation with its turns; 404 when it is unknown or not yours."""
     _require_chat_enabled()
     try:
         row = await sessions.get_session(session_id, user.id, db)
@@ -282,9 +255,6 @@ async def delete_session(
     if not deleted:
         raise HTTPException(status_code=404, detail="Session not found")
     return {"deleted": True}
-
-
-# --- turns --------------------------------------------------------------------
 
 
 @router.get("/sessions/{session_id}/turns", response_model=SessionTurnsDTO)
@@ -339,11 +309,7 @@ async def _persist_turn(
     db: Any = None,
     client_message_id: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
-    """Write the turn; mid-stream callers use a fresh pooled connection.
-
-    Losing the audit row must never lose an answer the user already received,
-    so a persistence failure is logged and swallowed.
-    """
+    """Write the turn; mid-stream callers use a fresh pooled connection."""
     try:
         if db is None:
             async with db_connection.database.connection() as fresh:
@@ -394,11 +360,7 @@ def _meta_payload(
 
 
 def _stream_replay(saved: Dict[str, Any]) -> StreamingResponse:
-    """Replay a stored turn as one SSE delta, then meta and done.
-
-    A retried streaming POST must not call the model again or return a different
-    answer than the one stored for its client_message_id.
-    """
+    """Replay a stored turn as one SSE delta, then meta and done."""
     turn = TurnResult(
         answer=str(saved.get("answer") or ""),
         route=str(saved.get("route") or ""),
@@ -437,10 +399,8 @@ def _stream_response(
         final: Optional[TurnResult] = None
         saved: Optional[Dict[str, Any]] = None
         try:
-            # A streaming response outlives the request handler, so the
-            # request-scoped connection (``db``) is already released by the
-            # time this generator runs. Hold a fresh pooled connection for the
-            # stream's lifetime: domain ops need it, and so does persistence.
+            # A streaming response outlives the request handler, so ``db`` is
+            # already released here. Hold a pooled connection for the stream.
             async with db_connection.database.connection() as conn:
                 async for event in stream_turn(
                     question, user_id=user_id, db=conn, history=history
@@ -496,11 +456,7 @@ async def send_turn(
     user: AuthUserDTO = Depends(login_required),
     db: Database = Depends(get_db),
 ):
-    """Send one turn: answer the question in the context of this session.
-
-    ``stream: true`` returns SSE instead of JSON — the same endpoint, same
-    persistence, one protocol for canned and generated answers alike.
-    """
+    """Send one turn: answer the question in the context of this session."""
     _require_chat_enabled()
     _require_chat_config()
     try:
@@ -555,9 +511,6 @@ async def send_turn(
         )
 
     return _turn_dto(saved) if saved else _from_result(result, question, session_id)
-
-
-# --- stateless one-shot -------------------------------------------------------
 
 
 @router.post("/ask", response_model=None)

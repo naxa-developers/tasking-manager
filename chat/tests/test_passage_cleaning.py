@@ -1,5 +1,3 @@
-"""Passage cleaning: what a retrieved chunk looks like inside the prompt."""
-
 from __future__ import annotations
 
 from chat.generate import _format_chunk, _fit_chunks, clean_passage, escape_fence

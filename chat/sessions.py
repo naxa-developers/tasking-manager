@@ -1,15 +1,3 @@
-"""Sessions and turns, with ownership enforced at the store.
-
-A **turn** is one question and its answer, stored as a single row. That is the
-unit the API accepts and returns, so a conversation is a list of turns rather
-than a stream of role-tagged messages.
-
-Every public function takes the caller's ``user_id`` and resolves the session
-through :func:`_owned`, so a foreign or unknown id raises :class:`SessionNotFound`
-before any read or write happens. The store cannot be reached unscoped — a new
-endpoint gets the 404 rule by construction rather than by remembering to check.
-"""
-
 from __future__ import annotations
 
 import json
@@ -52,11 +40,7 @@ def _session_id(value: Any) -> int:
 async def _owned(
     session_id: int, user_id: Optional[int], db: Database
 ) -> Dict[str, Any]:
-    """The session row when ``user_id`` owns it; otherwise :class:`SessionNotFound`.
-
-    A missing session and someone else's session are deliberately the same
-    failure — the caller cannot tell them apart.
-    """
+    """The session row when ``user_id`` owns it; otherwise :class:`SessionNotFound`."""
     if user_id is None:
         raise SessionNotFound()
     row = await db.fetch_one(
@@ -200,12 +184,7 @@ async def append_turn(
     candidate_count: Optional[int] = None,
     client_message_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Persist one completed turn and mark the session active.
-
-    ``client_message_id`` makes a retried client POST idempotent. The unique
-    index is the final guard; the pre-check also avoids a second insert in the
-    common retry path.
-    """
+    """Persist one completed turn and mark the session active."""
     session_id = _session_id(session_id)
     await _owned(session_id, user_id, db)
     client_id = (client_message_id or "")[:64] or None

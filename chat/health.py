@@ -1,14 +1,3 @@
-"""Deploy-gate health and readiness checks for the RAG stack.
-
-Two endpoints, two audiences:
-
-``/health``  diagnostics for a human — is the index loaded, is the config sane.
-``/ready``   strict gate for a probe — all of the above plus reachable providers.
-
-Retrieval modules are imported lazily so a broken stack surfaces as an
-unavailable payload instead of failing application import.
-"""
-
 from __future__ import annotations
 
 import json
@@ -33,11 +22,7 @@ _PROBE_CACHE: Dict[str, Tuple[float, str]] = {}
 
 @lru_cache(maxsize=1)
 def _component_error() -> Optional[str]:
-    """Import or registry failure, or None when the stack loads.
-
-    Every op is resolved, so a typo in the registry shows up here instead of at
-    turn time — the same guarantee the parity test gives at build time.
-    """
+    """Import or registry failure, or None when the stack loads."""
     try:
         from chat.domain.registry import OPS
         from chat.pipeline import run_turn  # noqa: F401

@@ -1,5 +1,3 @@
-"""Health diagnostics: table safety, chunk counting, and the mounted routes."""
-
 from __future__ import annotations
 
 import json

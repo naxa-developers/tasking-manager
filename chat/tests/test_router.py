@@ -1,5 +1,3 @@
-"""The router turns a model payload into something safe to execute."""
-
 from __future__ import annotations
 
 from chat.router import RouterOutput, _validate_output

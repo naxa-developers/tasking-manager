@@ -1,21 +1,3 @@
-"""The routing step: one LLM call that picks KB, DOMAIN, or BOTH.
-
-Everything semantic is the model's decision — intent, which operations, which
-project, which filters. This module owns only the contract:
-
-* the JSON shape it asks for,
-* the allowlist that validates the answer,
-* the fallback when the answer cannot be executed.
-
-Two deliberate non-decisions:
-
-* **Project ids are not regex-grounded.** The model is told never to invent one,
-  and the fetchers already run ``authorize_project``, so an invented id comes
-  back as ``NOT_FOUND`` rather than as someone else's data.
-* **No clarification branch.** If a project-scoped op arrives without a project,
-  the op is dropped; generation asks the user which project they meant.
-"""
-
 from __future__ import annotations
 
 import json

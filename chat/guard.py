@@ -1,13 +1,3 @@
-"""Deterministic prompt-injection guard.
-
-The only non-LLM decision in the pipeline. Everything else — intent, route,
-operation choice, project scope — belongs to the router model.
-
-``detect_injection`` returns a reason string or None; ``neutralize_untrusted``
-is applied to untrusted text (user input, retrieved chunks, evidence values)
-before it reaches a prompt.
-"""
-
 from __future__ import annotations
 
 import base64
@@ -203,12 +193,7 @@ def _encoded_injection_reason(normalized: str) -> Optional[str]:
 
 
 def _spaced_out_reason(normalized: str) -> Optional[str]:
-    """Best-of-N letter spacing ("i g n o r e ...") — never a real question.
-
-    Require a run of consecutive one-letter tokens.  Counting every one-letter
-    word in a long passage also matches ordinary prose full of "a" articles,
-    which made retrieved KB passages get withheld wholesale.
-    """
+    """Best-of-N letter spacing ("i g n o r e ...") — never a real question."""
     run = 0
     for word in normalized.split(" "):
         if len(word) == 1 and word.isalnum():

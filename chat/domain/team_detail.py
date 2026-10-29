@@ -17,13 +17,7 @@ _MAX_MEMBERS = 20
 
 @dataclass(frozen=True)
 class TeamDetailEvidence(EvidenceBase):
-    """One team's details: organisation, visibility, join method, members.
-
-    Mirrors ``TeamService.get_team_as_dto`` (full form, so members are
-    included). The team id comes from the route's ``team_id`` filter. The
-    join-requests endpoint is a manager CSV export; only a pending count is
-    surfaced here, and only to org/general admins.
-    """
+    """One team's details: organisation, visibility, join method, members."""
 
     status: DomainStatus
     team_id: int

@@ -1,5 +1,3 @@
-"""A retried streaming turn replays the stored answer, not a new generation."""
-
 from __future__ import annotations
 
 import pytest

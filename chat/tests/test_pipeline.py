@@ -1,5 +1,3 @@
-"""The turn pipeline, with the model and services faked out."""
-
 from __future__ import annotations
 
 from typing import Any, Dict, List

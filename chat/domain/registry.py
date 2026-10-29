@@ -1,17 +1,3 @@
-"""The domain operation catalogue — the single source of truth.
-
-Every live-data capability is one ``Op`` record. Three consumers read this
-table and nothing else:
-
-* ``chat.router``      — builds the router prompt from it, validates the model's
-                        ``ops`` against it.
-* ``chat.domain.dispatch`` — resolves each op's fetcher and calls it.
-* ``chat.domain.health``   — proves every entry still imports.
-
-Adding an operation is one record here. Nothing else in the package needs to
-change, and the router prompt cannot drift from what dispatch can execute.
-"""
-
 from __future__ import annotations
 
 import importlib
@@ -34,15 +20,7 @@ def _loader(module: str, function: str) -> Callable[[], Fetcher]:
 
 @dataclass(frozen=True)
 class Op:
-    """One read-only capability the router may select.
-
-    ``scope`` picks the call shape:
-
-    ``project``           ``fetch(user_id, project_id, db)`` — needs an id
-    ``optional_project``  ``fetch(user_id, project_id, db)`` — id may be None
-    ``personal``          ``fetch(user_id, db)`` — the asker's own data
-    ``filter``            ``fetch(user_id, project_id, db, filters)``
-    """
+    """One read-only capability the router may select."""
 
     name: str
     instruction: str
@@ -61,7 +39,6 @@ class Op:
 
 
 OPS: Tuple[Op, ...] = (
-    # --- one project ------------------------------------------------------
     Op(
         "stats",
         "Task counts for one project.",
@@ -122,7 +99,6 @@ OPS: Tuple[Op, ...] = (
         "project",
         _loader("project_partners", "get_project_partners_evidence"),
     ),
-    # --- project when named, global otherwise -----------------------------
     Op(
         "campaigns",
         "Campaigns on a project, or site campaigns.",
@@ -142,7 +118,6 @@ OPS: Tuple[Op, ...] = (
         "personal",
         _loader("user_tasks", "get_user_tasks_evidence"),
     ),
-    # --- the asker's own data --------------------------------------------
     Op(
         "mywork",
         "The asker's own locked or assigned tasks.",
@@ -203,7 +178,6 @@ OPS: Tuple[Op, ...] = (
         "personal",
         _loader("notifications", "get_notifications_evidence"),
     ),
-    # --- site-wide --------------------------------------------------------
     Op(
         "global_stats",
         "Site-wide totals: users, projects, or tasks overall.",
@@ -234,7 +208,6 @@ OPS: Tuple[Op, ...] = (
         "personal",
         _loader("recommendations", "get_user_recommendation_evidence"),
     ),
-    # --- filtered discovery ----------------------------------------------
     Op(
         "project_search",
         "Find projects by country, difficulty, organisation, campaign, "

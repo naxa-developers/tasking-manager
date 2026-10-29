@@ -1,15 +1,3 @@
-"""Pre-generation relevance gate for the KB arm.
-
-RRF is a ranking device, not a confidence score: its value depends on the
-candidate-list lengths and the RRF constant, so it cannot be thresholded across
-queries. This module gates on the underlying dense similarity, with a lexical
-coverage fallback for exact-term questions that dense retrieval under-scores.
-
-The gate is intentionally small and deterministic. It runs before generation so
-a weak KB turn costs only the router call (plus the embedding), not a generation
-call.
-"""
-
 from __future__ import annotations
 
 import re
@@ -77,11 +65,7 @@ class GateDecision:
 
 
 def get_gate_config() -> GateConfig:
-    """Read gate thresholds from the environment.
-
-    Defaults are starting points, not calibrated values. They must be tuned on
-    the golden set before the gate is trusted in production.
-    """
+    """Read gate thresholds from the environment."""
     dense_threshold = env_float("RAG_DENSE_SCORE_THRESHOLD", 0.35)
     dense_floor = env_float("RAG_DENSE_SCORE_FLOOR", 0.20)
     coverage_threshold = env_float("RAG_TERM_COVERAGE_THRESHOLD", 0.75)
@@ -120,9 +104,8 @@ def _gate_for_top(
 ) -> GateDecision:
     dense = top.vector_score
     if dense is None:
-        # The vector arm did not report a score. Do not reject an otherwise
-        # usable result on a missing diagnostic; retrieval health is reported
-        # separately.
+        # The vector arm reported no score. Don't reject a usable result on a
+        # missing diagnostic; retrieval health is reported separately.
         return GateDecision(
             allow=True,
             reason="dense_score_missing",

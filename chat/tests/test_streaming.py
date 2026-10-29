@@ -1,5 +1,3 @@
-"""Streaming: deltas then a finished turn, for generated and canned answers alike."""
-
 from __future__ import annotations
 
 from typing import Any, Dict, List

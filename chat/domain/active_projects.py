@@ -23,14 +23,7 @@ class ActiveProjectEntry:
 
 @dataclass(frozen=True)
 class ActiveProjectsEvidence(EvidenceBase):
-    """Projects with task activity in the last 24 hours.
-
-    Mirrors ``ProjectService.get_active_projects``: the GeoJSON feature
-    collection supplies the active project ids (task_history ∪ project_chat
-    within the interval); names are resolved from ``project_info`` for a
-    readable answer. Distinct from trending (popularity), which is a separate
-    op.
-    """
+    """Projects with task activity in the last 24 hours."""
 
     status: DomainStatus
     user_id: int

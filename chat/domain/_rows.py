@@ -1,5 +1,3 @@
-"""Shared row/DTO read helpers for the domain evidence modules."""
-
 from __future__ import annotations
 
 import datetime

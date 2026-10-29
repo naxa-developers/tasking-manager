@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""One-command TMBot turn debugger.
-
-Prints the deterministic decision, KB chunks, domain DB evidence, the exact
-LLM prompt, and (optionally) the generated answer for one question. Mirrors
-``chat/service.py`` so a debugging run reproduces production behavior without
-persisting a session.
-
-Run inside tm-backend:
-  docker compose run --rm --no-deps tm-backend \
-    python chat/retrieval/scripts/debug_turn.py \
-    --user-id 24358865 --question "how many projects have i created?" --show all
-"""
 
 from __future__ import annotations
 

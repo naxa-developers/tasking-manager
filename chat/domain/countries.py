@@ -1,11 +1,3 @@
-"""Country-name allowlist for discovery filters.
-
-Offline, deterministic matching of ``<in|from|near> <country>``. Aliases map
-to a canonical English name that the backend project-search resolver consumes.
-The allowlist prevents benign phrases ("in my opinion") from becoming country
-filters; the matcher never raises.
-"""
-
 from __future__ import annotations
 
 import re

@@ -14,14 +14,7 @@ OSM_PROVENANCE = "UserService.get_osm_details_for_user"
 
 @dataclass(frozen=True)
 class UserOsmStatsEvidence(EvidenceBase):
-    """The asker's OpenStreetMap account details.
-
-    Mirrors ``UserService.get_osm_details_for_user`` (the OSM API lookup
-    behind the openstreetmap endpoint). External dependency: unreachable OSM
-    surfaces as UNAVAILABLE. Ohsome edit statistics are served by a separate
-    proxy endpoint with no stored-copy service here, so they are out of
-    scope.
-    """
+    """The asker's OpenStreetMap account details."""
 
     status: DomainStatus
     user_id: int

@@ -1,28 +1,4 @@
 #!/usr/bin/env python3
-"""Convert a tm-kb ``chunks.jsonl`` build into tasking-manager's KB shape.
-
-The output is the lean ``chunks.json`` consumed by ``chat/retrieval/query_kb.py``
-and ``chat/retrieval/scripts/index_kb.py``. Metadata is mapped to the keys the
-turn pipeline uses for citations (``title``, ``doc_id``, ``node_heading``,
-``source_refs``, ``provenance``).
-
-If ``--embedding-cache`` is supplied, document vectors are read from the
-content-hash cache produced by the standalone tmbot service and written to a
-separate ``.npz`` (``ids`` + ``vectors``). ``index_kb.py --embeddings`` then
-indexes without re-embedding.
-
-Usage::
-
-    PYTHONPATH=. .venv/bin/python chat/retrieval/scripts/import_tm_kb.py \
-        --chunks ~/Desktop/tm-kb/chunks/chunks.jsonl \
-        --embedding-cache ~/Desktop/final-rag-chat/chat/cache/embeddings \
-        --out-chunks chat/retrieval/data/chunks.json \
-        --out-embeddings chat/retrieval/data/embeddings_tmkb.npz
-
-The cache key parameters must match the cache producer, not this repo's
-runtime embedding config: the tmbot cache tags ``embeddinggemma`` with the
-``title: none | text: `` document prefix and 768 dimensions.
-"""
 
 from __future__ import annotations
 
@@ -328,7 +304,9 @@ def _summarize(
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="Convert a tm-kb chunks.jsonl build into the TM KB shape."
+    )
     parser.add_argument("--chunks", required=True, type=Path, help="tm-kb chunks.jsonl")
     parser.add_argument(
         "--out-chunks",

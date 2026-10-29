@@ -26,12 +26,7 @@ class CampaignEntry:
 
 @dataclass(frozen=True)
 class CampaignsEvidence(EvidenceBase):
-    """Campaigns: those linked to one project, or the site-wide list.
-
-    Mirrors ``CampaignService.get_project_campaigns_as_dto`` when the question
-    names a project and ``CampaignService.get_all_campaigns`` otherwise. The
-    by-id detail endpoint needs a campaign id the route does not carry.
-    """
+    """Campaigns: those linked to one project, or the site-wide list."""
 
     status: DomainStatus
     project_id: Optional[int] = None

@@ -8,12 +8,7 @@ from chat.domain.evidence import DomainStatus
 
 
 async def can_read_project(user_id: int, project_id: int, db: Any) -> Optional[Any]:
-    """Return the project row if user_id may read it, else None.
-
-    Visibility (public/draft/private, manager/allowed-list/team) is owned by
-    ``ProjectService.can_user_read_project`` — the same predicate the project
-    APIs use — so RAG permissions can never drift from API permissions.
-    """
+    """Return the project row if user_id may read it, else None."""
     from backend.exceptions import NotFound
     from backend.services.project_service import ProjectService
 
