@@ -203,10 +203,20 @@ def _encoded_injection_reason(normalized: str) -> Optional[str]:
 
 
 def _spaced_out_reason(normalized: str) -> Optional[str]:
-    """Best-of-N letter spacing ("i g n o r e ...") — never a real question."""
-    single = sum(1 for w in normalized.split(" ") if len(w) == 1 and w.isalnum())
-    if single >= 8:
-        return "spaced-out input"
+    """Best-of-N letter spacing ("i g n o r e ...") — never a real question.
+
+    Require a run of consecutive one-letter tokens.  Counting every one-letter
+    word in a long passage also matches ordinary prose full of "a" articles,
+    which made retrieved KB passages get withheld wholesale.
+    """
+    run = 0
+    for word in normalized.split(" "):
+        if len(word) == 1 and word.isalnum():
+            run += 1
+            if run >= 6:
+                return "spaced-out input"
+        else:
+            run = 0
     return None
 
 

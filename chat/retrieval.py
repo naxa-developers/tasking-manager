@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import copy
 import json
 import os
 import threading
@@ -369,9 +370,13 @@ class Retriever:
             return RankedCandidates([], {}, None)
 
         try:
-            hits = self.bm25.retrieve(
-                question, similarity_top_k=limit or len(self.node_map)
-            )
+            # llama-index-retrievers-bm25 0.4.0 reads the cap from
+            # ``self.similarity_top_k`` inside retrieve() and rejects it as a
+            # keyword argument. Copy the retriever so a per-call cap cannot
+            # mutate the instance shared by concurrent turns.
+            retriever = copy.copy(self.bm25)
+            retriever.similarity_top_k = limit or len(self.node_map)
+            hits = retriever.retrieve(question)
             ids: List[str] = []
             scores: Dict[str, float] = {}
             for item in hits:
